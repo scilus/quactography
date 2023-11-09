@@ -25,6 +25,8 @@ def _build_arg_parser():
     p.add_argument('--keep_mask',
                    help='Nodes that must not be filtered out.')
 
+    p.add_argument('--subsample', type=int, default=1,
+                   help='Take one slice every N slices. [%(default)s]')
     p.add_argument('--threshold', default=0.0, type=float,
                    help='Cut all weights below a given threshold. [%(default)s]')
     p.add_argument('--slice_index', type=int,
@@ -42,17 +44,20 @@ def main():
     sh_im = nib.load(args.in_sh)
 
     nodes_mask = slice_along_axis(nodes_mask_im.get_fdata().astype(bool),
-                                  args.axis_name, args.slice_index)
+                                  args.axis_name, args.slice_index, args.subsample)
 
     keep_node_indices = None
     if args.keep_mask:
         keep_mask_im = nib.load(args.keep_mask)
         keep_mask = slice_along_axis(keep_mask_im.get_fdata().astype(bool),
-                                            args.axis_name, args.slice_index)
+                                            args.axis_name, args.slice_index,
+                                            args.subsample)
         keep_node_indices = np.flatnonzero(keep_mask)
 
-    # !! Careful, we remove a dimension, but the SH amplitudes still exist in 3D
-    sh = slice_along_axis(sh_im.get_fdata(), args.axis_name, args.slice_index)
+    # Careful, we remove a dimension, but the SH amplitudes still exist
+    # in 3D (important for sphere definition when projecting SH to SF.)
+    sh = slice_along_axis(sh_im.get_fdata(), args.axis_name,
+                          args.slice_index, args.subsample)
 
     # adjacency graph
     adj_matrix, node_indices = build_adjacency_matrix(nodes_mask)
