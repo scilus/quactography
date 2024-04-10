@@ -21,7 +21,7 @@ def plot_distribution_of_probabilities(
         color="pink",  # type: ignore
     )
     # Save plot of distribution:
-    plt.savefig(visu_out_file_total)
+    plt.savefig(visu_out_file_total + "_alpha_" + str(h.alpha))
 
     # print(max(dist_binary_prob, key=dist_binary_prob.get))  # type: ignore
     bin_str = list(map(int, max(dist_binary_prob, key=dist_binary_prob.get)))  # type: ignore
@@ -78,7 +78,7 @@ def plot_distribution_of_probabilities(
         ),
         color="pink" if match_found else "lightblue",  # type: ignore
         sort="value_desc",  # type: ignore
-        filename=visu_out_file_selected,  # type: ignore
+        filename=visu_out_file_selected + "_alpha_" + str(h.alpha),  # type: ignore
         target_string=h.exact_path,  # type: ignore
     )
     # if match_found:

@@ -79,13 +79,13 @@ def main():
 
     else:  # Pour une seule valeur de alpha
         for i in range(len(hamiltonians)):
-            _find_longest_path([hamiltonians[i], args.reps, args.output_file])
+            _find_longest_path([hamiltonians[i], args.reps, args.output_file + str(i)])
 
             if args.dist_show:
                 plot_distribution_of_probabilities(
-                    args.output_file + ".npz",
-                    args.visual_dist_output_file_total,
-                    args.visual_dist_output_file_selected,
+                    args.output_file + str(i) + ".npz",
+                    args.visual_dist_output_file_total + str(i),
+                    args.visual_dist_output_file_selected + str(i),
                 )
             # Ajouter visualisation des chemins pour une seule valeur de alpha
 
