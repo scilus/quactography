@@ -32,15 +32,8 @@ def main():
     # for hamiltonian in hamiltonians:
     #     print(hamiltonian.total_hamiltonian)
 
+    # reste qaoa solver et visualisation à faire
+
 
 if __name__ == "__main__":
     main()
-# print(
-#     graph.number_of_edges,
-#     graph.weights,
-#     graph.starting_nodes,
-#     graph.ending_nodes,
-#     graph.q_indices,
-#     graph.all_weights_sum,
-#     graph.max_weight,
-# )

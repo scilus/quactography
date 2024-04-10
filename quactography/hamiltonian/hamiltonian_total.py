@@ -2,6 +2,7 @@
 """
 
 from qiskit.quantum_info import SparsePauliOp
+import numpy as np
 
 # Definition of a Hamiltonian class which will contain all informations about the global quantum cost function:
 
@@ -25,6 +26,7 @@ class Hamiltonian:
                 (self.starting_node_c) ** 2 + (self.ending_node_c) ** 2 + self.hint_c
             ).simplify()
         )
+        self.exact_cost, self.exact_path = self.get_exact_sol()
 
     def mandatory_cost(self):
         """Cost of going through a path
@@ -195,3 +197,18 @@ class Hamiltonian:
             intermediate_cost_h_terms.append(intermediate_cost_h_term[i] ** 2)
         # print(f"Sum of intermediate terms squared: {sum(intermediate_cost_h_terms)}")
         return sum(intermediate_cost_h_terms)
+
+    def get_exact_sol(self):
+        mat_hamiltonian = np.array(self.total_hamiltonian.to_matrix())
+        eigenvalues, eigenvectors = np.linalg.eig(mat_hamiltonian)
+
+        best_indices = np.where(eigenvalues == np.min(eigenvalues))
+        # print(eigenvalues[int("0111", 2)])
+        print("Eigenvalues : ", eigenvalues[best_indices])
+        print("Eigenvectors : ", eigenvectors[best_indices])
+
+        binary_paths = [bin(idx[0]).lstrip("-0b") for idx in best_indices]
+        # print("Binary paths : ", binary_paths)
+
+        # costs and paths to all best solutions
+        return eigenvalues[best_indices], binary_paths
