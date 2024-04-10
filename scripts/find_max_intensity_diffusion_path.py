@@ -1,10 +1,13 @@
 import argparse
+import numpy as np
 
 from quactography.graph.graph_with_connexions import Graph
 from quactography.adj_matrix.io import load_graph
 from quactography.hamiltonian.hamiltonian_total import Hamiltonian
 from quactography.solver.multiprocess_solver import multiprocess_qaoa_solver
 from quactography.solver.qaoa_solver import _find_longest_path
+from quactography.visu.dist_prob import plot_distribution_of_probabilities
+from quactography.solver.io import load_optimization_results
 
 
 def _build_arg_parser():
@@ -18,11 +21,28 @@ def _build_arg_parser():
     )
     p.add_argument("starting_node", help="Starting node of the graph", type=int)
     p.add_argument("ending_node", help="Ending node of the graph", type=int)
+    p.add_argument("output_file", help="Output file name", type=str)
 
     p.add_argument(
         "-a", "--alphas", nargs="+", type=int, help="List of alphas", default=[1.1]
     )
     p.add_argument("-m", "--multiprocess", help="Use multiprocess", action="store_true")
+
+    p.add_argument(
+        "-v",
+        "--visual_dist_output_file_total",
+        help="Output file name for visualisation",
+        type=str,
+    )
+    p.add_argument(
+        "-vs",
+        "--visual_dist_output_file_selected",
+        help="Output file name for visualisation",
+        type=str,
+    )
+    p.add_argument(
+        "-d", "--dist_show", help="Show probabilities distribution", action="store_true"
+    )
     p.add_argument(
         "-r",
         "--reps",
@@ -51,10 +71,23 @@ def main():
     hamiltonians = [Hamiltonian(graph, alpha) for alpha in args.alphas]
 
     if args.multiprocess:
-        multiprocess_qaoa_solver(hamiltonians, args.reps, args.number_processors)
-    else:
+        multiprocess_qaoa_solver(
+            hamiltonians, args.reps, args.number_processors, args.output_file
+        )
+        # Ajouter visualisation de la distribution de probabilités pour multiprocess
+        # Ajouter visualisation des chemins pour multiprocess
+
+    else:  # Pour une seule valeur de alpha
         for i in range(len(hamiltonians)):
-            _find_longest_path([hamiltonians[i], args.reps])
+            _find_longest_path([hamiltonians[i], args.reps, args.output_file])
+
+            if args.dist_show:
+                plot_distribution_of_probabilities(
+                    args.output_file + ".npz",
+                    args.visual_dist_output_file_total,
+                    args.visual_dist_output_file_selected,
+                )
+            # Ajouter visualisation des chemins pour une seule valeur de alpha
 
 
 if __name__ == "__main__":

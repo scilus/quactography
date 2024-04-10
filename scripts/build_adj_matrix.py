@@ -12,7 +12,7 @@ from quactography.adj_matrix.filter import (
     remove_intermediate_connections,
 )
 from quactography.image.utils import slice_along_axis
-from quactography.adj_matrix.io import save_graph
+from adj_matrix.io import save_graph
 
 
 def _build_arg_parser():

@@ -8,7 +8,7 @@ from rustworkx.visualization import mpl_draw as draw
 import matplotlib.pyplot as plt
 import argparse
 
-from quactography.adj_matrix.io import load_graph
+from adj_matrix.io import load_graph
 
 
 def _build_arg_parser():
