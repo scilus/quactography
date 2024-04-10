@@ -9,7 +9,9 @@ def _build_arg_parser():
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter  # type: ignore
     )
     p.add_argument(
-        "in_graph", help="Adjacency matrix which graph we want shortest path", type=str
+        "in_graph",
+        help="Adjacency matrix which graph we want path that maximizes weights in graph",
+        type=str,
     )
     p.add_argument("starting_node", help="Starting node of the graph", type=int)
     p.add_argument("ending_node", help="Ending node of the graph", type=int)
