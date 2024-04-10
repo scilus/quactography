@@ -42,7 +42,7 @@ def generate_random_adj_matrix_given_nodes_edges():
     args = parser.parse_args()
 
     max_num_edges = ((args.num_nodes * args.num_nodes) - args.num_nodes) / 2
-    print(f"max number of edges: {max_num_edges}")
+    # print(f"max number of edges: {max_num_edges}")
 
     if args.edges_matter == True:
         args.num_nodes = int((1 + np.sqrt(1 + 8 * args.num_edges)) / 2)
@@ -53,7 +53,7 @@ def generate_random_adj_matrix_given_nodes_edges():
         if args.num_edges > max_num_edges:
             args.num_edges = max_num_edges  # type: ignore
 
-    print("num edges wanted", args.num_edges)
+    # print("num edges wanted", args.num_edges)
     mat = np.zeros((args.num_nodes, args.num_nodes), dtype=float)
     for i in range(args.num_nodes):
         for j in range(args.num_nodes):
@@ -68,7 +68,7 @@ def generate_random_adj_matrix_given_nodes_edges():
             num_edges_in_mat += 1
     num_edges_in_mat = num_edges_in_mat / 2
     num_edges_too_much = num_edges_in_mat - args.num_edges
-    print("num edges to delete:", num_edges_too_much)
+    # print("num edges to delete:", num_edges_too_much)
 
     print(mat_flatten)
     mat_triu = np.triu(mat)
@@ -94,8 +94,8 @@ def generate_random_adj_matrix_given_nodes_edges():
             print(num_edges_too_much)
             num_edges_too_much -= 1
 
-    print(num_edges_too_much)
-    print(mat_triu_flatten)
+    # print(num_edges_too_much)
+    # print(mat_triu_flatten)
 
     # Remove all-zero columns and rows
     mat = remove_zero_columns_rows(mat)
