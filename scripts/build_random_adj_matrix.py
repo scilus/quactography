@@ -20,7 +20,7 @@ def _build_arg_parser():
         help="If True, num_edges is the exact number of edges in the graph, if False, num_edges is the maximum number of edges in the graph.",
         type=bool,
     )
-    p.add_argument("out_graph", help="Output graph file name.")
+    p.add_argument("out_graph", help="Output graph file name.", type=str)
 
     return p
 
