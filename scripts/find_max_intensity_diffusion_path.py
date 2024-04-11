@@ -1,13 +1,12 @@
 import argparse
-import numpy as np
 
 from quactography.graph.graph_with_connexions import Graph
 from quactography.adj_matrix.io import load_graph
 from quactography.hamiltonian.hamiltonian_total import Hamiltonian
 from quactography.solver.multiprocess_solver import multiprocess_qaoa_solver
 from quactography.solver.qaoa_solver import _find_longest_path
-from quactography.visu.dist_prob import plot_distribution_of_probabilities
-from quactography.solver.io import load_optimization_results
+from quactography.visu.dist_prob import _plot_distribution_of_probabilities
+from quactography.visu.multiprocess_visu import multiprocess_visu
 
 
 def _build_arg_parser():
@@ -74,6 +73,17 @@ def main():
         multiprocess_qaoa_solver(
             hamiltonians, args.reps, args.number_processors, args.output_file
         )
+        if args.dist_show:
+            multiprocess_visu(
+                [
+                    args.output_file + "_alpha_" + str(hamiltonians[i].alpha) + ".npz"
+                    for i in range(len(hamiltonians))
+                ],
+                args.number_processors,
+                args.visual_dist_output_file_total,
+                args.visual_dist_output_file_selected,
+                hamiltonians,
+            )
         # Ajouter visualisation de la distribution de probabilités pour multiprocess
         # Ajouter visualisation des chemins pour multiprocess
 
@@ -82,10 +92,16 @@ def main():
             _find_longest_path([hamiltonians[i], args.reps, args.output_file + str(i)])
 
             if args.dist_show:
-                plot_distribution_of_probabilities(
-                    args.output_file + str(i) + ".npz",
-                    args.visual_dist_output_file_total + str(i),
-                    args.visual_dist_output_file_selected + str(i),
+                _plot_distribution_of_probabilities(
+                    [
+                        args.output_file
+                        + "_alpha_"
+                        + str(hamiltonians[i].alpha)
+                        + ".npz",
+                        args.visual_dist_output_file_total,
+                        args.visual_dist_output_file_selected,
+                        hamiltonians[i],
+                    ]
                 )
             # Ajouter visualisation des chemins pour une seule valeur de alpha
 

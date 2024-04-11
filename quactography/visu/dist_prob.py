@@ -5,9 +5,12 @@ import matplotlib.pyplot as plt
 from quactography.solver.io import load_optimization_results
 
 
-def plot_distribution_of_probabilities(
-    in_file, visu_out_file_total, visu_out_file_selected
-):
+def _plot_distribution_of_probabilities(args):
+    in_file = args[0]
+    visu_out_file_total = args[1]
+    visu_out_file_selected = args[2]
+    h = args[3]
+
     _, dist_binary_prob, min_cost, h = load_optimization_results(in_file)
     # convert dist_binary_prob a dictionary
     dist_binary_prob = dist_binary_prob.item()

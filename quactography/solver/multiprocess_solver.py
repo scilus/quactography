@@ -6,7 +6,7 @@ from quactography.solver.qaoa_solver import _find_longest_path
 alpha_min_costs = []
 
 
-def multiprocess_qaoa_solver(hamiltonians, reps, nbr_processes,output_file):
+def multiprocess_qaoa_solver(hamiltonians, reps, nbr_processes, output_file):
     pool = multiprocessing.Pool(nbr_processes)
 
     results = pool.map(
@@ -20,5 +20,7 @@ def multiprocess_qaoa_solver(hamiltonians, reps, nbr_processes,output_file):
     pool.close()
     pool.join()
 
-    print("------------------------PROCESS FINISHED-------------------------------")
+    print(
+        "------------------------MULTIPROCESS SOLVER FINISHED-------------------------------"
+    )
     return results

@@ -1,4 +1,5 @@
 .vscode
 *.egg-info
 *.npz
+output/*
 __pycache__

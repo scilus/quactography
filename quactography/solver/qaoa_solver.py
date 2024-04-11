@@ -21,6 +21,8 @@ def _find_longest_path(args):
     h = args[0]
     reps = args[1]
     outfile = args[2]
+    # Save output file name diffrerent for each alpha:
+    outfile = outfile + "_alpha_" + str(h.alpha)
 
     # Pad with zeros to the left to have the same length as the number of edges:
     for i in range(len(h.exact_path[0])):
