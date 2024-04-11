@@ -1,15 +1,13 @@
-from qiskit.visualization import plot_distribution  # type: ignore
+from qiskit.visualization import plot_distribution
 import numpy as np
 import matplotlib.pyplot as plt
 
 from quactography.solver.io import load_optimization_results
 
 
-def _plot_distribution_of_probabilities(args):
-    in_file = args[0]
-    visu_out_file_total = args[1]
-    visu_out_file_selected = args[2]
-    h = args[3]
+def plot_distribution_of_probabilities(
+    in_file, visu_out_file_total, visu_out_file_selected
+):
 
     _, dist_binary_prob, min_cost, h = load_optimization_results(in_file)
     # convert dist_binary_prob a dictionary
@@ -19,20 +17,22 @@ def _plot_distribution_of_probabilities(args):
     # # # Plot distribution of probabilities:
     plot_distribution(
         dist_binary_prob,
-        figsize=(10, 8),  # type: ignore
-        title="Distribution of probabilities",  # type: ignore
-        color="pink",  # type: ignore
+        figsize=(10, 8),
+        title="Distribution of probabilities",
+        color="pink",
     )
     # Save plot of distribution:
-    plt.savefig(visu_out_file_total + "_alpha_" + str(h.alpha))
+    plt.savefig(visu_out_file_total)
 
-    # print(max(dist_binary_prob, key=dist_binary_prob.get))  # type: ignore
-    bin_str = list(map(int, max(dist_binary_prob, key=dist_binary_prob.get)))  # type: ignore
+    # print(max(dist_binary_prob, key=dist_binary_prob.get))
+    bin_str = list(map(int, max(dist_binary_prob, key=dist_binary_prob.get)))
     bin_str_reversed = bin_str[::-1]
-    bin_str_reversed = np.array(bin_str_reversed)  # type: ignore
+    bin_str_reversed = np.array(bin_str_reversed)
 
     # Check if optimal path in a subset of most probable paths:
-    sorted_list_of_mostprobable_paths = sorted(dist_binary_prob, key=dist_binary_prob.get, reverse=True)  # type: ignore
+    sorted_list_of_mostprobable_paths = sorted(
+        dist_binary_prob, key=dist_binary_prob.get, reverse=True
+    )
 
     # Dictionary keys and values where key = binary path, value = probability:
     # Find maximal probability in all values of the dictionary:
@@ -73,16 +73,16 @@ def _plot_distribution_of_probabilities(args):
 
     plot_distribution(
         {key: dist_binary_prob[key] for key in selected_paths},
-        figsize=(16, 14),  # type: ignore
-        title=(  # type: ignore
+        figsize=(16, 14),
+        title=(
             f"Distribution of probabilities for selected paths \n Right path FOUND (quantum read): {h.exact_path}"
             if match_found
             else f"Distribution of probabilities for selected paths \n Right path NOT FOUND (quantum read): {h.exact_path}"
         ),
-        color="pink" if match_found else "lightblue",  # type: ignore
-        sort="value_desc",  # type: ignore
-        filename=visu_out_file_selected + "_alpha_" + str(h.alpha),  # type: ignore
-        target_string=h.exact_path,  # type: ignore
+        color="pink" if match_found else "lightblue",
+        sort="value_desc",
+        filename=visu_out_file_selected,
+        target_string=h.exact_path,
     )
     # if match_found:
     #     print(
@@ -95,13 +95,13 @@ def _plot_distribution_of_probabilities(args):
     #     )
 
     # Concatenate the binary path to a string:
-    str_path_reversed = ["".join(map(str, bin_str_reversed))]  # type: ignore
-    str_path_reversed = str_path_reversed[0]  # type: ignore
+    str_path_reversed = ["".join(map(str, bin_str_reversed))]
+    str_path_reversed = str_path_reversed[0]
 
     # Save parameters alpha and min_cost with path in csv file:
     alpha_min_cost = [h.alpha, min_cost, str_path_reversed]
 
     # print(sorted(dist_binary_prob, key=dist.bina
-    # ry_probabilities().get))  # type: ignore
+    # ry_probabilities().get))
     # print("Finished with alpha : ", h.alpha)
     return alpha_min_cost, selected_paths
