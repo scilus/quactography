@@ -1,24 +1,20 @@
 import argparse
 
-from quactography.visu.dist_prob import plot_distribution_of_probabilities
+from quactography.visu.optimal_paths import visualize_optimal_paths
 
 
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
+    p.add_argument("mat_adj", help="Adjacency matrix", type=str)
     p.add_argument(
         "input_files",
         nargs="+",
-        help="List of input files to plot distribution (add .npz extension)",
+        help="List of input files to plot optimal paths",
     )
     p.add_argument(
-        "visual_dist_output_file_total",
-        help="Output file name for visualisation",
-        type=str,
-    )
-    p.add_argument(
-        "visual_dist_output_file_selected",
+        "output_file",
         help="Output file name for visualisation",
         type=str,
     )
@@ -29,10 +25,10 @@ def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
     for i in range(len(args.input_files)):
-        plot_distribution_of_probabilities(
+        visualize_optimal_paths(
+            args.mat_adj,
             args.input_files[i],
-            args.visual_dist_output_file_total + "_" + str(i),
-            args.visual_dist_output_file_selected + "_" + str(i),
+            args.output_file + "_" + str(i),
         )
 
 

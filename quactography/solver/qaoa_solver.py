@@ -70,4 +70,15 @@ def _find_longest_path(args):
     circ.measure_all()
     dist = sampler.run(circ, res.x).result().quasi_dists[0]
     dist_binary_probabilities = dist.binary_probabilities()
-    save_optimization_results(dist=dist, dist_binary_probabilities=dist_binary_probabilities, min_cost=min_cost, hamiltonian=h, outfile=outfile)  # type: ignore
+
+    bin_str = list(map(int, max(dist.binary_probabilities(), key=dist.binary_probabilities().get)))  # type: ignore
+    bin_str_reversed = bin_str[::-1]
+    bin_str_reversed = np.array(bin_str_reversed)  # type: ignore
+    # Concatenate the binary path to a string:
+    str_path_reversed = ["".join(map(str, bin_str_reversed))]  # type: ignore
+    str_path_reversed = str_path_reversed[0]  # type: ignore
+
+    # Save parameters alpha and min_cost with path in csv file:
+    opt_path = str_path_reversed
+
+    save_optimization_results(dist=dist, dist_binary_probabilities=dist_binary_probabilities, min_cost=min_cost, hamiltonian=h, outfile=outfile, opt_bin_str=opt_path, reps=reps)  # type: ignore

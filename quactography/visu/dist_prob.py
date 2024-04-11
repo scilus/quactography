@@ -9,7 +9,7 @@ def plot_distribution_of_probabilities(
     in_file, visu_out_file_total, visu_out_file_selected
 ):
 
-    _, dist_binary_prob, min_cost, h = load_optimization_results(in_file)
+    _, dist_binary_prob, min_cost, h, _, _ = load_optimization_results(in_file)
     # convert dist_binary_prob a dictionary
     dist_binary_prob = dist_binary_prob.item()
     min_cost = min_cost.item()
@@ -25,9 +25,9 @@ def plot_distribution_of_probabilities(
     plt.savefig(visu_out_file_total)
 
     # print(max(dist_binary_prob, key=dist_binary_prob.get))
-    bin_str = list(map(int, max(dist_binary_prob, key=dist_binary_prob.get)))
-    bin_str_reversed = bin_str[::-1]
-    bin_str_reversed = np.array(bin_str_reversed)
+    # bin_str = list(map(int, max(dist_binary_prob, key=dist_binary_prob.get)))
+    # bin_str_reversed = bin_str[::-1]
+    # bin_str_reversed = np.array(bin_str_reversed)
 
     # Check if optimal path in a subset of most probable paths:
     sorted_list_of_mostprobable_paths = sorted(
@@ -93,15 +93,3 @@ def plot_distribution_of_probabilities(
     #     print(
     #         "The solution is not in given subset of solutions found by QAOA.\n_______________________________________________________________________"
     #     )
-
-    # Concatenate the binary path to a string:
-    str_path_reversed = ["".join(map(str, bin_str_reversed))]
-    str_path_reversed = str_path_reversed[0]
-
-    # Save parameters alpha and min_cost with path in csv file:
-    alpha_min_cost = [h.alpha, min_cost, str_path_reversed]
-
-    # print(sorted(dist_binary_prob, key=dist.bina
-    # ry_probabilities().get))
-    # print("Finished with alpha : ", h.alpha)
-    return alpha_min_cost, selected_paths
