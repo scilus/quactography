@@ -1,0 +1,23 @@
+
+For the code: 
+
+-Add good summaries of functions
+
+-Add subscripts such as test for hamiltonians, look details of optimizations, other debugging tools
+
+-Add a way to get the current state of the optimization (e.g. current iteration, current energy, etc.)
+
+-Add verbose option to print the current state of the optimization or other details 
+
+-Better error handling
+
+-Better ways of naming the output files in a more organized way 
+
+-Add a way to save the optimization results in a more organized way and add script to load the results
+
+
+Ideas for testing the algorithms: 
+
+- Test the algorithms with a simple 4 nodes graph to see if the optimization works at every step for 5 reps
+
+-
