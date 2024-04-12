@@ -15,6 +15,10 @@ For the code:
 
 -Add a way to save the optimization results in a more organized way and add script to load the results
 
+-Test multiprocessing for the optimization
+
+-Adjust how random ajacency matrices are generated to respect the number of nodes and the number of edges asked 
+
 
 Ideas for testing the algorithms: 
 
