@@ -101,3 +101,8 @@ def visualize_optimal_paths(
     # plt.show()
     plt.savefig(f"{out_file}_alpha_{alpha:.2f}.png")
     plt.close()
+
+
+def minimize_crossings():
+    """Create visulization of a graph with the minimum number of crossings with matplotlib"""
+    pass

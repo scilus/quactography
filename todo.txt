@@ -19,9 +19,22 @@ For the code:
 
 -Adjust how random ajacency matrices are generated to respect the number of nodes and the number of edges asked 
 
+- Généraliser à tout ordre de SH comme les scripts scilpy (inspire-toi des scil_fodf_metrics par exemple) 
+
+- Est-ce qu’on fait une somme des poids lorsqu’on enlève un nœud qui connecte deux autres (en enlevant on ne perd pas d’info) ? 
+Je pense qu’on pourrait sommer ou même multiplier. Voir mon papier de proba tracking IEEE TMI 2009 ou celui de Sotiropoulos pour inspiration.
+Mais à mon avis, ç’aurait du sens d’accumuler les proba en multipliant quand on enlève un noeud
+
 
 Ideas for testing the algorithms: 
 
 - Test the algorithms with a simple 4 nodes graph to see if the optimization works at every step for 5 reps
 
--
+- Test other optimizers than COBYLA 
+
+- Try other optimization methods, VQE
+
+
+Ideas for visualization: 
+
+- Create a visualization tool to draw the graph by minimizing the number of crossing edges
