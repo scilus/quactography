@@ -5,7 +5,7 @@ Visualize graph using matplotlib.
 import argparse
 import numpy as np
 
-from adj_matrix.io import load_graph
+from quactography.adj_matrix.io import load_graph
 import matplotlib.pyplot as plt
 
 
