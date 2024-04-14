@@ -26,7 +26,7 @@ def main():
     args = parser.parse_args()
     for i in range(len(args.input_files)):
         visualize_optimal_paths(
-            args.mat_adj,
+            args.mat_adj + ".npz",
             args.input_files[i],
             args.output_file + "_" + str(i),
         )

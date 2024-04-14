@@ -204,8 +204,8 @@ class Hamiltonian:
 
         best_indices = np.where(eigenvalues == np.min(eigenvalues))
         # print(eigenvalues[int("0111", 2)])
-        print("Eigenvalues : ", eigenvalues[best_indices])
-        print("Eigenvectors : ", eigenvectors[best_indices])
+        # print("Eigenvalues : ", eigenvalues[best_indices])
+        # print("Eigenvectors : ", eigenvectors[best_indices])
 
         binary_paths = [bin(idx[0]).lstrip("-0b") for idx in best_indices]
         # print("Binary paths : ", binary_paths)

@@ -26,7 +26,7 @@ def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
 
-    weighted_graph, node_indices, _ = load_graph(args.in_graph)
+    weighted_graph, node_indices, _ = load_graph(args.in_graph + ".npz")
     graph = rx.PyGraph()
     num_nodes = len(node_indices)
     nodes_list = graph.add_nodes_from((range(num_nodes)))

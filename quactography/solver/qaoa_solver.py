@@ -28,7 +28,7 @@ def _find_longest_path(args):
     for i in range(len(h.exact_path[0])):
         if len(h.exact_path[0]) < h.graph.number_of_edges:
             h.exact_path[i] = h.exact_path[i].zfill(h.graph.number_of_edges + 1)
-    print("Path Hamiltonian (quantum reading -> right=q0) : ", h.exact_path)
+    # print("Path Hamiltonian (quantum reading -> right=q0) : ", h.exact_path)
 
     # Reverse the binary path to have the same orientation as the classical path:
     h.exact_path_classical_read = [path[::-1] for path in h.exact_path]

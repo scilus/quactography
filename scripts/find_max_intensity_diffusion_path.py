@@ -47,7 +47,7 @@ def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
 
-    weighted_graph, _, _ = load_graph(args.in_graph)
+    weighted_graph, _, _ = load_graph(args.in_graph + ".npz")
 
     graph = Graph(weighted_graph, args.starting_node, args.ending_node)
     hamiltonians = [Hamiltonian(graph, alpha) for alpha in args.alphas]
