@@ -2,4 +2,5 @@
 *.egg-info
 *.npz
 output/*
+scripts/demo copy.ipynb
 __pycache__
