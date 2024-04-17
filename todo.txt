@@ -19,6 +19,10 @@ For the code:
 
 -Adjust how random ajacency matrices are generated to respect the number of nodes and the number of edges asked 
 
+-Correct demo.sh (python error message)
+
+-Add connexions function inside graph class in quactography/graph/graph_with_connexions.py
+
 Graph generation with diffusion MRI data: 
 
 - Généraliser à tout ordre de SH comme les scripts scilpy (inspire-toi des scil_fodf_metrics par exemple) 
@@ -41,3 +45,5 @@ Ideas for testing the algorithms:
 Ideas for visualization: 
 
 - Create a visualization tool to draw the graph by minimizing the number of crossing edges
+
+- Add legend to distribution plots 

@@ -44,6 +44,7 @@ def main():
                 )
 
     plt.scatter(x, y)
+    plt.savefig("graph_adj_mat.png")  # Save the plot as a PNG file
     plt.show()
 
 
