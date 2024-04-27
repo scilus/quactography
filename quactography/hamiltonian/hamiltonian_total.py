@@ -1,6 +1,3 @@
-"""Creates the Hamiltonian with the given graph and alpha value
-"""
-
 from qiskit.quantum_info import SparsePauliOp
 import numpy as np
 
@@ -8,6 +5,8 @@ import numpy as np
 
 
 class Hamiltonian:
+    """Creates the Hamiltonian with the given graph and alpha value"""
+
     def __init__(
         self,
         graph,

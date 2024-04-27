@@ -3,7 +3,7 @@ from qiskit import QuantumCircuit
 from qiskit.primitives import Estimator, Sampler
 
 
-def check_hamiltonian_terms(hamiltonian_term, binary_paths_classical_read):
+def print_hamiltonian_circuit(hamiltonian_term, binary_paths_classical_read):
     estimator = Estimator(options={"shots": 1000000, "seed": 42})
     circuit = QuantumCircuit(len(binary_paths_classical_read[0]))
     for i in range(len(binary_paths_classical_read)):

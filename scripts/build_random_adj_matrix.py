@@ -26,7 +26,7 @@ def _build_arg_parser():
 
 
 # New method to generate random adjacency matrix:
-def generate_random_adj_matrix_given_nodes_edges():
+def main():
     """Generate a random adjacency matrix given number of nodes and edges.
 
     Args:
@@ -102,10 +102,6 @@ def generate_random_adj_matrix_given_nodes_edges():
 
     # Save the graph:
     save_graph(mat, np.arange(mat.shape[0]), mat.shape, args.out_graph)
-
-
-def main():
-    generate_random_adj_matrix_given_nodes_edges()
 
 
 if __name__ == "__main__":
