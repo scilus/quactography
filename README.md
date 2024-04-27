@@ -11,6 +11,6 @@ Scripts are located in the `scripts` folder and are available from the command l
 ```
 build_graph.py --help
 ```
-
+See demo for more instructions
 ![quactrography](https://github.com/scilus/quactography/assets/2171665/cfd6da68-699f-4761-8e30-395d0d8930ec)
 
