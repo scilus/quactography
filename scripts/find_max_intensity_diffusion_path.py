@@ -1,6 +1,6 @@
 import argparse
 
-from quactography.graph.graph_with_connexions import Graph
+from quactography.graph.undirected_graph import Graph
 from quactography.adj_matrix.io import load_graph
 from quactography.hamiltonian.hamiltonian_total import Hamiltonian
 from quactography.solver.qaoa_multiprocess_solver import multiprocess_qaoa_solver
