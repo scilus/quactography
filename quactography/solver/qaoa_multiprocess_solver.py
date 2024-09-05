@@ -1,3 +1,5 @@
+import multiprocessing
+import itertools
 from qiskit.primitives import Estimator, Sampler
 from qiskit.circuit.library import QAOAAnsatz
 from scipy.optimize import minimize
@@ -6,8 +8,11 @@ import numpy as np
 from quactography.solver.io import save_optimization_results
 
 
+alpha_min_costs = []
+
+
 # Function to find the shortest path in a graph using QAOA algorithm with parallel processing:
-def _find_longest_path(args):
+def find_longest_path(args):
     """Summary :  Usage of QAOA algorithm to find the shortest path in a graph.
 
     Args:
@@ -82,3 +87,22 @@ def _find_longest_path(args):
     opt_path = str_path_reversed
 
     save_optimization_results(dist=dist, dist_binary_probabilities=dist_binary_probabilities, min_cost=min_cost, hamiltonian=h, outfile=outfile, opt_bin_str=opt_path, reps=reps)  # type: ignore
+
+
+def multiprocess_qaoa_solver(hamiltonians, reps, nbr_processes, output_file):
+    pool = multiprocessing.Pool(nbr_processes)
+
+    results = pool.map(
+        find_longest_path,
+        zip(
+            hamiltonians,
+            itertools.repeat(reps),
+            itertools.repeat(output_file),
+        ),
+    )
+    pool.close()
+    pool.join()
+
+    print(
+        "------------------------MULTIPROCESS SOLVER FINISHED-------------------------------"
+    )

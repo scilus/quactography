@@ -3,8 +3,8 @@ import argparse
 from quactography.graph.graph_with_connexions import Graph
 from quactography.adj_matrix.io import load_graph
 from quactography.hamiltonian.hamiltonian_total import Hamiltonian
-from quactography.solver.multiprocess_solver import multiprocess_qaoa_solver
-from quactography.solver.qaoa import _find_longest_path
+from quactography.solver.qaoa_multiprocess_solver import multiprocess_qaoa_solver
+from quactography.solver.qaoa_multiprocess_solver import find_longest_path
 
 
 def _build_arg_parser():
@@ -23,7 +23,6 @@ def _build_arg_parser():
     p.add_argument(
         "--alphas", nargs="+", type=int, help="List of alphas", default=[1.1]
     )
-    p.add_argument("--multiprocess", help="Use multiprocess", action="store_true")
 
     p.add_argument(
         "--reps",
@@ -52,16 +51,9 @@ def main():
     graph = Graph(weighted_graph, args.starting_node, args.ending_node)
     hamiltonians = [Hamiltonian(graph, alpha) for alpha in args.alphas]
 
-    if args.multiprocess:
-        multiprocess_qaoa_solver(
-            hamiltonians, args.reps, args.number_processors, args.output_file
-        )
-
-    else:  # Pour une seule valeur de alpha
-        for i in range(len(hamiltonians)):
-            _find_longest_path(
-                [hamiltonians[i], args.reps, args.output_file + "_" + str(i)]
-            )
+    multiprocess_qaoa_solver(
+        hamiltonians, args.reps, args.number_processors, args.output_file
+    )
 
 
 if __name__ == "__main__":
