@@ -1,7 +1,3 @@
-"""
-Build graph from given number of nodes and edges, and if number of edges is exact or number of nodes is exact.
-"""
-
 import numpy as np
 import argparse
 

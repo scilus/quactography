@@ -1,7 +1,3 @@
-"""
-Visualize graph using rustworkx and matplotlib. 
-"""
-
 import rustworkx as rx
 import matplotlib.pyplot as plt
 from rustworkx.visualization import mpl_draw as draw
@@ -23,6 +19,9 @@ def _build_arg_parser():
 
 
 def main():
+    """
+    Visualize graph using rustworkx and matplotlib.
+    """
     parser = _build_arg_parser()
     args = parser.parse_args()
 

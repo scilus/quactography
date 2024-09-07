@@ -1,7 +1,3 @@
-"""
-Visualize graph using matplotlib.
-"""
-
 import argparse
 import numpy as np
 
@@ -18,6 +14,9 @@ def _build_arg_parser():
 
 
 def main():
+    """
+    Visualize graph using matplotlib.
+    """
     parser = _build_arg_parser()
     args = parser.parse_args()
 
