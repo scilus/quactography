@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 from rustworkx.visualization import mpl_draw as draw
 import matplotlib.pyplot as plt
 import argparse
+import sys
+
+sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.adj_matrix.io import load_graph
 

@@ -1,5 +1,8 @@
 import argparse
 import numpy as np
+import sys
+
+sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.adj_matrix.io import load_graph
 import matplotlib.pyplot as plt

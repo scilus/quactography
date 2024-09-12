@@ -1,4 +1,7 @@
 import argparse
+import sys
+
+sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.graph.undirected_graph import Graph
 from quactography.adj_matrix.io import load_graph

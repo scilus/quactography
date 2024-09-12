@@ -1,4 +1,7 @@
 import argparse
+import sys
+
+sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.visu.dist_prob import plot_distribution_of_probabilities
 
