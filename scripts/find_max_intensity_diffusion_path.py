@@ -45,6 +45,10 @@ def _build_arg_parser():
 
 
 def main():
+    """
+    Uses QAOA with multiprocess as an option to find shortest path, with a given Graph, starting, ending node and Hamiltonian associated
+    to the graph.
+    """
     parser = _build_arg_parser()
     args = parser.parse_args()
 
