@@ -5,7 +5,7 @@ import numpy as np
 
 
 class Hamiltonian:
-    """Creates the Hamiltonian with the given graph and alpha value"""
+    """Creates the Hamiltonian with qubits considered to be nodes with the given graph and alpha value"""
 
     def __init__(
         self,
