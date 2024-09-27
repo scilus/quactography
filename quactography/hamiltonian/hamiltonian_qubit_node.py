@@ -146,12 +146,16 @@ class Hamiltonian:
         """
         # Intermediate connections, constraints:
         int_nodes = []
+        # We look for nodes in list of starting nodes which are not start or end :
         for node, value in enumerate(self.graph.starting_nodes):
             if (value != self.graph.starting_node) and (
                 value != self.graph.ending_node
             ):
+                # If the intermediate node appears more than once, we check if it is already in the int_nodes list, if not, we add:
                 if value not in int_nodes:
                     int_nodes.append(self.graph.starting_nodes[node])
+        # The ending_nodes list contains intermediate nodes as well which might not be in the starting_nodes list, so we do the same check and add
+        # to int_nodes list:
         for node, value in enumerate(self.graph.ending_nodes):
             if (value != self.graph.starting_node) and (
                 value != self.graph.ending_node
@@ -160,7 +164,7 @@ class Hamiltonian:
                     int_nodes.append(self.graph.ending_nodes[node])
 
         # print(f"List of intermediate nodes: {int_nodes} \n")
-
+        #
         liste_qubits_int = [[] for _ in range(len(int_nodes))]
         for i, node in enumerate(int_nodes):
             for node, value in enumerate(self.graph.ending_nodes):
