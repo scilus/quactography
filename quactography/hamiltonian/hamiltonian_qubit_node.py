@@ -1,10 +1,11 @@
 from qiskit.quantum_info import SparsePauliOp
 import numpy as np
 
-# Definition of a Hamiltonian class which will contain all informations about the global quantum cost function:
+# Definition of a Hamiltonian class which will contain all informations about the global quantum cost function
+# when considering the qubits as nodes of a graph:
 
 
-class Hamiltonian:
+class Hamiltonian_qubit_node:
     """Creates the Hamiltonian with qubits considered to be nodes with the given graph and alpha value"""
 
     def __init__(
@@ -14,8 +15,8 @@ class Hamiltonian:
     ):
         self.graph = graph
         self.mandatory_c = self.mandatory_cost()
-        self.starting_node_c = self.starting_node_cost()
-        self.ending_node_c = self.ending_node_cost()
+        self.starting_node_c = self.starting_ending_node_cost()[0]
+        self.ending_node_c = self.starting_ending_node_cost()[1]
         self.hint_c = self.intermediate_node_cost()
         self.alpha = alpha
         self.total_hamiltonian = (
@@ -25,110 +26,182 @@ class Hamiltonian:
                 (self.starting_node_c) ** 2 + (self.ending_node_c) ** 2 + self.hint_c
             ).simplify()
         )
-        self.exact_cost, self.exact_path = self.get_exact_sol()
 
     def mandatory_cost(self):
         """Cost of going through a path
 
         Args:
-            number_of_edges (int): Number of edges in the graph
+            num_nodes (int): Number of nodes in the graph
             weights (list int): The weights of the edges
             all_weights_sum (int): Sum of all weights in the graph
+            starting_nodes (list int): List of nodes in starting_nodesure (according to the adjacency matrix to avoid doublets)
+            ending_nodes (list int): List of nodes in end (according to the adjacency matrix to avoid doublets)
 
         Returns:
             Sparse pauli op (str):  Pauli string representing the cost of going through a path
         """
-
         pauli_weight_first_term = [
-            ("I" * self.graph.number_of_edges, self.graph.all_weights_sum / 2)
+            ("I" * self.graph.num_nodes, self.graph.all_weights_sum / 4)
         ]
 
-        # Z à la bonne position:
-        for i in range(self.graph.number_of_edges):
+        # Goes trough a list of starting and ending nodes forming all possible edges in the graph, and according to the formula in markdown previous passage,
+        # Constructs the Term which includes the cost of the path:
+        pos = 0
+        for node, node2 in zip(self.graph.starting_nodes, self.graph.ending_nodes):
+
             str1 = (
-                "I" * (self.graph.number_of_edges - i - 1) + "Z" + "I" * i,
-                -self.graph.weights[0][i] / 2,
+                "I" * (self.graph.num_nodes - 1 - node) + "Z" + "I" * node,
+                -self.graph.weights[0][pos] / 4,
             )
-            pauli_weight_first_term.append(str1)
+            str2 = (
+                "I" * (self.graph.num_nodes - 1 - node2) + "Z" + "I" * node2,
+                -self.graph.weights[0][pos] / 4,
+            )
+            if node < node2:
+                str3 = (
+                    "I" * (self.graph.num_nodes - 1 - node2)
+                    + "Z"
+                    + "I" * (node2 - node - 1)
+                    + "Z"
+                    + "I" * node,
+                    -self.graph.weights[0][pos] / 4,
+                )
+                pauli_weight_first_term.append(str1)
+                pauli_weight_first_term.append(str2)
+                pauli_weight_first_term.append(str3)
+            pos += 1
+
+        # We must now convert the list of strings containing the Pauli operators to a SparsePauliOp in Qiskit:
 
         mandatory_cost_h = SparsePauliOp.from_list(pauli_weight_first_term)
         # print(f"\n Cost of given path taken = {mandatory_cost_h}")
         return mandatory_cost_h
 
-    def starting_node_cost(self):
-        """Cost term of having a single starting_nodesure connection (one edge connected to the starting node)
+    def starting_ending_node_cost(self):
+        """Cost term of having only one node connected to the starting node and one node connected to the ending node
 
         Args:
+            num_nodes (int): Number of nodes in the graph
             starting_node (int): Starting node decided by the user
-            starting_nodes (list int):  List of nodes in starting_nodes (according to the adjacency matrix to avoid doublets)
-            q_indices (list int): Index associated with each qubit according to the adjacency matrix
-            ending_nodes (list int):  List of nodes in end (according to the adjacency matrix to avoid doublets)
-            number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
+            ending_node (int): Ending node decided by the user
+            starting_nodes (list int): List of nodes in starting_nodesure (according to the adjacency matrix to avoid doublets)
+            ending_nodes (list int): List of nodes in end (according to the adjacency matrix to avoid doublets)
 
         Returns:
-            Sparse pauli op (str): Pauli string representing the cost associated with the constraint of having a single starting_nodesure connection
+            Sparse pauli op (list of str): Pauli string representing the cost associated with the constraint of having only one node connected to the starting node and one node connected to the ending node
         """
 
-        starting_qubit = []
-        for node, value in enumerate(self.graph.starting_nodes):
-            if value == self.graph.starting_node:
-                starting_qubit.append(self.graph.q_indices[node])
-        for node, value in enumerate(self.graph.ending_nodes):
-            if value == self.graph.starting_node:
-                starting_qubit.append(self.graph.q_indices[node])
-        # print(f"\n Qubit to sum over starting x_i: q({starting_qubit}) - I ")
+        departure_nodes = []
+        finishing_nodes = []
 
+        # Constructs the Term of the Hamiltonian which makes sure that there is only one node connected to the starting node (only one path taken from begining)
+        # Constructs the very similar Term for making sure we also arrive at the ending node with one other intermediate node connected to it:
+
+        # Constant terms for Start constraint:
         pauli_starting_node_term = [
-            ("I" * self.graph.number_of_edges, len(starting_qubit) * 0.5 - 1)
+            ("I" * self.graph.num_nodes, -0.75),
+            (
+                "I" * (self.graph.num_nodes - 1 - self.graph.starting_node)
+                + "Z"
+                + "I" * self.graph.starting_node,
+                -0.25,
+            ),
         ]
 
-        # Z à la bonne position:
-        for _, value in enumerate(starting_qubit):
-            str2 = (
-                "I" * (self.graph.number_of_edges - (value + 1)) + "Z" + "I" * value,
-                -0.5,
+        # Constant terms for End constraint:
+        pauli_end_term = [
+            ("I" * self.graph.num_nodes, -0.75),
+            (
+                "I" * (self.graph.num_nodes - 1 - self.graph.ending_node)
+                + "Z"
+                + "I" * self.graph.ending_node,
+                -0.25,
+            ),
+        ]
+
+        for node, node2 in zip(self.graph.starting_nodes, self.graph.ending_nodes):
+            start_node = self.graph.starting_node
+            end_node = self.graph.ending_node
+
+            if node == start_node:
+                departure_nodes.append(node2)
+            if node2 == start_node:
+                departure_nodes.append(node)
+            if node == end_node:
+                finishing_nodes.append(node2)
+            if node2 == end_node:
+                finishing_nodes.append(node)
+
+        for node in departure_nodes:
+            if node > self.graph.starting_node:
+                str1 = (
+                    "I" * (self.graph.num_nodes - 1 - node)
+                    + "Z"
+                    + "I" * (node - self.graph.starting_node - 1)
+                    + "Z"
+                    + "I" * self.graph.starting_node,
+                    1 / 4,
+                )
+                pauli_starting_node_term.append(str1)
+
+            if node < self.graph.starting_node:
+                str2 = (
+                    "I" * (self.graph.num_nodes - 1 - self.graph.starting_node)
+                    + "Z"
+                    + "I" * (self.graph.starting_node - node - 1)
+                    + "Z"
+                    + "I" * node,
+                    1 / 4,
+                )
+                pauli_starting_node_term.append(str2)
+
+            str3 = (
+                "I" * (self.graph.num_nodes - 1 - node) + "Z" + "I" * node,
+                -0.25,
             )
-            pauli_starting_node_term.append(str2)
+            pauli_starting_node_term.append(str3)
+
+        for node in finishing_nodes:
+            if node > self.graph.ending_node:
+                str4 = (
+                    "I" * (self.graph.num_nodes - 1 - node)
+                    + "Z"
+                    + "I" * (node - self.graph.ending_node - 1)
+                    + "Z"
+                    + "I" * self.graph.ending_node,
+                    1 / 4,
+                )
+                pauli_end_term.append(str4)
+
+            if node < self.graph.ending_node:
+                str5 = (
+                    "I" * (self.graph.num_nodes - 1 - self.graph.ending_node)
+                    + "Z"
+                    + "I" * (self.graph.ending_node - node - 1)
+                    + "Z"
+                    + "I" * node,
+                    1 / 4,
+                )
+                pauli_end_term.append(str5)
+
+            str6 = (
+                "I" * (self.graph.num_nodes - 1 - node) + "Z" + "I" * node,
+                -0.25,
+            )
+            pauli_end_term.append(str6)
+
+        # print(pauli_starting_node_term)
+        # print(pauli_end_term)
+
+        # print("D : ", departure_nodes)
+        # print("F : ", finishing_nodes)
+
         start_node_constraint_cost_h = SparsePauliOp.from_list(pauli_starting_node_term)
+        # print(start_node_constraint_cost_h)
 
-        # print(f"\n Start constraint = {start_node_constraint_cost_h}")
-        return start_node_constraint_cost_h
-
-    def ending_node_cost(self):
-        """Cost term of having a single end connection (one edge connected to the ending node)
-
-        Args:
-            ending_node (int): Ending node decided by the user
-            starting_nodes (list int): List of nodes in starting_nodes (according to the adjacency matrix to avoid doublets)
-            q_indices (list int): Index associated with each qubit according to the adjacency matrix
-            ending_nodes (list int): List of nodes in end (according to the adjacency matrix to avoid doublets)
-            number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
-
-        Returns:
-        Sparse pauli op (str): Pauli string representing the cost associated with the constraint of having a single end connection
-        """
-        qubit_end = []
-        for node, value in enumerate(self.graph.ending_nodes):
-            if value == self.graph.ending_node:
-                qubit_end.append(self.graph.q_indices[node])
-        for node, value in enumerate(self.graph.starting_nodes):
-            if value == self.graph.ending_node:
-                qubit_end.append(self.graph.q_indices[node])
-        # print(f"\nQubit to sum over ending x_i: q({qubit_end}) - I ")
-
-        pauli_end_term = [("I" * self.graph.number_of_edges, len(qubit_end) * 0.5 - 1)]
-
-        # Z à la bonne position:
-        for _, value in enumerate(qubit_end):
-            str2 = (
-                "I" * (self.graph.number_of_edges - (value + 1)) + "Z" + "I" * value,
-                -0.5,
-            )
-            pauli_end_term.append(str2)
         ending_node_constraint_cost_h = SparsePauliOp.from_list(pauli_end_term)
-
-        # print(f"\n End constraint = {ending_node_constraint_cost_h}")
-        return ending_node_constraint_cost_h
+        # print(ending_node_constraint_cost_h)
+        return start_node_constraint_cost_h, ending_node_constraint_cost_h
 
     def intermediate_node_cost(self):
         """Cost term of having an even number of intermediate connections (two edges connected to the intermediate nodes)
@@ -144,74 +217,94 @@ class Hamiltonian:
         Returns:
             Sparse pauli op (str): Pauli string representing the cost associated with the constraint of having an even number of intermediate connections
         """
-        # Intermediate connections, constraints:
-        int_nodes = []
-        # We look for nodes in list of starting nodes which are not start or end :
-        for node, value in enumerate(self.graph.starting_nodes):
-            if (value != self.graph.starting_node) and (
-                value != self.graph.ending_node
-            ):
-                # If the intermediate node appears more than once, we check if it is already in the int_nodes list, if not, we add:
-                if value not in int_nodes:
-                    int_nodes.append(self.graph.starting_nodes[node])
-        # The ending_nodes list contains intermediate nodes as well which might not be in the starting_nodes list, so we do the same check and add
-        # to int_nodes list:
-        for node, value in enumerate(self.graph.ending_nodes):
-            if (value != self.graph.starting_node) and (
-                value != self.graph.ending_node
-            ):
-                if value not in int_nodes:
-                    int_nodes.append(self.graph.ending_nodes[node])
+        # List of ["I" * num_nodes], then replace j element in list by Z (nodes connected to intermediate node k)
 
-        # print(f"List of intermediate nodes: {int_nodes} \n")
-        #
-        liste_qubits_int = [[] for _ in range(len(int_nodes))]
-        for i, node in enumerate(int_nodes):
-            for node, value in enumerate(self.graph.ending_nodes):
-                if value == int_nodes[i]:
-                    liste_qubits_int[i].append(self.graph.q_indices[node])
-            for node, value in enumerate(self.graph.starting_nodes):
-                if value == int_nodes[i]:
-                    liste_qubits_int[i].append(self.graph.q_indices[node])
+        initial_int_term = ["I"] * self.graph.num_nodes
 
-        for i in range(len(liste_qubits_int)):
-            a = liste_qubits_int[i]
-            # print(f"Multiply qubits on intermediate x_i: q({a}) ")
+        print(self.graph.starting_nodes)
+        print(self.graph.ending_nodes)
+        print(self.graph.starting_node)
+        print(self.graph.ending_node)
 
-        intermediate_cost_h_term = []
-        prod_terms = []
-        for list_q in liste_qubits_int:
-            prod_term = "I" * self.graph.number_of_edges
-            for qubit in list_q:
-                prod_term = prod_term[:qubit] + "Z" + prod_term[qubit + 1 :]
-            prod_terms.append(prod_term[::-1])
+        # Set an empty dictionary to store the intermediate nodes connected to which other node in the graph:
+        node_connected = {}
+        for node, node2 in zip(self.graph.starting_nodes, self.graph.ending_nodes):
+            if node != self.graph.starting_node and node != self.graph.ending_node:
+                if node not in node_connected:
+                    node_connected[node] = [node2]
+                else:
+                    node_connected[node].append(node2)
+            if node2 != self.graph.starting_node and node2 != self.graph.ending_node:
+                if node2 not in node_connected:
+                    node_connected[node2] = [node]
+                else:
+                    node_connected[node2].append(node)
+        # Create the right number of terms for every intermediate node:
 
-        for i in range(len(liste_qubits_int)):
-            intermediate_cost_h_term.append([])
+        initial_int_term_list = [initial_int_term] * len(node_connected)
+        # initial_int_term_list
 
-            intermediate_cost_h_term[i] = SparsePauliOp.from_list(
-                [("I" * self.graph.number_of_edges, -1.0), (prod_terms[i], 1.0)]
-            )
+        # Replace the position of the list which are values in the dictionary by Z:
+        for pos, node_name in enumerate(node_connected):
+            for node in node_connected[node_name]:
+                initial_int_term_list[pos] = list(initial_int_term_list[pos])
+                initial_int_term_list[pos][node] = "Z"
+                initial_int_term_list[pos] = "".join(initial_int_term_list[pos])
+                initial_int_term_list[pos] = initial_int_term_list[pos]
+                # reverse the string to have the correct order of the qubits
+                initial_int_term_list[pos] = initial_int_term_list[pos][::-1]
 
-        # print(f"\n Intermediate constraint = {intermediate_cost_h_term}")
+        print(initial_int_term_list)
 
-        intermediate_cost_h_terms = []
-        for i in range(len(intermediate_cost_h_term)):
-            intermediate_cost_h_terms.append(intermediate_cost_h_term[i] ** 2)
-        # print(f"Sum of intermediate terms squared: {sum(intermediate_cost_h_terms)}")
-        return sum(intermediate_cost_h_terms)
+        # Now that we have the  product terms, we must add the substraction of the identity operator to each term, elevate each of them to the square, then sum them as a SparsePauliOp:
+        for i in range(len(initial_int_term_list)):
+            initial_int_term_list[i] = (initial_int_term_list[i], 1)
+            initial_int_term_list[i] = [
+                initial_int_term_list[i],
+                (("I" * self.graph.num_nodes, -1)),
+            ]
+        list_with_identity = initial_int_term_list
 
-    def get_exact_sol(self):
-        mat_hamiltonian = np.array(self.total_hamiltonian.to_matrix())
-        eigenvalues, eigenvectors = np.linalg.eig(mat_hamiltonian)
+        print("identity : ", list_with_identity)
 
-        best_indices = np.where(eigenvalues == np.min(eigenvalues))
-        # print(eigenvalues[int("0111", 2)])
-        # print("Eigenvalues : ", eigenvalues[best_indices])
-        # print("Eigenvectors : ", eigenvectors[best_indices])
+        # Create a Pauli Operator with the terms in the list:
+        for i in range(len(list_with_identity)):
+            list_with_identity[i] = SparsePauliOp.from_list(list_with_identity[i])
 
-        binary_paths = [bin(idx[0]).lstrip("-0b") for idx in best_indices]
-        # print("Binary paths : ", binary_paths)
+        print("Pauli Operators of list elements : ", list_with_identity)
 
-        # costs and paths to all best solutions
-        return eigenvalues[best_indices], binary_paths
+        # Square each term :
+        for i in range(len(list_with_identity)):
+            list_with_identity[i] = list_with_identity[i] @ list_with_identity[i]
+        print("Squared each term: ", list_with_identity)
+
+        # Sum all the terms:
+        initial_int_term_h = sum(list_with_identity)
+        sum_intermediate_cost_h_terms = initial_int_term_h
+
+        return sum_intermediate_cost_h_terms
+
+
+# # Test the Hamiltonian_qubit_node class:
+# import numpy as np
+# import sys
+
+# sys.path.append(r"C:\Users\harsh\quactography")
+
+# from quactography.graph.undirected_graph import Graph
+# from quactography.adj_matrix.io import load_graph
+
+# my_graph = load_graph(
+#     r"C:\Users\harsh\quactography\quactography\hamiltonian\rand_graph.npz"
+# )
+# my_graph_class = Graph(my_graph[0], 1, 0)
+# # Test mandatory_cost
+# h = Hamiltonian_qubit_node(my_graph_class, 1)
+# print(h.mandatory_c)
+
+# # Test starting_ending_node_cost
+
+# print(h.starting_node_c)
+# print(h.ending_node_c)
+# print(h.hint_c)
+# print(h.total_hamiltonian)

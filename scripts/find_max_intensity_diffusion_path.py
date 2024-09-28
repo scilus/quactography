@@ -6,6 +6,7 @@ sys.path.append(r"C:\Users\harsh\quactography")
 from quactography.graph.undirected_graph import Graph
 from quactography.adj_matrix.io import load_graph
 from hamiltonian.hamiltonian_qubit_edge import Hamiltonian
+from hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
 from quactography.solver.qaoa_multiprocess_solver import multiprocess_qaoa_solver
 
 
@@ -55,7 +56,7 @@ def main():
     weighted_graph, _, _ = load_graph(args.in_graph + ".npz")
 
     graph = Graph(weighted_graph, args.starting_node, args.ending_node)
-    hamiltonians = [Hamiltonian(graph, alpha) for alpha in args.alphas]
+    hamiltonians = [Hamiltonian_qubit_node(graph, alpha) for alpha in args.alphas]
 
     multiprocess_qaoa_solver(
         hamiltonians, args.reps, args.number_processors, args.output_file
