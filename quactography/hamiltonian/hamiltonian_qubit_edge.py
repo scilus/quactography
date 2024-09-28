@@ -4,7 +4,7 @@ import numpy as np
 # Definition of a Hamiltonian class which will contain all informations about the global quantum cost function:
 
 
-class Hamiltonian:
+class Hamiltonian_qubit_edge:
     """Creates the Hamiltonian with qubits considered to be edges with the given graph and alpha value"""
 
     def __init__(

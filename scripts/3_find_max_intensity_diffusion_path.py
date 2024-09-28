@@ -6,7 +6,7 @@ sys.path.append(r"C:\Users\harsh\quactography")
 from quactography.graph.undirected_graph import Graph
 from quactography.adj_matrix.io import load_graph
 
-# from hamiltonian.hamiltonian_qubit_edge import Hamiltonian
+from quactography.hamiltonian.hamiltonian_qubit_edge import Hamiltonian_qubit_edge
 from quactography.hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
 from quactography.solver.qaoa_multiprocess_solver import multiprocess_qaoa_solver
 
