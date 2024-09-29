@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from quactography.solver.io import load_optimization_results
 
 
-def plot_distribution_of_probabilities(
+def plot_distribution_of_probabilities_edge(
     in_file, visu_out_file_total, visu_out_file_selected
 ):
 

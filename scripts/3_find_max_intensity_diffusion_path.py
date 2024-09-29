@@ -25,6 +25,13 @@ def _build_arg_parser():
     p.add_argument("output_file", help="Output file name", type=str)
 
     p.add_argument(
+        "--hamiltonian",
+        help="Hamiltonian qubit representation to use for QAOA, either 'node' or 'edge' ",
+        default="node",
+        choices=["node", "edge"],
+        type=str,
+    )
+    p.add_argument(
         "--alphas", nargs="+", type=int, help="List of alphas", default=[1.1]
     )
 
@@ -57,7 +64,12 @@ def main():
     weighted_graph, _, _ = load_graph(args.in_graph + ".npz")
 
     graph = Graph(weighted_graph, args.starting_node, args.ending_node)
-    hamiltonians = [Hamiltonian_qubit_node(graph, alpha) for alpha in args.alphas]
+    if args.hamiltonian == "edge":
+        hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in args.alphas]
+        print("Calculating qubits as edges")
+    else:
+        hamiltonians = [Hamiltonian_qubit_node(graph, alpha) for alpha in args.alphas]
+        print("Calculating qubits as nodes")
 
     multiprocess_qaoa_solver(
         hamiltonians, args.reps, args.number_processors, args.output_file

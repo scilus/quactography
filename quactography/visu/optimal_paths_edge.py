@@ -10,7 +10,7 @@ from quactography.solver.io import load_optimization_results
 from quactography.adj_matrix.io import load_graph
 
 
-def visualize_optimal_paths(
+def visualize_optimal_paths_edge(
     graph_file,
     in_file,
     out_file,

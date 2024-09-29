@@ -3,7 +3,9 @@ import sys
 
 sys.path.append(r"C:\Users\harsh\quactography")
 
-from quactography.visu.dist_prob import plot_distribution_of_probabilities
+from quactography.visu.dist_prob_edge import plot_distribution_of_probabilities_edge
+
+# from quactography.visu.dist_prob_node import plot_distribution_of_probabilities_node
 
 
 def _build_arg_parser():
@@ -25,6 +27,12 @@ def _build_arg_parser():
         help="Output file name for visualisation",
         type=str,
     )
+    p.add_argument(
+        "hamiltonian",
+        help="Hamiltonian qubit representation to use for plots, either 'node' or 'edge' ",
+        choices=["node", "edge"],
+        type=str,
+    )
     return p
 
 
@@ -35,12 +43,14 @@ def main():
     """
     parser = _build_arg_parser()
     args = parser.parse_args()
-    for i in range(len(args.input_files)):
-        plot_distribution_of_probabilities(
-            args.input_files[i],
-            args.visual_dist_output_file_total + "_" + str(i),
-            args.visual_dist_output_file_selected + "_" + str(i),
-        )
+    if args.hamiltonian == "edge":
+        for i in range(len(args.input_files)):
+            plot_distribution_of_probabilities_edge(
+                args.input_files[i],
+                args.visual_dist_output_file_total + "_" + str(i),
+                args.visual_dist_output_file_selected + "_" + str(i),
+            )
+    # else:
 
 
 if __name__ == "__main__":

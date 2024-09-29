@@ -222,10 +222,10 @@ class Hamiltonian_qubit_node:
 
         initial_int_term = ["I"] * self.graph.num_nodes
 
-        print(self.graph.starting_nodes)
-        print(self.graph.ending_nodes)
-        print(self.graph.starting_node)
-        print(self.graph.ending_node)
+        # print(self.graph.starting_nodes)
+        # print(self.graph.ending_nodes)
+        # print(self.graph.starting_node)
+        # print(self.graph.ending_node)
 
         # Set an empty dictionary to store the intermediate nodes connected to which other node in the graph:
         node_connected = {}
@@ -266,18 +266,18 @@ class Hamiltonian_qubit_node:
             ]
         list_with_identity = initial_int_term_list
 
-        print("identity : ", list_with_identity)
+        # print("identity : ", list_with_identity)
 
         # Create a Pauli Operator with the terms in the list:
         for i in range(len(list_with_identity)):
             list_with_identity[i] = SparsePauliOp.from_list(list_with_identity[i])
 
-        print("Pauli Operators of list elements : ", list_with_identity)
+        # print("Pauli Operators of list elements : ", list_with_identity)
 
         # Square each term :
         for i in range(len(list_with_identity)):
             list_with_identity[i] = list_with_identity[i] @ list_with_identity[i]
-        print("Squared each term: ", list_with_identity)
+        # print("Squared each term: ", list_with_identity)
 
         # Sum all the terms:
         initial_int_term_h = sum(list_with_identity)
