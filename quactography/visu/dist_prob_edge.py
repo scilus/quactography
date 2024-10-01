@@ -14,7 +14,7 @@ def plot_distribution_of_probabilities_edge(
     dist_binary_prob = dist_binary_prob.item()
     min_cost = min_cost.item()
     h = h.item()
-    # # # Plot distribution of probabilities:
+    # Plot distribution of probabilities:
     plot_distribution(
         dist_binary_prob,
         figsize=(10, 8),

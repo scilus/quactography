@@ -5,10 +5,10 @@ sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.graph.undirected_graph import Graph
 from quactography.adj_matrix.io import load_graph
-
 from quactography.hamiltonian.hamiltonian_qubit_edge import Hamiltonian_qubit_edge
 from quactography.hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
-from quactography.solver.qaoa_multiprocess_solver import multiprocess_qaoa_solver
+from quactography.solver.qaoa_solver_qu_edge import multiprocess_qaoa_solver_edge
+from quactography.solver.qaoa_solver_qu_node import multiprocess_qaoa_solver_node
 
 
 def _build_arg_parser():
@@ -62,18 +62,23 @@ def main():
     args = parser.parse_args()
 
     weighted_graph, _, _ = load_graph(args.in_graph + ".npz")
-
     graph = Graph(weighted_graph, args.starting_node, args.ending_node)
+
+    # Construct Hamiltonian when qubits are set as edges, then optimize with QAOA/scipy:
     if args.hamiltonian == "edge":
         hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in args.alphas]
-        print("Calculating qubits as edges")
+        print("\n Calculating qubits as edges......................")
+        multiprocess_qaoa_solver_edge(
+            hamiltonians, args.reps, args.number_processors, args.output_file
+        )
+
+    # Construct Hamiltonian when qubits are set as nodes, then optimize with QAOA/scipy:
     else:
         hamiltonians = [Hamiltonian_qubit_node(graph, alpha) for alpha in args.alphas]
-        print("Calculating qubits as nodes")
-
-    multiprocess_qaoa_solver(
-        hamiltonians, args.reps, args.number_processors, args.output_file
-    )
+        print("\n Calculating qubits as nodes......................")
+        multiprocess_qaoa_solver_node(
+            hamiltonians, args.reps, args.number_processors, args.output_file
+        )
 
 
 if __name__ == "__main__":

@@ -141,7 +141,7 @@ class Hamiltonian_qubit_node:
                     + "I" * (node - self.graph.starting_node - 1)
                     + "Z"
                     + "I" * self.graph.starting_node,
-                    1 / 4,
+                    0.25,
                 )
                 pauli_starting_node_term.append(str1)
 
@@ -152,7 +152,7 @@ class Hamiltonian_qubit_node:
                     + "I" * (self.graph.starting_node - node - 1)
                     + "Z"
                     + "I" * node,
-                    1 / 4,
+                    0.25,
                 )
                 pauli_starting_node_term.append(str2)
 
@@ -170,7 +170,7 @@ class Hamiltonian_qubit_node:
                     + "I" * (node - self.graph.ending_node - 1)
                     + "Z"
                     + "I" * self.graph.ending_node,
-                    1 / 4,
+                    0.25,
                 )
                 pauli_end_term.append(str4)
 
@@ -181,7 +181,7 @@ class Hamiltonian_qubit_node:
                     + "I" * (self.graph.ending_node - node - 1)
                     + "Z"
                     + "I" * node,
-                    1 / 4,
+                    0.25,
                 )
                 pauli_end_term.append(str5)
 
@@ -255,7 +255,7 @@ class Hamiltonian_qubit_node:
                 # reverse the string to have the correct order of the qubits
                 initial_int_term_list[pos] = initial_int_term_list[pos][::-1]
 
-        print(initial_int_term_list)
+        # print(initial_int_term_list)
 
         # Now that we have the  product terms, we must add the substraction of the identity operator to each term, elevate each of them to the square, then sum them as a SparsePauliOp:
         for i in range(len(initial_int_term_list)):
@@ -301,26 +301,45 @@ class Hamiltonian_qubit_node:
         return eigenvalues[best_indices], binary_paths
 
 
-# # Test the Hamiltonian_qubit_node class:
-# import numpy as np
-# import sys
+# Test the Hamiltonian_qubit_node class:
+import numpy as np
+import sys
 
-# sys.path.append(r"C:\Users\harsh\quactography")
+sys.path.append(r"C:\Users\harsh\quactography")
 
-# from quactography.graph.undirected_graph import Graph
-# from quactography.adj_matrix.io import load_graph
+from quactography.graph.undirected_graph import Graph
+from quactography.adj_matrix.io import load_graph
 
-# my_graph = load_graph(
-#     r"C:\Users\harsh\quactography\quactography\hamiltonian\rand_graph.npz"
-# )
-# my_graph_class = Graph(my_graph[0], 1, 0)
-# # Test mandatory_cost
-# h = Hamiltonian_qubit_node(my_graph_class, 1)
-# print(h.mandatory_c)
+import numpy as np
+import sys
 
-# # Test starting_ending_node_cost
+sys.path.append(r"C:\Users\harsh\quactography")
 
-# print(h.starting_node_c)
-# print(h.ending_node_c)
-# print(h.hint_c)
-# print(h.total_hamiltonian)
+from quactography.adj_matrix.io import save_graph
+
+# mat = np.array([[0, 1, 1, 0], [1, 0, 0, 5], [1, 0, 0, 6], [0, 5, 6, 0]])
+
+# # This is the given format you should use to save the graph, for mat:
+# save_graph(mat, np.array([0, 1, 2, 3]), np.array([4, 4]), "rand_graph.npz")
+
+my_graph = load_graph(
+    r"C:\Users\harsh\quactography\quactography\hamiltonian\rand_graph.npz"
+)
+print(my_graph[0])
+my_graph_class = Graph(my_graph[0], 2, 3)
+# Test mandatory_cost
+h = Hamiltonian_qubit_node(my_graph_class, 2)
+print(h.mandatory_c)
+
+# Test starting_ending_node_cost
+
+print(h.starting_node_c)  # -1
+print(h.ending_node_c)  # -0.5
+print(h.hint_c)  # 8
+
+print(h.total_hamiltonian)
+print(h.exact_cost)
+print(h.exact_path)
+from quactography.hamiltonian.validate import print_hamiltonian_circuit
+
+print_hamiltonian_circuit(h.hint_c, ["0011"])

@@ -89,7 +89,7 @@ def find_longest_path(args):
     save_optimization_results(dist=dist, dist_binary_probabilities=dist_binary_probabilities, min_cost=min_cost, hamiltonian=h, outfile=outfile, opt_bin_str=opt_path, reps=reps)  # type: ignore
 
 
-def multiprocess_qaoa_solver(hamiltonians, reps, nbr_processes, output_file):
+def multiprocess_qaoa_solver_edge(hamiltonians, reps, nbr_processes, output_file):
     pool = multiprocessing.Pool(nbr_processes)
 
     results = pool.map(
