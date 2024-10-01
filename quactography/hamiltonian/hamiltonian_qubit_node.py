@@ -99,26 +99,10 @@ class Hamiltonian_qubit_node:
         # Constructs the very similar Term for making sure we also arrive at the ending node with one other intermediate node connected to it:
 
         # Constant terms for Start constraint:
-        pauli_starting_node_term = [
-            ("I" * self.graph.num_nodes, -0.75),
-            (
-                "I" * (self.graph.num_nodes - 1 - self.graph.starting_node)
-                + "Z"
-                + "I" * self.graph.starting_node,
-                -0.25,
-            ),
-        ]
+        pauli_starting_node_term = []
 
         # Constant terms for End constraint:
-        pauli_end_term = [
-            ("I" * self.graph.num_nodes, -0.75),
-            (
-                "I" * (self.graph.num_nodes - 1 - self.graph.ending_node)
-                + "Z"
-                + "I" * self.graph.ending_node,
-                -0.25,
-            ),
-        ]
+        pauli_end_term = []
 
         for node, node2 in zip(self.graph.starting_nodes, self.graph.ending_nodes):
             start_node = self.graph.starting_node
@@ -134,6 +118,16 @@ class Hamiltonian_qubit_node:
                 finishing_nodes.append(node)
 
         for node in departure_nodes:
+            str0 = (
+                ("I" * self.graph.num_nodes, 0.25),
+                (
+                    "I" * (self.graph.num_nodes - 1 - self.graph.starting_node)
+                    + "Z"
+                    + "I" * self.graph.starting_node,
+                    -0.25,
+                ),
+            )
+            pauli_starting_node_term.extend(str0)
             if node > self.graph.starting_node:
                 str1 = (
                     "I" * (self.graph.num_nodes - 1 - node)
@@ -162,7 +156,12 @@ class Hamiltonian_qubit_node:
             )
             pauli_starting_node_term.append(str3)
 
+        str4 = ("I" * self.graph.num_nodes, -1)
+
+        pauli_starting_node_term.append(str4)
+
         for node in finishing_nodes:
+
             if node > self.graph.ending_node:
                 str4 = (
                     "I" * (self.graph.num_nodes - 1 - node)
@@ -191,6 +190,19 @@ class Hamiltonian_qubit_node:
             )
             pauli_end_term.append(str6)
 
+            str8 = (
+                ("I" * self.graph.num_nodes, 0.25),
+                (
+                    "I" * (self.graph.num_nodes - 1 - self.graph.ending_node)
+                    + "Z"
+                    + "I" * self.graph.ending_node,
+                    -0.25,
+                ),
+            )
+
+            pauli_end_term.extend(str8)
+        str7 = ("I" * self.graph.num_nodes, -1)
+        pauli_end_term.append(str7)
         # print(pauli_starting_node_term)
         # print(pauli_end_term)
 
@@ -302,7 +314,11 @@ class Hamiltonian_qubit_node:
 
 
 # Test the Hamiltonian_qubit_node class:
-import numpy as np
+
+# mat = np.array([[0, 1, 1, 0], [1, 0, 0, 5], [1, 0, 0, 6], [0, 5, 6, 0]])
+
+# # This is the given format you should use to save the graph, for mat:
+# save_graph(mat, np.array([0, 1, 2, 3]), np.array([4, 4]), "rand_graph.npz")
 import sys
 
 sys.path.append(r"C:\Users\harsh\quactography")
@@ -310,36 +326,35 @@ sys.path.append(r"C:\Users\harsh\quactography")
 from quactography.graph.undirected_graph import Graph
 from quactography.adj_matrix.io import load_graph
 
+# from quactography.hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
 import numpy as np
-import sys
-
-sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.adj_matrix.io import save_graph
 
-# mat = np.array([[0, 1, 1, 0], [1, 0, 0, 5], [1, 0, 0, 6], [0, 5, 6, 0]])
+my_graph_class = Graph(np.array([[0, 5, 1], [5, 0, 4], [1, 4, 0]]), 1, 0)
+print(my_graph_class.starting_nodes)
+print(my_graph_class.ending_nodes)
+print(my_graph_class.weights)
+print(my_graph_class.q_indices)
 
-# # This is the given format you should use to save the graph, for mat:
-# save_graph(mat, np.array([0, 1, 2, 3]), np.array([4, 4]), "rand_graph.npz")
-
-my_graph = load_graph(
-    r"C:\Users\harsh\quactography\quactography\hamiltonian\rand_graph.npz"
-)
-print(my_graph[0])
-my_graph_class = Graph(my_graph[0], 2, 3)
 # Test mandatory_cost
-h = Hamiltonian_qubit_node(my_graph_class, 2)
+h = Hamiltonian_qubit_node(my_graph_class, 1)
 print(h.mandatory_c)
 
 # Test starting_ending_node_cost
+print(h.starting_node_c)
+print(h.ending_node_c)
 
-print(h.starting_node_c)  # -1
-print(h.ending_node_c)  # -0.5
-print(h.hint_c)  # 8
+# Test intermediate_cost
+print(h.hint_c)
 
-print(h.total_hamiltonian)
+print("total :", h.total_hamiltonian.simplify())
 print(h.exact_cost)
 print(h.exact_path)
 from quactography.hamiltonian.validate import print_hamiltonian_circuit
 
-print_hamiltonian_circuit(h.hint_c, ["0011"])
+print_hamiltonian_circuit(h.total_hamiltonian, ["011"])
+print_hamiltonian_circuit(h.mandatory_c, ["011"])
+print_hamiltonian_circuit(h.starting_node_c, ["011"])
+print_hamiltonian_circuit(h.ending_node_c, ["011"])
+print_hamiltonian_circuit(h.hint_c, ["000"])
