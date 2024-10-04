@@ -12,7 +12,7 @@ def print_hamiltonian_circuit(hamiltonian_term, binary_paths_classical_read):
                 circuit.x(j)
 
         print(
-            circuit,
+            # circuit,
             "\n Cost for path (classical read -> left=q0)",
             binary_paths_classical_read[i],
             " : ",

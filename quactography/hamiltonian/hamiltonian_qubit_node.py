@@ -331,7 +331,19 @@ import numpy as np
 
 from quactography.adj_matrix.io import save_graph
 
-my_graph_class = Graph(np.array([[0, 5, 1], [5, 0, 4], [1, 4, 0]]), 1, 0)
+my_graph_class = Graph(
+    np.array(
+        [
+            [0, 1, 1, 1, 2],
+            [1, 0, 1, 0, 2],
+            [1, 1, 0, 1, 2],
+            [1, 0, 1, 0, 2],
+            [1, 0, 1, 0, 2],
+        ]
+    ),
+    1,
+    0,
+)
 print(my_graph_class.starting_nodes)
 print(my_graph_class.ending_nodes)
 print(my_graph_class.weights)
@@ -353,8 +365,25 @@ print(h.exact_cost)
 print(h.exact_path)
 from quactography.hamiltonian.validate import print_hamiltonian_circuit
 
-print_hamiltonian_circuit(h.total_hamiltonian, ["011"])
-print_hamiltonian_circuit(h.mandatory_c, ["011"])
-print_hamiltonian_circuit(h.starting_node_c, ["011"])
-print_hamiltonian_circuit(h.ending_node_c, ["011"])
-print_hamiltonian_circuit(h.hint_c, ["000"])
+print("total")
+print_hamiltonian_circuit(h.total_hamiltonian, ["11000"])
+print("mandatory")
+print_hamiltonian_circuit(h.mandatory_c, ["11000"])
+print("start")
+print_hamiltonian_circuit(h.starting_node_c, ["11000"])
+print("finish")
+print_hamiltonian_circuit(h.ending_node_c, ["11000"])
+print("int")
+print_hamiltonian_circuit(h.hint_c, ["11000"])
+
+
+print("total2")
+print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
+print("mandatory2")
+print_hamiltonian_circuit(h.mandatory_c, ["11111"])
+print("start2")
+print_hamiltonian_circuit(h.starting_node_c, ["11111"])
+print("finish2")
+print_hamiltonian_circuit(h.ending_node_c, ["11111"])
+print("int2")
+print_hamiltonian_circuit(h.hint_c, ["11111"])
