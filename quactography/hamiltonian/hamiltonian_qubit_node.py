@@ -217,85 +217,87 @@ class Hamiltonian_qubit_node:
         return start_node_constraint_cost_h, ending_node_constraint_cost_h
 
     def intermediate_node_cost(self):
-        """Cost term of having an even number of intermediate connections (two edges connected to the intermediate nodes)
+        pass
 
-        Args:
-            starting_node (int):  Starting node decided by the user
-            ending_node (int): Ending node decided by the user
-            starting_nodes (list int): List of nodes in starting_nodesure (according to the adjacency matrix to avoid doublets)
-            q_indices (list int): Index associated with each qubit according to the adjacency matrix
-            ending_nodes (list int): List of nodes in end (according to the adjacency matrix to avoid doublets)
-            number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
+    #     """Cost term of having an even number of intermediate connections (two edges connected to the intermediate nodes)
 
-        Returns:
-            Sparse pauli op (str): Pauli string representing the cost associated with the constraint of having an even number of intermediate connections
-        """
-        # List of ["I" * num_nodes], then replace j element in list by Z (nodes connected to intermediate node k)
+    #     Args:
+    #         starting_node (int):  Starting node decided by the user
+    #         ending_node (int): Ending node decided by the user
+    #         starting_nodes (list int): List of nodes in starting_nodesure (according to the adjacency matrix to avoid doublets)
+    #         q_indices (list int): Index associated with each qubit according to the adjacency matrix
+    #         ending_nodes (list int): List of nodes in end (according to the adjacency matrix to avoid doublets)
+    #         number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
 
-        initial_int_term = ["I"] * self.graph.num_nodes
+    #     Returns:
+    #         Sparse pauli op (str): Pauli string representing the cost associated with the constraint of having an even number of intermediate connections
+    #     """
+    #     # List of ["I" * num_nodes], then replace j element in list by Z (nodes connected to intermediate node k)
 
-        # print(self.graph.starting_nodes)
-        # print(self.graph.ending_nodes)
-        # print(self.graph.starting_node)
-        # print(self.graph.ending_node)
+    #     initial_int_term = ["I"] * self.graph.num_nodes
 
-        # Set an empty dictionary to store the intermediate nodes connected to which other node in the graph:
-        node_connected = {}
-        for node, node2 in zip(self.graph.starting_nodes, self.graph.ending_nodes):
-            if node != self.graph.starting_node and node != self.graph.ending_node:
-                if node not in node_connected:
-                    node_connected[node] = [node2]
-                else:
-                    node_connected[node].append(node2)
-            if node2 != self.graph.starting_node and node2 != self.graph.ending_node:
-                if node2 not in node_connected:
-                    node_connected[node2] = [node]
-                else:
-                    node_connected[node2].append(node)
-        # Create the right number of terms for every intermediate node:
+    #     # print(self.graph.starting_nodes)
+    #     # print(self.graph.ending_nodes)
+    #     # print(self.graph.starting_node)
+    #     # print(self.graph.ending_node)
 
-        initial_int_term_list = [initial_int_term] * len(node_connected)
-        # initial_int_term_list
+    #     # Set an empty dictionary to store the intermediate nodes connected to which other node in the graph:
+    #     node_connected = {}
+    #     for node, node2 in zip(self.graph.starting_nodes, self.graph.ending_nodes):
+    #         if node != self.graph.starting_node and node != self.graph.ending_node:
+    #             if node not in node_connected:
+    #                 node_connected[node] = [node2]
+    #             else:
+    #                 node_connected[node].append(node2)
+    #         if node2 != self.graph.starting_node and node2 != self.graph.ending_node:
+    #             if node2 not in node_connected:
+    #                 node_connected[node2] = [node]
+    #             else:
+    #                 node_connected[node2].append(node)
+    #     # Create the right number of terms for every intermediate node:
 
-        # Replace the position of the list which are values in the dictionary by Z:
-        for pos, node_name in enumerate(node_connected):
-            for node in node_connected[node_name]:
-                initial_int_term_list[pos] = list(initial_int_term_list[pos])
-                initial_int_term_list[pos][node] = "Z"
-                initial_int_term_list[pos] = "".join(initial_int_term_list[pos])
-                initial_int_term_list[pos] = initial_int_term_list[pos]
-                # reverse the string to have the correct order of the qubits
-                initial_int_term_list[pos] = initial_int_term_list[pos][::-1]
+    #     initial_int_term_list = [initial_int_term] * len(node_connected)
+    #     # initial_int_term_list
 
-        # print(initial_int_term_list)
+    #     # Replace the position of the list which are values in the dictionary by Z:
+    #     for pos, node_name in enumerate(node_connected):
+    #         for node in node_connected[node_name]:
+    #             initial_int_term_list[pos] = list(initial_int_term_list[pos])
+    #             initial_int_term_list[pos][node] = "Z"
+    #             initial_int_term_list[pos] = "".join(initial_int_term_list[pos])
+    #             initial_int_term_list[pos] = initial_int_term_list[pos]
+    #             # reverse the string to have the correct order of the qubits
+    #             initial_int_term_list[pos] = initial_int_term_list[pos][::-1]
 
-        # Now that we have the  product terms, we must add the substraction of the identity operator to each term, elevate each of them to the square, then sum them as a SparsePauliOp:
-        for i in range(len(initial_int_term_list)):
-            initial_int_term_list[i] = (initial_int_term_list[i], 1)
-            initial_int_term_list[i] = [
-                initial_int_term_list[i],
-                (("I" * self.graph.num_nodes, -1)),
-            ]
-        list_with_identity = initial_int_term_list
+    #     # print(initial_int_term_list)
 
-        # print("identity : ", list_with_identity)
+    #     # Now that we have the  product terms, we must add the substraction of the identity operator to each term, elevate each of them to the square, then sum them as a SparsePauliOp:
+    #     for i in range(len(initial_int_term_list)):
+    #         initial_int_term_list[i] = (initial_int_term_list[i], 1)
+    #         initial_int_term_list[i] = [
+    #             initial_int_term_list[i],
+    #             (("I" * self.graph.num_nodes, -1)),
+    #         ]
+    #     list_with_identity = initial_int_term_list
 
-        # Create a Pauli Operator with the terms in the list:
-        for i in range(len(list_with_identity)):
-            list_with_identity[i] = SparsePauliOp.from_list(list_with_identity[i])
+    #     # print("identity : ", list_with_identity)
 
-        # print("Pauli Operators of list elements : ", list_with_identity)
+    #     # Create a Pauli Operator with the terms in the list:
+    #     for i in range(len(list_with_identity)):
+    #         list_with_identity[i] = SparsePauliOp.from_list(list_with_identity[i])
 
-        # Square each term :
-        for i in range(len(list_with_identity)):
-            list_with_identity[i] = list_with_identity[i] @ list_with_identity[i]
-        # print("Squared each term: ", list_with_identity)
+    #     # print("Pauli Operators of list elements : ", list_with_identity)
 
-        # Sum all the terms:
-        initial_int_term_h = sum(list_with_identity)
-        sum_intermediate_cost_h_terms = initial_int_term_h
+    #     # Square each term :
+    #     for i in range(len(list_with_identity)):
+    #         list_with_identity[i] = list_with_identity[i] @ list_with_identity[i]
+    #     # print("Squared each term: ", list_with_identity)
 
-        return sum_intermediate_cost_h_terms
+    #     # Sum all the terms:
+    #     initial_int_term_h = sum(list_with_identity)
+    #     sum_intermediate_cost_h_terms = initial_int_term_h
+
+    #     return sum_intermediate_cost_h_terms
 
     def get_exact_sol(self):
         mat_hamiltonian = np.array(self.total_hamiltonian.to_matrix())
