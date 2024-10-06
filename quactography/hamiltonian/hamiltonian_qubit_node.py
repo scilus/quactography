@@ -217,7 +217,20 @@ class Hamiltonian_qubit_node:
         return start_node_constraint_cost_h, ending_node_constraint_cost_h
 
     def intermediate_node_cost(self):
-        pass
+        # Get acces to intermediate nodes in the given instance:
+
+        intermediate_nodes = []
+
+        for node in self.graph.q_indices:
+            if node != self.graph.starting_node:
+                if node != self.graph.ending_node:
+                    intermediate_nodes.append(node)
+
+        # Get from starting nodes list, the nodes connected to intermediate node:
+
+        # Get from ending nodes list, the nodes connected to intermediate node:
+
+        return None
 
     #     """Cost term of having an even number of intermediate connections (two edges connected to the intermediate nodes)
 
@@ -353,39 +366,40 @@ print(my_graph_class.q_indices)
 
 # Test mandatory_cost
 h = Hamiltonian_qubit_node(my_graph_class, 1)
-print(h.mandatory_c)
 
-# Test starting_ending_node_cost
-print(h.starting_node_c)
-print(h.ending_node_c)
+# print(h.mandatory_c)
 
-# Test intermediate_cost
-print(h.hint_c)
+# # Test starting_ending_node_cost
+# print(h.starting_node_c)
+# print(h.ending_node_c)
 
-print("total :", h.total_hamiltonian.simplify())
-print(h.exact_cost)
-print(h.exact_path)
-from quactography.hamiltonian.validate import print_hamiltonian_circuit
+# # Test intermediate_cost
+# print(h.hint_c)
 
-print("total")
-print_hamiltonian_circuit(h.total_hamiltonian, ["11000"])
-print("mandatory")
-print_hamiltonian_circuit(h.mandatory_c, ["11000"])
-print("start")
-print_hamiltonian_circuit(h.starting_node_c, ["11000"])
-print("finish")
-print_hamiltonian_circuit(h.ending_node_c, ["11000"])
-print("int")
-print_hamiltonian_circuit(h.hint_c, ["11000"])
+# print("total :", h.total_hamiltonian.simplify())
+# print(h.exact_cost)
+# print(h.exact_path)
+# from quactography.hamiltonian.validate import print_hamiltonian_circuit
+
+# print("total")
+# print_hamiltonian_circuit(h.total_hamiltonian, ["11000"])
+# print("mandatory")
+# print_hamiltonian_circuit(h.mandatory_c, ["11000"])
+# print("start")
+# print_hamiltonian_circuit(h.starting_node_c, ["11000"])
+# print("finish")
+# print_hamiltonian_circuit(h.ending_node_c, ["11000"])
+# print("int")
+# print_hamiltonian_circuit(h.hint_c, ["11000"])
 
 
-print("total2")
-print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
-print("mandatory2")
-print_hamiltonian_circuit(h.mandatory_c, ["11111"])
-print("start2")
-print_hamiltonian_circuit(h.starting_node_c, ["11111"])
-print("finish2")
-print_hamiltonian_circuit(h.ending_node_c, ["11111"])
-print("int2")
-print_hamiltonian_circuit(h.hint_c, ["11111"])
+# print("total2")
+# print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
+# print("mandatory2")
+# print_hamiltonian_circuit(h.mandatory_c, ["11111"])
+# print("start2")
+# print_hamiltonian_circuit(h.starting_node_c, ["11111"])
+# print("finish2")
+# print_hamiltonian_circuit(h.ending_node_c, ["11111"])
+# print("int2")
+# print_hamiltonian_circuit(h.hint_c, ["11111"])
