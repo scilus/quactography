@@ -274,89 +274,7 @@ class Hamiltonian_qubit_node:
         sum_intermediate_cost_h_terms = sum(pauli_op_term_ints)
 
         # print(sum_intermediate_cost_h_terms.simplify())
-
-        return sum_intermediate_cost_h_terms
-
-    # Old version of int cost:
-    #     """Cost term of having an even number of intermediate connections (two edges connected to the intermediate nodes)
-
-    #     Args:
-    #         starting_node (int):  Starting node decided by the user
-    #         ending_node (int): Ending node decided by the user
-    #         starting_nodes (list int): List of nodes in starting_nodesure (according to the adjacency matrix to avoid doublets)
-    #         edge_indices (list int): Index associated with each qubit according to the adjacency matrix
-    #         ending_nodes (list int): List of nodes in end (according to the adjacency matrix to avoid doublets)
-    #         number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
-
-    #     Returns:
-    #         Sparse pauli op (str): Pauli string representing the cost associated with the constraint of having an even number of intermediate connections
-    #     """
-    #     # List of ["I" * num_nodes], then replace j element in list by Z (nodes connected to intermediate node k)
-
-    #     initial_int_term = ["I"] * self.graph.num_nodes
-
-    #     # print(self.graph.starting_nodes)
-    #     # print(self.graph.ending_nodes)
-    #     # print(self.graph.starting_node)
-    #     # print(self.graph.ending_node)
-
-    #     # Set an empty dictionary to store the intermediate nodes connected to which other node in the graph:
-    #     node_connected = {}
-    #     for node, node2 in zip(self.graph.starting_nodes, self.graph.ending_nodes):
-    #         if node != self.graph.starting_node and node != self.graph.ending_node:
-    #             if node not in node_connected:
-    #                 node_connected[node] = [node2]
-    #             else:
-    #                 node_connected[node].append(node2)
-    #         if node2 != self.graph.starting_node and node2 != self.graph.ending_node:
-    #             if node2 not in node_connected:
-    #                 node_connected[node2] = [node]
-    #             else:
-    #                 node_connected[node2].append(node)
-    #     # Create the right number of terms for every intermediate node:
-
-    #     initial_int_term_list = [initial_int_term] * len(node_connected)
-    #     # initial_int_term_list
-
-    #     # Replace the position of the list which are values in the dictionary by Z:
-    #     for pos, node_name in enumerate(node_connected):
-    #         for node in node_connected[node_name]:
-    #             initial_int_term_list[pos] = list(initial_int_term_list[pos])
-    #             initial_int_term_list[pos][node] = "Z"
-    #             initial_int_term_list[pos] = "".join(initial_int_term_list[pos])
-    #             initial_int_term_list[pos] = initial_int_term_list[pos]
-    #             # reverse the string to have the correct order of the qubits
-    #             initial_int_term_list[pos] = initial_int_term_list[pos][::-1]
-
-    #     # print(initial_int_term_list)
-
-    #     # Now that we have the  product terms, we must add the substraction of the identity operator to each term, elevate each of them to the square, then sum them as a SparsePauliOp:
-    #     for i in range(len(initial_int_term_list)):
-    #         initial_int_term_list[i] = (initial_int_term_list[i], 1)
-    #         initial_int_term_list[i] = [
-    #             initial_int_term_list[i],
-    #             (("I" * self.graph.num_nodes, -1)),
-    #         ]
-    #     list_with_identity = initial_int_term_list
-
-    #     # print("identity : ", list_with_identity)
-
-    #     # Create a Pauli Operator with the terms in the list:
-    #     for i in range(len(list_with_identity)):
-    #         list_with_identity[i] = SparsePauliOp.from_list(list_with_identity[i])
-
-    #     # print("Pauli Operators of list elements : ", list_with_identity)
-
-    #     # Square each term :
-    #     for i in range(len(list_with_identity)):
-    #         list_with_identity[i] = list_with_identity[i] @ list_with_identity[i]
-    #     # print("Squared each term: ", list_with_identity)
-
-    #     # Sum all the terms:
-    #     initial_int_term_h = sum(list_with_identity)
-    #     sum_intermediate_cost_h_terms = initial_int_term_h
-
-    #     return sum_intermediate_cost_h_terms
+        return sum_intermediate_cost_h_terms.simplify()  # type: ignore
 
     def get_exact_sol(self):
         mat_hamiltonian = np.array(self.total_hamiltonian.to_matrix())
@@ -374,7 +292,7 @@ class Hamiltonian_qubit_node:
         return eigenvalues[best_indices], binary_paths
 
 
-# Test the Hamiltonian_qubit_node class:
+# Test the Hamiltonian_qubit_node class:---------------------------------------------------------------------------------------------------
 
 # mat = np.array([[0, 1, 1, 0], [1, 0, 0, 5], [1, 0, 0, 6], [0, 5, 6, 0]])
 
@@ -413,39 +331,40 @@ print(my_graph_class.edge_indices)
 # Test mandatory_cost
 h = Hamiltonian_qubit_node(my_graph_class, 1)
 
-print(h.mandatory_c)
+# print(h.mandatory_c)
 
-# Test starting_ending_node_cost
-print(h.starting_node_c)
-print(h.ending_node_c)
+# # Test starting_ending_node_cost
+# print(h.starting_node_c)
+# print(h.ending_node_c)
 
 # Test intermediate_cost
 print(h.hint_c)
 
-print("total :", h.total_hamiltonian.simplify())
-print(h.exact_cost)
-print(h.exact_path)
+# print("total :", h.total_hamiltonian.simplify())
+# print(h.exact_cost)
+# print(h.exact_path)
 from quactography.hamiltonian.validate import print_hamiltonian_circuit
 
-print("total")
-print_hamiltonian_circuit(h.total_hamiltonian, ["11000"])
-print("mandatory")
-print_hamiltonian_circuit(h.mandatory_c, ["11000"])
-print("start")
-print_hamiltonian_circuit(h.starting_node_c, ["11000"])
-print("finish")
-print_hamiltonian_circuit(h.ending_node_c, ["11000"])
-print("int")
+# print("total")
+# print_hamiltonian_circuit(h.total_hamiltonian, ["11000"])
+# print("mandatory")
+# print_hamiltonian_circuit(h.mandatory_c, ["11000"])
+# print("start")
+# print_hamiltonian_circuit(h.starting_node_c, ["11000"])
+# print("finish")
+# print_hamiltonian_circuit(h.ending_node_c, ["11000"])
+# print("int")
 print_hamiltonian_circuit(h.hint_c, ["11000"])
+# print()
 
-
-print("total2")
-print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
-print("mandatory2")
-print_hamiltonian_circuit(h.mandatory_c, ["11111"])
-print("start2")
-print_hamiltonian_circuit(h.starting_node_c, ["11111"])
-print("finish2")
-print_hamiltonian_circuit(h.ending_node_c, ["11111"])
-print("int2")
-print_hamiltonian_circuit(h.hint_c, ["11111"])
+# print("total2")
+# print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
+# print("mandatory2")
+# print_hamiltonian_circuit(h.mandatory_c, ["11111"])
+# print("start2")
+# print_hamiltonian_circuit(h.starting_node_c, ["11111"])
+# print("finish2")
+# print_hamiltonian_circuit(h.ending_node_c, ["11111"])
+# print("int2")
+# print_hamiltonian_circuit(h.hint_c, ["11111"])
+# ------------------------------------------------------------------------------------------------------------------------------------------
