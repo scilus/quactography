@@ -217,6 +217,18 @@ class Hamiltonian_qubit_node:
         return start_node_constraint_cost_h, ending_node_constraint_cost_h
 
     def intermediate_node_cost(self):
+        """Cost term for having a pair number of nodes connected to each intermediate node
+
+        Args:
+            num_nodes (int): Number of nodes in the graph
+            starting_node (int): Starting node decided by the graph instance
+            ending_node (int): Ending node decided by the graph instance
+            starting_nodes (list int): List of nodes in starting_nodesure (according to the adjacency matrix to avoid doublets)
+            ending_nodes (list int): List of nodes in end (according to the adjacency matrix to avoid doublets)
+
+        Returns:
+            Sparse Pauli op (list of str and weight associated): Return Pauli chain corresponding to the given graph instance (needs to change for each path.... Not done in the code yet)
+        """
 
         # List of intermediate nodes indices:
         intermediate_nodes = []
@@ -292,8 +304,7 @@ class Hamiltonian_qubit_node:
         return eigenvalues[best_indices], binary_paths
 
 
-# Test the Hamiltonian_qubit_node class:---------------------------------------------------------------------------------------------------
-
+"""Test the Hamiltonian_qubit_node class: TO REMOVE WHEN TESTING FINISHED---------------------------------------------------------------------------------------------------"""
 # mat = np.array([[0, 1, 1, 0], [1, 0, 0, 5], [1, 0, 0, 6], [0, 5, 6, 0]])
 
 # # This is the given format you should use to save the graph, for mat:
