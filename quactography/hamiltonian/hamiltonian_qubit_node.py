@@ -217,28 +217,74 @@ class Hamiltonian_qubit_node:
         return start_node_constraint_cost_h, ending_node_constraint_cost_h
 
     def intermediate_node_cost(self):
-        # Get acces to intermediate nodes in the given instance:
 
+        # List of intermediate nodes indices:
         intermediate_nodes = []
 
-        for node in self.graph.q_indices:
-            if node != self.graph.starting_node:
-                if node != self.graph.ending_node:
-                    intermediate_nodes.append(node)
+        # List of list of connexions of each intermediate nodes:
+        connected_tos = []
 
-        # Get from starting nodes list, the nodes connected to intermediate node:
+        # print("num nodes", self.graph.num_nodes)
 
-        # Get from ending nodes list, the nodes connected to intermediate node:
+        # Fill the list of intermediate_nodes:
+        for i in range(self.graph.num_nodes):
 
-        return None
+            if i != self.graph.starting_node:
+                if i != self.graph.ending_node:
+                    intermediate_nodes.append(i)
 
+        # Fill the list of connected_tos with list of connexions for each intermediate node:
+        for pos, int_node_index in enumerate(intermediate_nodes):
+            connected_to = []
+
+            for node, node2 in zip(self.graph.starting_nodes, self.graph.ending_nodes):
+                if node == int_node_index:
+                    connected_to.append(node2)
+                elif node2 == int_node_index:
+                    connected_to.append(node)
+            connected_tos.append(connected_to)
+
+        # print(intermediate_nodes)
+        # print(connected_tos)
+
+        # List containing the Hamiltonian term for each intermediate term
+        list_int_terms = []
+
+        for pos, connexions_list in enumerate(connected_tos):
+            init_term = ["I"] * self.graph.num_nodes
+            # print(init_term)
+            for i in connexions_list:
+                init_term[i] = "Z"
+
+            init_term = init_term[::-1]
+            init_term = "".join(init_term)
+            list_int_terms.extend([((init_term, 1), ("I" * self.graph.num_nodes, -1))])
+
+        # print(list_int_terms)
+        # print(len(list_int_terms))
+
+        pauli_op_term_ints = []
+        for i in range(len(list_int_terms)):
+            pauli_op_term_ints.append(SparsePauliOp.from_list(list_int_terms[i]))
+        # print(pauli_op_term_ints)
+
+        for i in range(len(pauli_op_term_ints)):
+            pauli_op_term_ints[i] = pauli_op_term_ints[i] @ pauli_op_term_ints[i]
+        # print(pauli_op_term_ints)
+        sum_intermediate_cost_h_terms = sum(pauli_op_term_ints)
+
+        # print(sum_intermediate_cost_h_terms.simplify())
+
+        return sum_intermediate_cost_h_terms
+
+    # Old version of int cost:
     #     """Cost term of having an even number of intermediate connections (two edges connected to the intermediate nodes)
 
     #     Args:
     #         starting_node (int):  Starting node decided by the user
     #         ending_node (int): Ending node decided by the user
     #         starting_nodes (list int): List of nodes in starting_nodesure (according to the adjacency matrix to avoid doublets)
-    #         q_indices (list int): Index associated with each qubit according to the adjacency matrix
+    #         edge_indices (list int): Index associated with each qubit according to the adjacency matrix
     #         ending_nodes (list int): List of nodes in end (according to the adjacency matrix to avoid doublets)
     #         number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
 
@@ -349,11 +395,11 @@ from quactography.adj_matrix.io import save_graph
 my_graph_class = Graph(
     np.array(
         [
-            [0, 1, 1, 1, 2],
-            [1, 0, 1, 0, 2],
-            [1, 1, 0, 1, 2],
-            [1, 0, 1, 0, 2],
-            [1, 0, 1, 0, 2],
+            [0, 1, 1, 1, 1],
+            [1, 0, 1, 0, 1],
+            [1, 1, 0, 1, 1],
+            [1, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1],
         ]
     ),
     1,
@@ -362,44 +408,44 @@ my_graph_class = Graph(
 print(my_graph_class.starting_nodes)
 print(my_graph_class.ending_nodes)
 print(my_graph_class.weights)
-print(my_graph_class.q_indices)
+print(my_graph_class.edge_indices)
 
 # Test mandatory_cost
 h = Hamiltonian_qubit_node(my_graph_class, 1)
 
-# print(h.mandatory_c)
+print(h.mandatory_c)
 
-# # Test starting_ending_node_cost
-# print(h.starting_node_c)
-# print(h.ending_node_c)
+# Test starting_ending_node_cost
+print(h.starting_node_c)
+print(h.ending_node_c)
 
-# # Test intermediate_cost
-# print(h.hint_c)
+# Test intermediate_cost
+print(h.hint_c)
 
-# print("total :", h.total_hamiltonian.simplify())
-# print(h.exact_cost)
-# print(h.exact_path)
-# from quactography.hamiltonian.validate import print_hamiltonian_circuit
+print("total :", h.total_hamiltonian.simplify())
+print(h.exact_cost)
+print(h.exact_path)
+from quactography.hamiltonian.validate import print_hamiltonian_circuit
 
-# print("total")
-# print_hamiltonian_circuit(h.total_hamiltonian, ["11000"])
-# print("mandatory")
-# print_hamiltonian_circuit(h.mandatory_c, ["11000"])
-# print("start")
-# print_hamiltonian_circuit(h.starting_node_c, ["11000"])
-# print("finish")
-# print_hamiltonian_circuit(h.ending_node_c, ["11000"])
-# print("int")
-# print_hamiltonian_circuit(h.hint_c, ["11000"])
+print("total")
+print_hamiltonian_circuit(h.total_hamiltonian, ["11000"])
+print("mandatory")
+print_hamiltonian_circuit(h.mandatory_c, ["11000"])
+print("start")
+print_hamiltonian_circuit(h.starting_node_c, ["11000"])
+print("finish")
+print_hamiltonian_circuit(h.ending_node_c, ["11000"])
+print("int")
+print_hamiltonian_circuit(h.hint_c, ["11000"])
 
 
-# print("total2")
-# print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
-# print("mandatory2")
-# print_hamiltonian_circuit(h.mandatory_c, ["11111"])
-# print("start2")
-# print_hamiltonian_circuit(h.starting_node_c, ["11111"])
-# print("finish2")
-# print_hamiltonian_circuit(h.ending_node_c, ["11111"])
-# print("int2")
-# print_hamiltonian_circuit(h.hint_c, ["11111"])
+print("total2")
+print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
+print("mandatory2")
+print_hamiltonian_circuit(h.mandatory_c, ["11111"])
+print("start2")
+print_hamiltonian_circuit(h.starting_node_c, ["11111"])
+print("finish2")
+print_hamiltonian_circuit(h.ending_node_c, ["11111"])
+print("int2")
+print_hamiltonian_circuit(h.hint_c, ["11111"])

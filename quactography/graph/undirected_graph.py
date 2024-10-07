@@ -10,7 +10,7 @@ class Graph:
             self.weights,
             self.starting_nodes,
             self.ending_nodes,
-            self.q_indices,
+            self.edge_indices,
             self.all_weights_sum,
             self.max_weight,
         ) = self.connexions_edges(mat_adj, self.num_nodes)
@@ -28,7 +28,7 @@ class Graph:
             weights (list): list of weights
             starting_nodes (list): list of nodes of starting_nodesure
             ending_nodes (list): list of ending_nodes nodes
-            q_indices (list): list of indices corresponding to the edges same as the qubit indices
+            edge_indices (list): list of indices corresponding to the edges same as the qubit indices
             all_weights_sum (float): sum of all weights in the graph
         """
         mat_triang_sup = np.triu(mat_adj)
@@ -52,17 +52,17 @@ class Graph:
         #     f"All possible connexions without doubles: {list_of_nodes_for_naming_edges}\n"
         # )
 
-        q_indices = []
+        edge_indices = []
         starting_nodes = []
         index = 0
         num_nodes_minus_1 = num_nodes - 1
         for i in range(num_nodes_minus_1):
             for _ in list_of_nodes_for_naming_edges[i]:
                 starting_nodes.append(i)
-                q_indices.append(index)
+                edge_indices.append(index)
                 index += 1
 
-        # print(f"Index :{q_indices}")
+        # print(f"Index :{edge_indices}")
         # print(f"Start :{starting_nodes}")
         # print(f"End   :{ending_nodes}")
 
@@ -80,7 +80,7 @@ class Graph:
             weights,
             starting_nodes,
             ending_nodes,
-            q_indices,
+            edge_indices,
             all_weights_sum,
             max_weight,
         )
