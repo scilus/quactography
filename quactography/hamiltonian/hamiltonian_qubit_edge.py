@@ -61,7 +61,7 @@ class Hamiltonian_qubit_edge:
         Args:
             starting_node (int): Starting node decided by the user
             starting_nodes (list int):  List of nodes in starting_nodes (according to the adjacency matrix to avoid doublets)
-            q_indices (list int): Index associated with each qubit according to the adjacency matrix
+            edge_indices (list int): Index associated with each qubit according to the adjacency matrix
             ending_nodes (list int):  List of nodes in end (according to the adjacency matrix to avoid doublets)
             number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
 
@@ -72,10 +72,10 @@ class Hamiltonian_qubit_edge:
         starting_qubit = []
         for node, value in enumerate(self.graph.starting_nodes):
             if value == self.graph.starting_node:
-                starting_qubit.append(self.graph.q_indices[node])
+                starting_qubit.append(self.graph.edge_indices[node])
         for node, value in enumerate(self.graph.ending_nodes):
             if value == self.graph.starting_node:
-                starting_qubit.append(self.graph.q_indices[node])
+                starting_qubit.append(self.graph.edge_indices[node])
         # print(f"\n Qubit to sum over starting x_i: q({starting_qubit}) - I ")
 
         pauli_starting_node_term = [
@@ -100,7 +100,7 @@ class Hamiltonian_qubit_edge:
         Args:
             ending_node (int): Ending node decided by the user
             starting_nodes (list int): List of nodes in starting_nodes (according to the adjacency matrix to avoid doublets)
-            q_indices (list int): Index associated with each qubit according to the adjacency matrix
+            edge_indices (list int): Index associated with each qubit according to the adjacency matrix
             ending_nodes (list int): List of nodes in end (according to the adjacency matrix to avoid doublets)
             number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
 
@@ -110,10 +110,10 @@ class Hamiltonian_qubit_edge:
         qubit_end = []
         for node, value in enumerate(self.graph.ending_nodes):
             if value == self.graph.ending_node:
-                qubit_end.append(self.graph.q_indices[node])
+                qubit_end.append(self.graph.edge_indices[node])
         for node, value in enumerate(self.graph.starting_nodes):
             if value == self.graph.ending_node:
-                qubit_end.append(self.graph.q_indices[node])
+                qubit_end.append(self.graph.edge_indices[node])
         # print(f"\nQubit to sum over ending x_i: q({qubit_end}) - I ")
 
         pauli_end_term = [("I" * self.graph.number_of_edges, len(qubit_end) * 0.5 - 1)]
@@ -137,7 +137,7 @@ class Hamiltonian_qubit_edge:
             starting_node (int):  Starting node decided by the user
             ending_node (int): Ending node decided by the user
             starting_nodes (list int): List of nodes in starting_nodesure (according to the adjacency matrix to avoid doublets)
-            q_indices (list int): Index associated with each qubit according to the adjacency matrix
+            edge_indices (list int): Index associated with each qubit according to the adjacency matrix
             ending_nodes (list int): List of nodes in end (according to the adjacency matrix to avoid doublets)
             number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
 
@@ -165,10 +165,10 @@ class Hamiltonian_qubit_edge:
         for i, node in enumerate(int_nodes):
             for node, value in enumerate(self.graph.ending_nodes):
                 if value == int_nodes[i]:
-                    liste_qubits_int[i].append(self.graph.q_indices[node])
+                    liste_qubits_int[i].append(self.graph.edge_indices[node])
             for node, value in enumerate(self.graph.starting_nodes):
                 if value == int_nodes[i]:
-                    liste_qubits_int[i].append(self.graph.q_indices[node])
+                    liste_qubits_int[i].append(self.graph.edge_indices[node])
 
         for i in range(len(liste_qubits_int)):
             a = liste_qubits_int[i]
@@ -198,6 +198,12 @@ class Hamiltonian_qubit_edge:
         return sum(intermediate_cost_h_terms)
 
     def get_exact_sol(self):
+        """Get the exact solution of the Hamiltonian
+
+        Returns:
+            list of cost values (int): Costs of the best solutions (multiple solutions possible if degenerate)
+            list of binary paths (str): Binary paths (QUANTUM READ) of the best solutions (multiple solutions possible if degenerate)
+        """
         mat_hamiltonian = np.array(self.total_hamiltonian.to_matrix())
         eigenvalues, eigenvectors = np.linalg.eig(mat_hamiltonian)
 
@@ -211,3 +217,75 @@ class Hamiltonian_qubit_edge:
 
         # costs and paths to all best solutions
         return eigenvalues[best_indices], binary_paths
+
+
+import sys
+
+sys.path.append(r"C:\Users\harsh\quactography")
+
+from quactography.graph.undirected_graph import Graph
+from quactography.adj_matrix.io import load_graph
+
+# from quactography.hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
+import numpy as np
+
+from quactography.adj_matrix.io import save_graph
+
+my_graph_class = Graph(
+    np.array(
+        [
+            [0, 1, 1, 1, 1],
+            [1, 0, 1, 0, 1],
+            [1, 1, 0, 1, 1],
+            [1, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1],
+        ]
+    ),
+    1,
+    0,
+)
+print(my_graph_class.starting_nodes)
+print(my_graph_class.ending_nodes)
+print(my_graph_class.weights)
+print(my_graph_class.edge_indices)
+
+# Test mandatory_cost
+h = Hamiltonian_qubit_edge(my_graph_class, 1)
+
+# print(h.mandatory_c)
+
+# # Test starting_ending_node_cost
+# print(h.starting_node_c)
+# print(h.ending_node_c)
+
+# # Test intermediate_cost
+# print(h.hint_c)
+
+# print("total :", h.total_hamiltonian.simplify())
+print("exact cost", h.exact_cost)
+print("quantum read", h.exact_path)
+from quactography.hamiltonian.validate import print_hamiltonian_circuit
+
+print("total")
+print_hamiltonian_circuit(h.total_hamiltonian, ["010010111"])
+print("mandatory")
+print_hamiltonian_circuit(h.mandatory_c, ["010010111"])
+print("start")
+print_hamiltonian_circuit(h.starting_node_c, ["010010111"])
+print("finish")
+print_hamiltonian_circuit(h.ending_node_c, ["010010111"])
+print("int")
+print_hamiltonian_circuit(h.hint_c, ["010010111"])
+
+
+# print("total2")
+# print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
+# print("mandatory2")
+# print_hamiltonian_circuit(h.mandatory_c, ["11111"])
+# print("start2")
+# print_hamiltonian_circuit(h.starting_node_c, ["11111"])
+# print("finish2")
+# print_hamiltonian_circuit(h.ending_node_c, ["11111"])
+# print("int2")
+# print_hamiltonian_circuit(h.hint_c, ["11111"])
+# ------------------------------------------------------------------------------------------------------------------------------------------
