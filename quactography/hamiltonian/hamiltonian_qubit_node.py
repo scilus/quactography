@@ -209,10 +209,12 @@ class Hamiltonian_qubit_node:
         # print("D : ", departure_nodes)
         # print("F : ", finishing_nodes)
 
-        start_node_constraint_cost_h = SparsePauliOp.from_list(pauli_starting_node_term)
+        start_node_constraint_cost_h = SparsePauliOp.from_list(
+            pauli_starting_node_term * 4
+        )
         # print(start_node_constraint_cost_h)
 
-        ending_node_constraint_cost_h = SparsePauliOp.from_list(pauli_end_term)
+        ending_node_constraint_cost_h = SparsePauliOp.from_list(pauli_end_term * 4)
         # print(ending_node_constraint_cost_h)
         return start_node_constraint_cost_h, ending_node_constraint_cost_h
 
@@ -278,13 +280,40 @@ class Hamiltonian_qubit_node:
         pauli_op_term_ints = []
         for i in range(len(list_int_terms)):
             pauli_op_term_ints.append(SparsePauliOp.from_list(list_int_terms[i]))
-        # print(pauli_op_term_ints)
 
+        list_int_verif_terms = []
+        pauli_int_verif_terms = []
+
+        # Adding term to verify if the intermediate node is present in the path: Z_int - I for each intermediate node
+        for pos, int_node_index in enumerate(intermediate_nodes):
+            list_int_verif_terms.append(
+                [
+                    (
+                        "I" * (self.graph.num_nodes - 1 - int_node_index)
+                        + "Z"
+                        + "I" * int_node_index,
+                        1,
+                    ),
+                    ("I" * self.graph.num_nodes, -1),
+                ]
+            )
+        for i in range(len(intermediate_nodes)):
+            pauli_int_verif_terms.append(
+                (SparsePauliOp.from_list(list_int_verif_terms[i]))
+            )
+
+        # print("int verif", pauli_int_verif_terms)
+        # print("pauli int terms", pauli_op_term_ints)
+        # Multiply pauli_op_term_ints by pauli_int_verif_terms:
+        for i in range(len(pauli_op_term_ints)):
+            pauli_op_term_ints[i] = pauli_op_term_ints[i] @ pauli_int_verif_terms[i]
+
+        # Square terms for QUBO method:
         for i in range(len(pauli_op_term_ints)):
             pauli_op_term_ints[i] = pauli_op_term_ints[i] @ pauli_op_term_ints[i]
-        # print(pauli_op_term_ints)
-        sum_intermediate_cost_h_terms = sum(pauli_op_term_ints)
 
+        sum_intermediate_cost_h_terms = sum(pauli_op_term_ints)
+        # print(sum_intermediate_cost_h_terms)
         # print(sum_intermediate_cost_h_terms.simplify())
         return sum_intermediate_cost_h_terms.simplify()  # type: ignore
 
@@ -334,6 +363,19 @@ my_graph_class = Graph(
     1,
     0,
 )
+
+# my_graph_class = Graph(
+#     np.array(
+#         [
+#             [0, 1, 1, 1],
+#             [1, 0, 1, 0],
+#             [1, 1, 0, 1],
+#             [1, 0, 1, 0],
+#         ]
+#     ),
+#     1,
+#     0,
+# )
 print(my_graph_class.starting_nodes)
 print(my_graph_class.ending_nodes)
 print(my_graph_class.weights)
@@ -351,21 +393,21 @@ h = Hamiltonian_qubit_node(my_graph_class, 1)
 # Test intermediate_cost
 print(h.hint_c)
 
-# print("total :", h.total_hamiltonian.simplify())
-# print(h.exact_cost)
-# print(h.exact_path)
+print("total :", h.total_hamiltonian.simplify())
+print(h.exact_cost)
+print(h.exact_path)
 from quactography.hamiltonian.validate import print_hamiltonian_circuit
 
-# print("total")
-# print_hamiltonian_circuit(h.total_hamiltonian, ["11000"])
-# print("mandatory")
-# print_hamiltonian_circuit(h.mandatory_c, ["11000"])
-# print("start")
-# print_hamiltonian_circuit(h.starting_node_c, ["11000"])
-# print("finish")
-# print_hamiltonian_circuit(h.ending_node_c, ["11000"])
-# print("int")
-print_hamiltonian_circuit(h.hint_c, ["11000"])
+print("total")
+print_hamiltonian_circuit(h.total_hamiltonian, ["10101"])
+print("mandatory")
+print_hamiltonian_circuit(h.mandatory_c, ["10101"])
+print("start")
+print_hamiltonian_circuit(h.starting_node_c, ["10101"])
+print("finish")
+print_hamiltonian_circuit(h.ending_node_c, ["10101"])
+print("int")
+print_hamiltonian_circuit(h.hint_c, ["10101"])
 # print()
 
 # print("total2")
