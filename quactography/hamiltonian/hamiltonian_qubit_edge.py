@@ -261,7 +261,7 @@ h = Hamiltonian_qubit_edge(my_graph_class, 1)
 # # Test intermediate_cost
 # print(h.hint_c)
 
-# print("total :", h.total_hamiltonian.simplify())
+print("total :", h.total_hamiltonian.simplify())
 print("exact cost", h.exact_cost)
 print("quantum read", h.exact_path)
 from quactography.hamiltonian.validate import print_hamiltonian_circuit
