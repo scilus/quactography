@@ -3,16 +3,18 @@ from dipy.reconst.shm import sh_to_sf
 from dipy.core.sphere import Sphere
 
 
-DIRECTIONS_2D = np.array([
-    [-1.0, 0.0],
-    [1.0, 0.0],
-    [0.0, -1.0],
-    [0.0, 1.0],
-    [-np.sqrt(2.0)/2.0, np.sqrt(2.0)/2.0],
-    [np.sqrt(2.0)/2.0, np.sqrt(2.0)/2.0],
-    [np.sqrt(2.0)/2.0, -np.sqrt(2.0)/2.0],
-    [-np.sqrt(2.0)/2.0, -np.sqrt(2.0)/2.0]
-])
+DIRECTIONS_2D = np.array(
+    [
+        [-1.0, 0.0],
+        [1.0, 0.0],
+        [0.0, -1.0],
+        [0.0, 1.0],
+        [-np.sqrt(2.0) / 2.0, np.sqrt(2.0) / 2.0],
+        [np.sqrt(2.0) / 2.0, np.sqrt(2.0) / 2.0],
+        [np.sqrt(2.0) / 2.0, -np.sqrt(2.0) / 2.0],
+        [-np.sqrt(2.0) / 2.0, -np.sqrt(2.0) / 2.0],
+    ]
+)
 
 
 def build_adjacency_matrix(nodes_mask):
@@ -21,25 +23,42 @@ def build_adjacency_matrix(nodes_mask):
     # 1st. Assign labels to non-zero voxels (nodes)
     node_indices = np.flatnonzero(nodes_mask)
 
+    # List of every column in the image:
     labels_volume = np.zeros(nodes_mask.shape, dtype=int)
+
+    # Names every element in labels_volume as a node from bottom to top (lower y number to higher), column left to right (lower x to higher x)
     labels_volume[nodes_mask] = np.arange(len(node_indices))
 
+    # Creates an empty adjacency matrix with the nodes as rows and columns (dimension)
     adj_matrix = np.zeros((len(node_indices), len(node_indices)))
 
     # node traversal
     for i in range(len(node_indices)):
         label = node_indices[i]
+
+        # Coordinates of voxel
         x, y = np.unravel_index(label, nodes_mask.shape)
 
+        # Adds possibility of an edge to the actual node closest neighbour in 8 directions
         for offset in [-1, 1]:
-            adj_matrix = _add_edge_perhaps(x + offset, y, i, nodes_mask,
-                                           labels_volume, adj_matrix)
-            adj_matrix = _add_edge_perhaps(x, y + offset, i, nodes_mask,
-                                           labels_volume, adj_matrix)
+            adj_matrix = _add_edge_perhaps(
+                x + offset, y, i, nodes_mask, labels_volume, adj_matrix
+            )
+            adj_matrix = _add_edge_perhaps(
+                x, y + offset, i, nodes_mask, labels_volume, adj_matrix
+            )
             for y_offset in [-1, 1]:
-                adj_matrix = _add_edge_perhaps(x + offset, y + y_offset, i,
-                                               nodes_mask, labels_volume,
-                                               adj_matrix)
+                adj_matrix = _add_edge_perhaps(
+                    x + offset, y + y_offset, i, nodes_mask, labels_volume, adj_matrix
+                )
+    # # Verify number of non-zero potential connexions (max) for closest neighbours :
+    # num_non_zero = 0
+    # adj_matrix_1 = adj_matrix.flatten()
+    # for i in adj_matrix_1:
+    #     if i != 0:
+    #         num_non_zero += 1
+    # print(num_non_zero)
+
     return adj_matrix, node_indices
 
 
@@ -62,8 +81,9 @@ def build_weighted_graph(adj_matrix, node_indices, sh, axis_name):
             w_list = []
             for conn_idx in range(nb_connections):
                 conn_x, conn_y = connected_xs[conn_idx], connected_ys[conn_idx]
-                dir = np.array([[conn_x, conn_y]], dtype=float)\
-                    - np.array([[start_x, start_y]], dtype=float)
+                dir = np.array([[conn_x, conn_y]], dtype=float) - np.array(
+                    [[start_x, start_y]], dtype=float
+                )
                 dir_id = np.argmax(np.dot(dir, DIRECTIONS_2D.T))
 
                 w = sf[start_x, start_y, dir_id] + sf[conn_x, conn_y, dir_id]
@@ -77,21 +97,22 @@ def build_weighted_graph(adj_matrix, node_indices, sh, axis_name):
 
 def _get_sphere_for_axis(axis_name):
     directions = np.zeros((len(DIRECTIONS_2D), 3))
-    if axis_name == 'sagittal':
+    if axis_name == "sagittal":
         directions[:, 1] = DIRECTIONS_2D[:, 0]
         directions[:, 2] = DIRECTIONS_2D[:, 1]
-    elif axis_name == 'coronal':
+    elif axis_name == "coronal":
         directions[:, 0] = DIRECTIONS_2D[:, 0]
         directions[:, 2] = DIRECTIONS_2D[:, 1]
-    elif axis_name == 'axial':
+    elif axis_name == "axial":
         directions[:, 0] = DIRECTIONS_2D[:, 0]
         directions[:, 1] = DIRECTIONS_2D[:, 1]
     # print(directions)
     return Sphere(xyz=directions)
 
 
-def _add_edge_perhaps(pos_x, pos_y, current_node, nodes_mask,
-                      labels_volume, adj_matrix):
+def _add_edge_perhaps(
+    pos_x, pos_y, current_node, nodes_mask, labels_volume, adj_matrix
+):
     if _is_valid_pos(pos_x, pos_y, nodes_mask):
         neighbor_label = labels_volume[pos_x, pos_y]
         adj_matrix[current_node, neighbor_label] = 1
