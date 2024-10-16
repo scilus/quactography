@@ -1,6 +1,7 @@
 import numpy as np
 
 
+# Filter out nodes that aren't connected to any other:
 def remove_orphan_nodes(graph, node_indices, keep_indices=None):
     out_graph = []
     out_it = []
@@ -16,6 +17,7 @@ def remove_orphan_nodes(graph, node_indices, keep_indices=None):
     return out_graph, out_indices
 
 
+# Remove nodes that do not add a change in direction between the two nodes it is connected to where the direction stays the same:
 def remove_intermediate_connections(graph, node_indices=None, keep_indices=None):
     skipped_at_least_one = True
     while skipped_at_least_one:
@@ -25,8 +27,10 @@ def remove_intermediate_connections(graph, node_indices=None, keep_indices=None)
                 it, node_indices, keep_indices
             ):
                 indices = np.flatnonzero(graph_row)
+                # Here we sum the weights:
                 graph[indices[0], indices[1]] = np.sum(graph_row)
                 graph[indices[1], indices[0]] = np.sum(graph_row)
+                # We replace with zero the node that is taken out:
                 graph[it, :] = 0.0
                 graph[:, it] = 0.0
                 if indices[0] < it and indices[1] < it:

@@ -63,6 +63,7 @@ def build_adjacency_matrix(nodes_mask):
 
 
 def build_weighted_graph(adj_matrix, node_indices, sh, axis_name):
+    # Get directions depending if we are in axial, coronal or sagittal :
     sphere = _get_sphere_for_axis(axis_name)
     sf = sh_to_sf(sh, sphere, sh_order=8)
     sf[sf < 0.0] = 0.0
@@ -77,17 +78,23 @@ def build_weighted_graph(adj_matrix, node_indices, sh, axis_name):
         nb_connections = np.count_nonzero(node_row)
         if nb_connections > 0:
             start_x, start_y = x[it], y[it]
+            # which nodes are connected to every starting node:
             connected_xs, connected_ys = x[node_row > 0], y[node_row > 0]
+
             w_list = []
             for conn_idx in range(nb_connections):
                 conn_x, conn_y = connected_xs[conn_idx], connected_ys[conn_idx]
+
                 dir = np.array([[conn_x, conn_y]], dtype=float) - np.array(
                     [[start_x, start_y]], dtype=float
                 )
+                # The directions :
+
                 dir_id = np.argmax(np.dot(dir, DIRECTIONS_2D.T))
 
                 w = sf[start_x, start_y, dir_id] + sf[conn_x, conn_y, dir_id]
                 w_list.append(w)
+
             weights = np.zeros((len(node_row),))
             weights[node_row > 0] = np.asarray(w_list)
             weighted_graph[it, :] = weights
