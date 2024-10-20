@@ -38,6 +38,31 @@ def remove_intermediate_connections(graph, node_indices=None, keep_indices=None)
     return graph
 
 
+# Remove nodes that do not add a change in direction between the two nodes it is connected to where the direction stays the same
+# by multiplying instead of adding the weights:
+def remove_intermediate_connections_prod_instead_sum(
+    graph, node_indices=None, keep_indices=None
+):
+    skipped_at_least_one = True
+    while skipped_at_least_one:
+        skipped_at_least_one = False
+        for it, graph_row in enumerate(graph):
+            if np.count_nonzero(graph_row) == 2 and _test_removable_indice(
+                it, node_indices, keep_indices
+            ):
+                indices = np.flatnonzero(graph_row)
+                # Here we sum the weights:
+
+                graph[indices[0], indices[1]] = np.prod(graph_row)
+                graph[indices[1], indices[0]] = np.prod(graph_row)
+                # We replace with zero the node that is taken out:
+                graph[it, :] = 0.0
+                graph[:, it] = 0.0
+                if indices[0] < it and indices[1] < it:
+                    skipped_at_least_one = True
+    return graph
+
+
 def _test_removable_indice(it, node_indices, keep_indices):
     if keep_indices is None or node_indices is None:
         return True
