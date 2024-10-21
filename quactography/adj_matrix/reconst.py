@@ -85,12 +85,12 @@ def build_weighted_graph(adj_matrix, node_indices, sh, axis_name):
             for conn_idx in range(nb_connections):
                 conn_x, conn_y = connected_xs[conn_idx], connected_ys[conn_idx]
 
-                dir = np.array([[conn_x, conn_y]], dtype=float) - np.array(
+                direction = np.array([[conn_x, conn_y]], dtype=float) - np.array(
                     [[start_x, start_y]], dtype=float
                 )
                 # The directions :
 
-                dir_id = np.argmax(np.dot(dir, DIRECTIONS_2D.T))
+                dir_id = np.argmax(np.dot(direction, DIRECTIONS_2D.T))
 
                 w = sf[start_x, start_y, dir_id] + sf[conn_x, conn_y, dir_id]
                 w_list.append(w)
