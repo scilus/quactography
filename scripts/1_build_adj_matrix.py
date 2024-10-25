@@ -46,23 +46,23 @@ def main():
     """
     parser = _build_arg_parser()
     args = parser.parse_args()
-    nodes_mask_im = nib.load(args.in_nodes_mask) # type: ignore
-    sh_im = nib.load(args.in_sh) # type: ignore
+    nodes_mask_im = nib.load(args.in_nodes_mask)  # type: ignore
+    sh_im = nib.load(args.in_sh)  # type: ignore
 
     nodes_mask = slice_along_axis(
-        nodes_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index # type: ignore
+        nodes_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index  # type: ignore
     )
 
     keep_node_indices = None
     if args.keep_mask:
-        keep_mask_im = nib.load(args.keep_mask) # type: ignore
+        keep_mask_im = nib.load(args.keep_mask)  # type: ignore
         keep_mask = slice_along_axis(
-            keep_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index # type: ignore
+            keep_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index  # type: ignore
         )
         keep_node_indices = np.flatnonzero(keep_mask)
 
     # !! Careful, we remove a dimension, but the SH amplitudes still exist in 3D
-    sh = slice_along_axis(sh_im.get_fdata(), args.axis_name, args.slice_index) # type: ignore
+    sh = slice_along_axis(sh_im.get_fdata(), args.axis_name, args.slice_index)  # type: ignore
 
     # adjacency graph
     adj_matrix, node_indices = build_adjacency_matrix(nodes_mask)
