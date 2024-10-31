@@ -2,6 +2,7 @@ import argparse
 import nibabel as nib
 import numpy as np
 import sys
+import matplotlib.pyplot as plt
 
 sys.path.append(r"C:\Users\harsh\quactography")
 
@@ -84,7 +85,8 @@ def main():
     weighted_graph, node_indices = remove_orphan_nodes(
         weighted_graph, node_indices, keep_node_indices
     )
-
+    plt.imshow(np.log(weighted_graph + 1))
+    plt.show()
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
 
