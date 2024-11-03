@@ -1,3 +1,6 @@
+# Code from:https://el-openqaoa.readthedocs.io/en/main/notebooks/07_cost_landscapes_w_manual_mode.html
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from openqaoa.qaoa_components import QAOADescriptor, create_qaoa_variational_params
