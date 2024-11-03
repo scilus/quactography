@@ -333,91 +333,91 @@ class Hamiltonian_qubit_node:
         return eigenvalues[best_indices], binary_paths
 
 
-"""Test the Hamiltonian_qubit_node class: TO REMOVE WHEN TESTING FINISHED---------------------------------------------------------------------------------------------------"""
-# mat = np.array([[0, 1, 1, 0], [1, 0, 0, 5], [1, 0, 0, 6], [0, 5, 6, 0]])
+# """Test the Hamiltonian_qubit_node class: TO REMOVE WHEN TESTING FINISHED---------------------------------------------------------------------------------------------------"""
+# # mat = np.array([[0, 1, 1, 0], [1, 0, 0, 5], [1, 0, 0, 6], [0, 5, 6, 0]])
 
-# # This is the given format you should use to save the graph, for mat:
-# save_graph(mat, np.array([0, 1, 2, 3]), np.array([4, 4]), "rand_graph.npz")
-import sys
+# # # This is the given format you should use to save the graph, for mat:
+# # save_graph(mat, np.array([0, 1, 2, 3]), np.array([4, 4]), "rand_graph.npz")
+# import sys
 
-sys.path.append(r"C:\Users\harsh\quactography")
+# sys.path.append(r"C:\Users\harsh\quactography")
 
-from quactography.graph.undirected_graph import Graph
-from quactography.adj_matrix.io import load_graph
+# from quactography.graph.undirected_graph import Graph
+# from quactography.adj_matrix.io import load_graph
 
-# from quactography.hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
-import numpy as np
+# # from quactography.hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
+# import numpy as np
 
-from quactography.adj_matrix.io import save_graph
-
-my_graph_class = Graph(
-    np.array(
-        [
-            [0, 1, 1, 1, 1],
-            [1, 0, 1, 0, 1],
-            [1, 1, 0, 1, 1],
-            [1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1],
-        ]
-    ),
-    1,
-    0,
-)
+# from quactography.adj_matrix.io import save_graph
 
 # my_graph_class = Graph(
 #     np.array(
 #         [
-#             [0, 1, 1, 1],
-#             [1, 0, 1, 0],
-#             [1, 1, 0, 1],
-#             [1, 0, 1, 0],
+#             [0, 1, 1, 1, 1],
+#             [1, 0, 1, 0, 1],
+#             [1, 1, 0, 1, 1],
+#             [1, 0, 1, 0, 1],
+#             [1, 0, 1, 0, 1],
 #         ]
 #     ),
 #     1,
 #     0,
 # )
-print(my_graph_class.starting_nodes)
-print(my_graph_class.ending_nodes)
-print(my_graph_class.weights)
-print(my_graph_class.edge_indices)
 
-# Test mandatory_cost
-h = Hamiltonian_qubit_node(my_graph_class, 1)
+# # my_graph_class = Graph(
+# #     np.array(
+# #         [
+# #             [0, 1, 1, 1],
+# #             [1, 0, 1, 0],
+# #             [1, 1, 0, 1],
+# #             [1, 0, 1, 0],
+# #         ]
+# #     ),
+# #     1,
+# #     0,
+# # )
+# print(my_graph_class.starting_nodes)
+# print(my_graph_class.ending_nodes)
+# print(my_graph_class.weights)
+# print(my_graph_class.edge_indices)
 
-# print(h.mandatory_c)
+# # Test mandatory_cost
+# h = Hamiltonian_qubit_node(my_graph_class, 1)
 
-# # Test starting_ending_node_cost
-# print(h.starting_node_c)
-# print(h.ending_node_c)
+# # print(h.mandatory_c)
 
-# Test intermediate_cost
-print(h.hint_c)
+# # # Test starting_ending_node_cost
+# # print(h.starting_node_c)
+# # print(h.ending_node_c)
 
-print("total :", h.total_hamiltonian.simplify())
-print(h.exact_cost)
-print(h.exact_path)
-from quactography.hamiltonian.validate import print_hamiltonian_circuit
+# # Test intermediate_cost
+# print(h.hint_c)
 
-print("total")
-print_hamiltonian_circuit(h.total_hamiltonian, ["10101"])
-print("mandatory")
-print_hamiltonian_circuit(h.mandatory_c, ["10101"])
-print("start")
-print_hamiltonian_circuit(h.starting_node_c, ["10101"])
-print("finish")
-print_hamiltonian_circuit(h.ending_node_c, ["10101"])
-print("int")
-print_hamiltonian_circuit(h.hint_c, ["10101"])
-# print()
+# print("total :", h.total_hamiltonian.simplify())
+# print(h.exact_cost)
+# print(h.exact_path)
+# from quactography.hamiltonian.validate import print_hamiltonian_circuit
 
-# print("total2")
-# print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
-# print("mandatory2")
-# print_hamiltonian_circuit(h.mandatory_c, ["11111"])
-# print("start2")
-# print_hamiltonian_circuit(h.starting_node_c, ["11111"])
-# print("finish2")
-# print_hamiltonian_circuit(h.ending_node_c, ["11111"])
-# print("int2")
-# print_hamiltonian_circuit(h.hint_c, ["11111"])
-# ------------------------------------------------------------------------------------------------------------------------------------------
+# print("total")
+# print_hamiltonian_circuit(h.total_hamiltonian, ["10101"])
+# print("mandatory")
+# print_hamiltonian_circuit(h.mandatory_c, ["10101"])
+# print("start")
+# print_hamiltonian_circuit(h.starting_node_c, ["10101"])
+# print("finish")
+# print_hamiltonian_circuit(h.ending_node_c, ["10101"])
+# print("int")
+# print_hamiltonian_circuit(h.hint_c, ["10101"])
+# # print()
+
+# # print("total2")
+# # print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
+# # print("mandatory2")
+# # print_hamiltonian_circuit(h.mandatory_c, ["11111"])
+# # print("start2")
+# # print_hamiltonian_circuit(h.starting_node_c, ["11111"])
+# # print("finish2")
+# # print_hamiltonian_circuit(h.ending_node_c, ["11111"])
+# # print("int2")
+# # print_hamiltonian_circuit(h.hint_c, ["11111"])
+# # ------------------------------------------------------------------------------------------------------------------------------------------

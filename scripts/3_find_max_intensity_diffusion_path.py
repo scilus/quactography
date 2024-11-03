@@ -25,10 +25,8 @@ def _build_arg_parser():
     p.add_argument("output_file", help="Output file name", type=str)
 
     p.add_argument(
-        "--hamiltonian",
+        "hamiltonian",
         help="Hamiltonian qubit representation to use for QAOA, either 'node' or 'edge' ",
-        default="node",
-        choices=["node", "edge"],
         type=str,
     )
     p.add_argument(
@@ -66,14 +64,15 @@ def main():
 
     # Construct Hamiltonian when qubits are set as edges, then optimize with QAOA/scipy:
     if args.hamiltonian == "edge":
+
         hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in args.alphas]
         print("\n Calculating qubits as edges......................")
         multiprocess_qaoa_solver_edge(
             hamiltonians, args.reps, args.number_processors, args.output_file
         )
-
+        print(hamiltonians[0].total_hamiltonian)
     # Construct Hamiltonian when qubits are set as nodes, then optimize with QAOA/scipy:
-    else:
+    elif args.hamiltonian == "node":
         hamiltonians = [Hamiltonian_qubit_node(graph, alpha) for alpha in args.alphas]
         print("\n Calculating qubits as nodes......................")
         multiprocess_qaoa_solver_node(
