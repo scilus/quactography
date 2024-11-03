@@ -14,20 +14,18 @@ from qiskit.quantum_info import SparsePauliOp
 from openqaoa.qaoa_components import PauliOp, Hamiltonian
 import numpy as np
 
-paul_term = [
-    PauliOp("III", (0, 1, 2)),  # type: ignore
+paul_term = [  # type: ignore
     PauliOp("Z", (0,)),
     PauliOp("Z", (1,)),
     PauliOp("Z", (2,)),
-    PauliOp("III", (0, 1, 2)),  # type: ignore
     PauliOp("ZZ", (0, 2)),  # type: ignore
     PauliOp("ZZ", (0, 1)),  # type: ignore
     PauliOp("ZZ", (1, 2)),  # type: ignore
 ]
 
-coef_terms = [-2, 1, 0.5, 0.5, 6, 1, 1, -4]
+coef_terms = [1, 0.5, 0.5, 1, 1, -4]
 
-cost_hamiltonian = Hamiltonian(paul_term, coef_terms, constant=0)
+cost_hamiltonian = Hamiltonian(paul_term, coef_terms, constant=4)
 n_qubits = 3
 qubit_register = [0, 1, 2]
 
@@ -37,7 +35,7 @@ pauli_coeffs = [1] * n_qubits
 mixer_hamiltonian = Hamiltonian(pauli_terms, pauli_coeffs, constant=0)  # type: ignore
 
 qaoa_descriptor_p1 = QAOADescriptor(cost_hamiltonian, mixer_hamiltonian, p=1)
-qaoa_descriptor_p2 = QAOADescriptor(cost_hamiltonian, mixer_hamiltonian, p=2)
+qaoa_descriptor_p2 = QAOADescriptor(cost_hamiltonian, mixer_hamiltonian, p=1)
 variate_params_std = create_qaoa_variational_params(
     qaoa_descriptor_p1, "standard", "ramp"
 )
