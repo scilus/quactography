@@ -66,14 +66,19 @@ def main():
     if args.hamiltonian == "edge":
 
         hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in args.alphas]
+
+        print(hamiltonians[0].total_hamiltonian)
+
         print("\n Calculating qubits as edges......................")
         multiprocess_qaoa_solver_edge(
             hamiltonians, args.reps, args.number_processors, args.output_file
         )
-        print(hamiltonians[0].total_hamiltonian)
+
     # Construct Hamiltonian when qubits are set as nodes, then optimize with QAOA/scipy:
     elif args.hamiltonian == "node":
         hamiltonians = [Hamiltonian_qubit_node(graph, alpha) for alpha in args.alphas]
+        print(hamiltonians[0].total_hamiltonian)
+
         print("\n Calculating qubits as nodes......................")
         multiprocess_qaoa_solver_node(
             hamiltonians, args.reps, args.number_processors, args.output_file

@@ -81,7 +81,7 @@ cost_landscape_std = plot_cost_landscape(
     betas, gammas, variate_params_std, backend_qiskit_p1
 )
 
-# cost landscape for Fourier parameterization
+# cost landscape for Fourier parameterization:
 us = np.linspace(0, 2 * np.pi, 50)
 vs = np.linspace(0, np.pi, 50)
 
