@@ -29,7 +29,7 @@ def main():
     args = parser.parse_args()
 
     weighted_graph, node_indices, _ = load_graph(args.in_graph + ".npz")
-    graph = rx.PyGraph()
+    graph = rx.PyGraph(multigraph=False)
     num_nodes = len(node_indices)
     nodes_list = graph.add_nodes_from((range(num_nodes)))
     # Add edges :
@@ -40,7 +40,7 @@ def main():
                 edges.append((i, j, ((weighted_graph[i, j])).round(3)))
 
     graph.add_edges_from(edges)
-    draw(graph, with_labels=True, edge_labels=str)  # type: ignore
+    draw(graph, with_labels=True, edge_labels=str, pos=rx.spiral_layout(graph))  # type: ignore
 
     # Save figure in output
     plt.savefig(args.initial_graph_filename)

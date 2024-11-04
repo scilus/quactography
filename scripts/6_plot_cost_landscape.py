@@ -25,7 +25,7 @@ paul_term = [  # type: ignore
 
 coef_terms = [1, 0.5, 0.5, 1, 1, -4]
 
-cost_hamiltonian = Hamiltonian(paul_term, coef_terms, constant=4)
+cost_hamiltonian = Hamiltonian(paul_term, coef_terms, constant=4.5)
 n_qubits = 3
 qubit_register = [0, 1, 2]
 
