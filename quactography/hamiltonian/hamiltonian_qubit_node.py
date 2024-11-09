@@ -26,7 +26,7 @@ class Hamiltonian_qubit_node:
                 (self.starting_node_c) ** 2 + (self.ending_node_c) ** 2 + self.hint_c
             ).simplify()
         )
-        self.exact_cost, self.exact_path = self.get_exact_sol()
+        # self.exact_cost, self.exact_path = self.get_exact_sol()
 
     def mandatory_cost(self):
         """Cost of going through a path
@@ -317,20 +317,20 @@ class Hamiltonian_qubit_node:
         # print(sum_intermediate_cost_h_terms.simplify())
         return sum_intermediate_cost_h_terms.simplify()  # type: ignore
 
-    def get_exact_sol(self):
-        mat_hamiltonian = np.array(self.total_hamiltonian.to_matrix())
-        eigenvalues, eigenvectors = np.linalg.eig(mat_hamiltonian)
+    # def get_exact_sol(self):
+    #     mat_hamiltonian = np.array(self.total_hamiltonian.to_matrix())
+    #     eigenvalues, eigenvectors = np.linalg.eig(mat_hamiltonian)
 
-        best_indices = np.where(eigenvalues == np.min(eigenvalues))
-        # print(eigenvalues[int("0111", 2)])
-        # print("Eigenvalues : ", eigenvalues[best_indices])
-        # print("Eigenvectors : ", eigenvectors[best_indices])
+    #     best_indices = np.where(eigenvalues == np.min(eigenvalues))
+    #     # print(eigenvalues[int("0111", 2)])
+    #     # print("Eigenvalues : ", eigenvalues[best_indices])
+    #     # print("Eigenvectors : ", eigenvectors[best_indices])
 
-        binary_paths = [bin(idx[0]).lstrip("-0b") for idx in best_indices]
-        # print("Binary paths : ", binary_paths)
+    #     binary_paths = [bin(idx[0]).lstrip("-0b") for idx in best_indices]
+    #     # print("Binary paths : ", binary_paths)
 
-        # costs and paths to all best solutions
-        return eigenvalues[best_indices], binary_paths
+    #     # costs and paths to all best solutions
+    #     return eigenvalues[best_indices], binary_paths
 
 
 # """Test the Hamiltonian_qubit_node class: TO REMOVE WHEN TESTING FINISHED---------------------------------------------------------------------------------------------------"""

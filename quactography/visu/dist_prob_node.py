@@ -67,24 +67,25 @@ def plot_distribution_of_probabilities_node(
     #     f"Optimal path obtained by diagonal hamiltonian minimum costs (right=q0): {h.exact_path}"
     # )
 
-    match_found = False
-    for i in selected_paths:
-        if i in h.exact_path:
-            match_found = True
-            break
+    # match_found = False
+    # for i in selected_paths:
+    #     if i in h.exact_path:
+    #         match_found = True
+    #         break
 
     plot_distribution(
         {key: dist_binary_prob[key] for key in selected_paths},
         figsize=(16, 14),
         title=(
-            f"Distribution of probabilities for selected paths \n Right path FOUND (quantum read): {h.exact_path}"
-            if match_found
-            else f"Distribution of probabilities for selected paths \n Right path NOT FOUND (quantum read): {h.exact_path}"
+            f"Distribution of probabilities for selected paths"
+            # \n Right path FOUND (quantum read): {h.exact_path}"
+            # if match_found
+            # else f"Distribution of probabilities for selected paths \n Right path NOT FOUND (quantum read): {h.exact_path}"
         ),
-        color="pink" if match_found else "lightblue",
+        color="pink",  # if match_found else "lightblue",
         sort="value_desc",
         filename=visu_out_file_selected,
-        target_string=h.exact_path,
+        # target_string=h.exact_path,
     )
     # if match_found:
     #     print(

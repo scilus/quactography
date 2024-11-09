@@ -94,7 +94,8 @@ def visualize_optimal_paths_edge(
     # plt.tight_layout()
     plt.legend(
         [
-            f"alpha_factor = {(alpha/all_weights_sum):.2f},\n Cost: {min_cost:.2f}\n Starting node : {starting_node}, \n Ending node : {ending_node},\n reps : {reps}, \n Good path : {h.exact_path}, \n Actual path : {bin_str}"
+            f"alpha_factor = {(alpha/all_weights_sum):.2f},\n Cost: {min_cost:.2f}\n Starting node : {starting_node}, \n Ending node : {ending_node},\n reps : {reps},\n Actual path : {bin_str}"
+            #  \n Good path : {h.exact_path},
         ],
         loc="upper right",
     )

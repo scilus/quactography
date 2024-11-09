@@ -29,14 +29,14 @@ def find_longest_path(args):
     # Save output file name diffrerent for each alpha:
     outfile = outfile + "_alpha_" + str(h.alpha)
 
-    # Pad with zeros to the left to have the same length as the number of edges:
-    for i in range(len(h.exact_path[0])):
-        if len(h.exact_path[0]) < h.graph.number_of_edges:
-            h.exact_path[i] = h.exact_path[i].zfill(h.graph.number_of_edges + 1)
-    # print("Path Hamiltonian (quantum reading -> right=q0) : ", h.exact_path)
+    # # Pad with zeros to the left to have the same length as the number of edges:
+    # for i in range(len(h.exact_path[0])):
+    #     if len(h.exact_path[0]) < h.graph.number_of_edges:
+    #         h.exact_path[i] = h.exact_path[i].zfill(h.graph.number_of_edges + 1)
+    # # print("Path Hamiltonian (quantum reading -> right=q0) : ", h.exact_path)
 
-    # Reverse the binary path to have the same orientation as the classical path:
-    h.exact_path_classical_read = [path[::-1] for path in h.exact_path]
+    # # Reverse the binary path to have the same orientation as the classical path:
+    # h.exact_path_classical_read = [path[::-1] for path in h.exact_path]
 
     # Create QAOA circuit.
     ansatz = QAOAAnsatz(h.total_hamiltonian, reps, name="QAOA")
