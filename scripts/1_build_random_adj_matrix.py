@@ -98,6 +98,18 @@ def main():
 
     # Remove all-zero columns and rows
     mat = remove_zero_columns_rows(mat)
+    mat = np.array(
+        [
+            [0, 1, 1, 1, 0, 0, 0, 0],
+            [1, 0, 1, 0, 1, 1, 0, 0],
+            [1, 1, 0, 1, 1, 1, 1, 0],
+            [1, 0, 1, 0, 0, 1, 1, 0],
+            [0, 1, 1, 0, 0, 1, 0, 1],
+            [0, 1, 1, 1, 1, 0, 1, 1],
+            [0, 0, 1, 1, 0, 1, 0, 1],
+            [0, 0, 0, 0, 1, 1, 1, 0],
+        ]
+    )
 
     # Save the graph:
     save_graph(mat, np.arange(mat.shape[0]), mat.shape, args.out_graph)

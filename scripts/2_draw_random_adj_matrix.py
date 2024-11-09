@@ -40,7 +40,7 @@ def main():
                 edges.append((i, j, ((weighted_graph[i, j])).round(3)))
 
     graph.add_edges_from(edges)
-    draw(graph, with_labels=True, edge_labels=str, pos=rx.spiral_layout(graph))  # type: ignore
+    draw(graph, with_labels=True, edge_labels=str, pos=rx.graph_spring_layout(graph))  # type: ignore
 
     # Save figure in output
     plt.savefig(args.initial_graph_filename)
