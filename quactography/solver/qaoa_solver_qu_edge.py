@@ -3,6 +3,7 @@ import itertools
 from qiskit.primitives import Estimator, Sampler
 from qiskit.circuit.library import QAOAAnsatz
 from scipy.optimize import minimize
+import matplotlib.pyplot as plt
 import numpy as np
 
 from quactography.solver.io import save_optimization_results
@@ -16,7 +17,9 @@ def find_longest_path(args):
     """Summary :  Usage of QAOA algorithm to find the shortest path in a graph.
 
     Args:
-        args (Sparse Pauli list):  Hamiltonian in QUBO representation
+        h (Sparse Pauli list):  Hamiltonian in QUBO representation
+        reps (int): number of layers to add to quantum circuit (p layers)
+        outfile ( str) : name of output file to save optimization results
 
     Returns:
         res (minimize):  Results of the minimization
@@ -48,7 +51,16 @@ def find_longest_path(args):
     estimator = Estimator(options={"shots": 1000000, "seed": 42})
     sampler = Sampler(options={"shots": 1000000, "seed": 42})
 
-    # Cost function for the minimizer:
+    # Define a small value as accepted difference to cease optimisation process:
+    epsilon = 1e-4
+
+    # Initialise parameters to zeros:
+    x_0 = np.zeros(ansatz.num_parameters)
+    # previous cost initialise to a very large number:
+    previous_cost = np.inf
+    cost_history = []
+
+    # Minimisation cost function:
     def cost_func(params, estimator, ansatz, hamiltonian):
         cost = (
             estimator.run(ansatz, hamiltonian, parameter_values=params)
@@ -57,17 +69,67 @@ def find_longest_path(args):
         )
         return cost
 
-    x0 = np.zeros(ansatz.num_parameters)
+    iteration = 0
+    # Boucle d'optimisation
+    while iteration < 1000:  # OU WHILE TRUE
+        # Minimisation du coût avec COBYLA
+        res = minimize(
+            cost_func,
+            x_0,
+            args=(estimator, ansatz, h.total_hamiltonian),
+            method="COBYLA",
+            options={"maxiter": 5000, "disp": False},
+            tol=1e-4,
+        )
 
-    # Minimize the cost function using COBYLA method:
-    res = minimize(
-        cost_func,
-        x0,
-        args=(estimator, ansatz, h.total_hamiltonian),
-        method="COBYLA",
-        options={"maxiter": 5000, "disp": False},
-        tol=1e-4,
-    )
+        # Optimised cost:
+        new_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
+        cost_history.append(new_cost)
+        print(f"Iteration {iteration}: Cost = {new_cost}")
+        iteration += 1
+
+        # Verify distance between previous cost and new one:
+        if (abs(previous_cost - new_cost)) ** 2 < epsilon:
+            opt_params = res.x
+            break
+        if iteration > 100:
+            opt_params = res.x
+            print("max iter attained!!")
+            break
+        # If new cost better, x_0 found is updated to the result found :
+        if new_cost < previous_cost:
+            x_0 = res.x
+            previous_cost = new_cost
+    plt.figure(figsize=(10, 6))
+    plt.plot(cost_history, label="Cost evolution")
+    plt.xlabel("Number of iteration")
+    plt.ylabel("Cost")
+    plt.title("Convergence of cost during optimisation")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("cost_history_plot")
+    # # Old way of minimising :
+    # # Cost function for the minimizer:--------------------------------------------------------------
+    # def cost_func(params, estimator, ansatz, hamiltonian):
+    #     cost = (
+    #         estimator.run(ansatz, hamiltonian, parameter_values=params)
+    #         .result()
+    #         .values[0]
+    #     )
+    #     return cost
+
+    # x0 = np.zeros(ansatz.num_parameters)
+
+    # # Minimize the cost function using COBYLA method:
+    # res = minimize(
+    #     cost_func,
+    #     x0,
+    #     args=(estimator, ansatz, h.total_hamiltonian),
+    #     method="COBYLA",
+    #     options={"maxiter": 5000, "disp": False},
+    #     tol=1e-4,
+    # )
+    # ----------------------------------------------------------------------------------------------------
 
     min_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
     circ = ansatz.copy()
@@ -84,8 +146,8 @@ def find_longest_path(args):
 
     # Save parameters alpha and min_cost with path in csv file:
     opt_path = str_path_reversed
-
-    save_optimization_results(dist=dist, dist_binary_probabilities=dist_binary_probabilities, min_cost=min_cost, hamiltonian=h, outfile=outfile, opt_bin_str=opt_path, reps=reps)  # type: ignore
+    print("opt_params", opt_params)
+    save_optimization_results(dist=dist, dist_binary_probabilities=dist_binary_probabilities, min_cost=min_cost, hamiltonian=h, outfile=outfile, opt_bin_str=opt_path, reps=reps, opt_params=opt_params)  # type: ignore
 
 
 def multiprocess_qaoa_solver_edge(hamiltonians, reps, nbr_processes, output_file):

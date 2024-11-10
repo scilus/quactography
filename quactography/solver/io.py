@@ -2,7 +2,14 @@ import numpy as np
 
 
 def save_optimization_results(
-    outfile, dist, min_cost, hamiltonian, dist_binary_probabilities, opt_bin_str, reps
+    outfile,
+    dist,
+    min_cost,
+    hamiltonian,
+    dist_binary_probabilities,
+    opt_bin_str,
+    reps,
+    opt_params,
 ):
     np.savez(
         outfile,
@@ -12,6 +19,7 @@ def save_optimization_results(
         hamiltonian=hamiltonian,
         opt_bin_str=opt_bin_str,
         reps=reps,
+        opt_params=opt_params,
     )
 
 
@@ -24,4 +32,5 @@ def load_optimization_results(in_file):
         data["hamiltonian"],
         data["opt_bin_str"],
         data["reps"],
+        data["opt_params"],
     )

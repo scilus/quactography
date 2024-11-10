@@ -54,7 +54,16 @@ def find_longest_path(args):
     estimator = Estimator(options={"shots": 1000000, "seed": 42})
     sampler = Sampler(options={"shots": 1000000, "seed": 42})
 
-    # Cost function for the minimizer:
+    #  ----------------------------ADDED NEW WAY TO MINIMIZE :--------------------------------------------------------
+    # Define a small value as accepted difference to cease optimisation process:
+    epsilon = 1e-4
+
+    # Initialise parameters to zeros:
+    x_0 = np.zeros(ansatz.num_parameters)
+    # previous cost initialise to a very large number:
+    previous_cost = np.inf
+
+    # Minimisation cost function:
     def cost_func(params, estimator, ansatz, hamiltonian):
         cost = (
             estimator.run(ansatz, hamiltonian, parameter_values=params)
@@ -63,17 +72,51 @@ def find_longest_path(args):
         )
         return cost
 
-    x0 = np.zeros(ansatz.num_parameters)
+    # Boucle d'optimisation
+    while True:
+        # Minimisation du coût avec COBYLA
+        res = minimize(
+            cost_func,
+            x_0,
+            args=(estimator, ansatz, h.total_hamiltonian),
+            method="COBYLA",
+            options={"maxiter": 5000, "disp": False},
+            tol=1e-4,
+        )
 
-    # Minimize the cost function using COBYLA method
-    res = minimize(
-        cost_func,
-        x0,
-        args=(estimator, ansatz, h.total_hamiltonian),
-        method="COBYLA",
-        options={"maxiter": 5000, "disp": False},
-        tol=1e-4,
-    )
+        # Optimised cost:
+        new_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
+
+        # Verify distance between previous cost and new one:
+        if (abs(previous_cost - new_cost)) ** 2 < epsilon:
+            break
+
+        # If new cost better, x_0 found is updated to the result found :
+        if new_cost < previous_cost:
+            x_0 = res.x
+            previous_cost = new_cost
+
+    # ----------------------------------------------------------------OLD VERSION TO MINIMIZE: -------------------------
+    # # Cost function for the minimizer:
+    # def cost_func(params, estimator, ansatz, hamiltonian):
+    #     cost = (
+    #         estimator.run(ansatz, hamiltonian, parameter_values=params)
+    #         .result()
+    #         .values[0]
+    #     )
+    #     return cost
+
+    # x0 = np.zeros(ansatz.num_parameters)
+
+    # # Minimize the cost function using COBYLA method
+    # res = minimize(
+    #     cost_func,
+    #     x0,
+    #     args=(estimator, ansatz, h.total_hamiltonian),
+    #     method="COBYLA",
+    #     options={"maxiter": 5000, "disp": False},
+    #     tol=1e-4,
+    # )
 
     # Find minimum cost:
     min_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)

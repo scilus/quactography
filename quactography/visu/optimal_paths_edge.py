@@ -23,7 +23,7 @@ def visualize_optimal_paths_edge(
         mat_adj (np array):  adjacency matrix
         list(map(int, bin_str)) (liste int): list of 0 and 1 representing the path taken
     """
-    _, _, min_cost, h, bin_str, reps = load_optimization_results(in_file)
+    _, _, min_cost, h, bin_str, reps, opt_params = load_optimization_results(in_file)
     min_cost = min_cost.item()
     h = h.item()
     bin_str = bin_str.item()
@@ -94,7 +94,7 @@ def visualize_optimal_paths_edge(
     # plt.tight_layout()
     plt.legend(
         [
-            f"alpha_factor = {(alpha/all_weights_sum):.2f},\n Cost: {min_cost:.2f}\n Starting node : {starting_node}, \n Ending node : {ending_node},\n reps : {reps},\n Actual path : {bin_str}"
+            f"alpha_factor = {(alpha):.2f},\n Cost: {min_cost:.2f}\n Starting node : {starting_node}, \n Ending node : {ending_node},\n reps : {reps},\n Actual path : {bin_str} "
             #  \n Good path : {h.exact_path},
         ],
         loc="upper right",

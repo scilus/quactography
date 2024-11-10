@@ -9,7 +9,9 @@ def plot_distribution_of_probabilities_edge(
     in_file, visu_out_file_total, visu_out_file_selected
 ):
 
-    _, dist_binary_prob, min_cost, h, _, _ = load_optimization_results(in_file)
+    _, dist_binary_prob, min_cost, h, _, _, opt_params = load_optimization_results(
+        in_file
+    )
     # convert dist_binary_prob a dictionary
     dist_binary_prob = dist_binary_prob.item()
     min_cost = min_cost.item()

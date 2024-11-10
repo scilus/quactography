@@ -30,7 +30,7 @@ def _build_arg_parser():
         type=str,
     )
     p.add_argument(
-        "--alphas", nargs="+", type=int, help="List of alphas", default=[1.1]
+        "--alphas", nargs="+", type=float, help="List of alphas", default=[1.1]
     )
 
     p.add_argument(
