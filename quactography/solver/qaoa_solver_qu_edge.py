@@ -44,12 +44,11 @@ def find_longest_path(args):
     # Plot the circuit layout:
     ansatz.decompose(reps=3).draw(output="mpl", style="iqp")
 
-    # Run on local estimator and sampler. Fix seeds for results reproducibility.
+    # Run on local estimator and sampler:
     estimator = Estimator(options={"shots": 1000000, "seed": 42})
     sampler = Sampler(options={"shots": 1000000, "seed": 42})
 
-    # Cost function for the minimizer.
-    # Returns the expectation value of circuit with Hamiltonian as an observable.
+    # Cost function for the minimizer:
     def cost_func(params, estimator, ansatz, hamiltonian):
         cost = (
             estimator.run(ansatz, hamiltonian, parameter_values=params)
@@ -59,13 +58,13 @@ def find_longest_path(args):
         return cost
 
     x0 = np.zeros(ansatz.num_parameters)
-    # Minimize the cost function using COBYLA method
+
+    # Minimize the cost function using COBYLA method:
     res = minimize(
         cost_func,
         x0,
         args=(estimator, ansatz, h.total_hamiltonian),
         method="COBYLA",
-        # callback=callback,
         options={"maxiter": 5000, "disp": False},
         tol=1e-4,
     )
