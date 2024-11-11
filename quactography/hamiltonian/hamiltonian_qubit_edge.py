@@ -27,6 +27,7 @@ class Hamiltonian_qubit_edge:
                 + self.hint_c
             ).simplify()
         )
+
         # self.exact_cost, self.exact_path = self.get_exact_sol()
 
     def mandatory_cost(self):

@@ -5,6 +5,9 @@ from qiskit.circuit.library import QAOAAnsatz
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 import numpy as np
+from qiskit_ibm_runtime import QiskitRuntimeService
+from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
+
 
 from quactography.solver.io import save_optimization_results
 
@@ -47,15 +50,18 @@ def find_longest_path(args):
     # Plot the circuit layout:
     ansatz.decompose(reps=3).draw(output="mpl", style="iqp")
 
+    # ----------------------------------------------------------------RUN LOCALLY: --------------------------------------------------------------------------------------
     # Run on local estimator and sampler:
     estimator = Estimator(options={"shots": 1000000, "seed": 42})
     sampler = Sampler(options={"shots": 1000000, "seed": 42})
+    # -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     # Define a small value as accepted difference to cease optimisation process:
-    epsilon = 1e-4
+    epsilon = 1e-6
 
     # Initialise parameters to zeros:
     x_0 = np.zeros(ansatz.num_parameters)
+
     # previous cost initialise to a very large number:
     previous_cost = np.inf
     cost_history = []
@@ -70,9 +76,9 @@ def find_longest_path(args):
         return cost
 
     iteration = 0
-    # Boucle d'optimisation
-    while iteration < 1000:  # OU WHILE TRUE
-        # Minimisation du coût avec COBYLA
+    # Optimisation loop
+    while True:
+        # With Cobyla, or other optimizer
         res = minimize(
             cost_func,
             x_0,
@@ -81,7 +87,7 @@ def find_longest_path(args):
             options={"maxiter": 5000, "disp": False},
             tol=1e-4,
         )
-
+        print(res)
         # Optimised cost:
         new_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
         cost_history.append(new_cost)
@@ -92,14 +98,20 @@ def find_longest_path(args):
         if (abs(previous_cost - new_cost)) ** 2 < epsilon:
             opt_params = res.x
             break
-        if iteration > 100:
+
+        # Break if more than 1000 iterations :
+        if iteration > 1000:
             opt_params = res.x
-            print("max iter attained!!")
+            print("maximum number of iterations attained!!")
             break
+
         # If new cost better, x_0 found is updated to the result found :
         if new_cost < previous_cost:
             x_0 = res.x
             previous_cost = new_cost
+
+    print("parameters after optimization loop : ", ansatz.parameters)
+    # Plot cost function:
     plt.figure(figsize=(10, 6))
     plt.plot(cost_history, label="Cost evolution")
     plt.xlabel("Number of iteration")
@@ -108,6 +120,7 @@ def find_longest_path(args):
     plt.legend()
     plt.grid(True)
     plt.savefig("cost_history_plot")
+
     # # Old way of minimising :
     # # Cost function for the minimizer:--------------------------------------------------------------
     # def cost_func(params, estimator, ansatz, hamiltonian):
@@ -140,6 +153,7 @@ def find_longest_path(args):
     bin_str = list(map(int, max(dist.binary_probabilities(), key=dist.binary_probabilities().get)))  # type: ignore
     bin_str_reversed = bin_str[::-1]
     bin_str_reversed = np.array(bin_str_reversed)  # type: ignore
+
     # Concatenate the binary path to a string:
     str_path_reversed = ["".join(map(str, bin_str_reversed))]  # type: ignore
     str_path_reversed = str_path_reversed[0]  # type: ignore
