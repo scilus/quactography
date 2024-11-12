@@ -72,9 +72,9 @@ def find_longest_path(args):
         )
         return cost
 
-    # Boucle d'optimisation
+    # Opt loop
     while True:
-        # Minimisation du coût avec COBYLA
+        # Minimisation with COBYLA or other method
         res = minimize(
             cost_func,
             x_0,
