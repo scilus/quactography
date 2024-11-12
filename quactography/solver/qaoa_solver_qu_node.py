@@ -25,6 +25,7 @@ def find_longest_path(args):
         min_cost (float):  Minimum cost
         alpha_min_cost (list):  List of alpha, minimum cost and binary path
     """
+
     # Load Hamiltonian, number of repetition (p) and name of file.
     h = args[0]
     reps = args[1]
@@ -33,16 +34,15 @@ def find_longest_path(args):
     # Save output file name diffrerent for each alpha:
     outfile = outfile + "_alpha_" + str(h.alpha)
 
-    # # Pad with zeros to the left to have the same length as the number of edges:
+    # # Pad with zeros to the left to have the same length as the number of edges: FOR EXACT PATH COMPARISON -------------------------------------------------
     # # -------------------- ONLY DIFFERENCE BETWEEN THIS FILE AND qaoa_solver_qu_node.py: h.graph.number_of_edges -> h.graph.num_nodes-----------------------
     # for i in range(len(h.exact_path[0])):
     #     if len(h.exact_path[0]) < h.graph.num_nodes:
     #         h.exact_path[i] = h.exact_path[i].zfill(h.graph.num_nodes + 1)
     # # print("Path Hamiltonian (quantum reading -> right=q0) : ", h.exact_path)
-    # # -----------------------------------------------------------------------------------------------------------------------------------------------------
-
     # # Reverse the binary path to have the same orientation as the classical path:
     # h.exact_path_classical_read = [path[::-1] for path in h.exact_path]
+    # # ------------------------------------------------------------------------------------------------------------------------------------------------------
 
     # Create QAOA circuit
     ansatz = QAOAAnsatz(h.total_hamiltonian, reps, name="QAOA")
@@ -117,6 +117,7 @@ def find_longest_path(args):
     #     options={"maxiter": 5000, "disp": False},
     #     tol=1e-4,
     # )
+    # -------------------------------------------------------------------------------------------------------------------
 
     # Find minimum cost:
     min_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
