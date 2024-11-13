@@ -9,4 +9,5 @@ scripts/demo copy.ipynb
 !10_edges_rand_graph.npz
 !13_edges_rand_graph.npz
 !17_edges_rand_graph.npz
+!data/*
 __pycache__
