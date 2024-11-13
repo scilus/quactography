@@ -83,12 +83,14 @@ def find_longest_path(args):
             options={"maxiter": 5000, "disp": False},
             tol=1e-4,
         )
+        # Print number of iterations:
+        print("Number of iterations: ", res.nfev)
 
         # Optimised cost:
         new_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
 
         # Verify distance between previous cost and new one:
-        if (abs(previous_cost - new_cost)) ** 2 < epsilon:
+        if (abs(previous_cost - new_cost)) < epsilon:
             break
 
         # If new cost better, x_0 found is updated to the result found :

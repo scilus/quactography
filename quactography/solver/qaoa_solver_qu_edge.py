@@ -1,5 +1,6 @@
 import multiprocessing
 import itertools
+from math import floor
 from qiskit.primitives import Estimator, Sampler
 from qiskit.circuit.library import QAOAAnsatz
 from scipy.optimize import minimize
@@ -56,17 +57,7 @@ def find_longest_path(args):
     sampler = Sampler(options={"shots": 1000000, "seed": 42})
     # -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    # Define a small value as accepted difference to cease optimisation process:
-    epsilon = 1e-6
-
-    # Initialise parameters to zeros:
-    x_0 = np.zeros(ansatz.num_parameters)
-
-    # previous cost initialise to a very large number:
-    previous_cost = np.inf
-    cost_history = []
-
-    # Minimisation cost function:
+    # Minimization cost function
     def cost_func(params, estimator, ansatz, hamiltonian):
         cost = (
             estimator.run(ansatz, hamiltonian, parameter_values=params)
@@ -75,51 +66,87 @@ def find_longest_path(args):
         )
         return cost
 
-    iteration = 0
-    # Optimisation loop
-    while True:
-        # With Cobyla, or other optimizer
-        res = minimize(
-            cost_func,
-            x_0,
-            args=(estimator, ansatz, h.total_hamiltonian),
-            method="COBYLA",
-            options={"maxiter": 5000, "disp": False},
-            tol=1e-4,
+    # Initialize list of invalid parameters
+    no_valid_params = []
+
+    # Optimizer function
+    def loop_optimizer(
+        loop_count, max_loops, previous_cost, epsilon, x_0, cost_history
+    ):
+        while loop_count < max_loops:
+            print("Loop:", loop_count)
+
+            # Minimization with COBYLA or other method
+            res = minimize(
+                cost_func,
+                x_0,
+                args=(estimator, ansatz, h.total_hamiltonian),
+                method="COBYLA",
+                options={"maxiter": 500, "disp": False},
+                tol=1e-5,
+            )
+
+            # Optimized cost
+            new_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
+            print("Loop:", loop_count, "Iterations:", res.nfev, "Cost:", new_cost)
+
+            # Check for convergence
+            if abs(previous_cost - new_cost) < epsilon:
+                print("Cost when convergence reached:", new_cost)
+
+            # Update starting point and previous cost if improvement found
+            if new_cost < previous_cost:
+                no_valid_params.append(res.x)
+                x_0 = res.x + 0.4
+                previous_cost = new_cost
+                cost_history.append(new_cost)
+            else:
+                no_valid_params.append(res.x)
+                cost_history.append(new_cost)
+                break
+
+            if loop_count == max_loops - 1:
+                print("Max loops reached")
+                print("Cost when max loops reached:", new_cost)
+                break
+
+            loop_count += 1
+
+        print("List of non-valid parameters:", no_valid_params)
+        return res, new_cost, previous_cost, x_0, loop_count, cost_history
+
+    # Initialize parameters for the optimizer
+    epsilon = 1e-6
+    x_0 = np.zeros(ansatz.num_parameters)
+    previous_cost = np.inf
+    cost_history = []
+    loop_count = 0
+    max_loops = 15
+
+    # Run initial optimization loop
+    res, last_cost, previous_cost, x_0, loop_count, cost_history = loop_optimizer(
+        loop_count, max_loops, previous_cost, epsilon, x_0, cost_history
+    )
+
+    # Helper function to check if a parameter is close to any of the non valid parameters
+    def is_close_to_any(x_0, no_valid_params, tol=1e-5):
+        return any(np.allclose(x_0, param, atol=tol) for param in no_valid_params)
+
+    # Main refinement loop
+    num_refinement_loops = 5
+    while last_cost > 0 and num_refinement_loops > 0:
+        # Set x_0 to random parameters not in the list of non valid parameters
+        while True:
+            x_0 = np.random.uniform(0, np.pi, ansatz.num_parameters)
+            if not is_close_to_any(x_0, no_valid_params):
+                break
+
+        # Run the optimizer
+        res, last_cost, previous_cost, x_0, loop_count, cost_history = loop_optimizer(
+            loop_count, max_loops, previous_cost, epsilon, x_0, cost_history
         )
-        print(res)
-        # Optimised cost:
-        new_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
-        cost_history.append(new_cost)
-        print(f"Iteration {iteration}: Cost = {new_cost}")
-        iteration += 1
 
-        # Verify distance between previous cost and new one:
-        if (abs(previous_cost - new_cost)) ** 2 < epsilon:
-            opt_params = res.x
-            break
-
-        # Break if more than 1000 iterations :
-        if iteration > 1000:
-            opt_params = res.x
-            print("maximum number of iterations attained!!")
-            break
-
-        # If new cost better, x_0 found is updated to the result found :
-        if new_cost < previous_cost:
-            x_0 = res.x
-            previous_cost = new_cost
-
-    print("parameters after optimization loop : ", ansatz.parameters)
-    # Plot cost function:
-    plt.figure(figsize=(10, 6))
-    plt.plot(cost_history, label="Cost evolution")
-    plt.xlabel("Number of iteration")
-    plt.ylabel("Cost")
-    plt.title("Convergence of cost during optimisation")
-    plt.legend()
-    plt.grid(True)
-    plt.savefig("cost_history_plot")
+        num_refinement_loops -= 1
 
     # # Old way of minimising :
     # # Cost function for the minimizer:--------------------------------------------------------------
@@ -145,6 +172,18 @@ def find_longest_path(args):
     # ----------------------------------------------------------------------------------------------------
 
     min_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
+    print("parameters after optimization loop : ", res.x)
+
+    # Plot cost function:
+    plt.figure(figsize=(10, 6))
+    plt.plot(cost_history, label="Cost evolution")
+    plt.xlabel("Number of iteration")
+    plt.ylabel("Cost")
+    plt.title("Convergence of cost during optimisation")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("cost_history_plot")
+
     circ = ansatz.copy()
     circ.measure_all()
     dist = sampler.run(circ, res.x).result().quasi_dists[0]
@@ -160,8 +199,17 @@ def find_longest_path(args):
 
     # Save parameters alpha and min_cost with path in csv file:
     opt_path = str_path_reversed
-    print("opt_params", opt_params)
-    save_optimization_results(dist=dist, dist_binary_probabilities=dist_binary_probabilities, min_cost=min_cost, hamiltonian=h, outfile=outfile, opt_bin_str=opt_path, reps=reps, opt_params=opt_params)  # type: ignore
+
+    save_optimization_results(
+        dist=dist,
+        dist_binary_probabilities=dist_binary_probabilities,
+        min_cost=min_cost,
+        hamiltonian=h,
+        outfile=outfile,
+        opt_bin_str=opt_path,
+        reps=reps,
+        opt_params=res.x,
+    )  # type: ignore
 
 
 def multiprocess_qaoa_solver_edge(hamiltonians, reps, nbr_processes, output_file):
