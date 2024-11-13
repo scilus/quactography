@@ -16,6 +16,7 @@ class Graph:
         ) = self.connexions_edges(mat_adj, self.num_nodes)
         self.starting_node = starting_node
         self.ending_node = ending_node
+        self.min_weight = min(np.tril(mat_adj).flatten())
 
     def connexions_edges(self, mat_adj, num_nodes):
         """Determine different connexions between nodes and the number of edges in the graph

@@ -81,7 +81,7 @@ def find_longest_path(args):
                 cost_func,
                 x_0,
                 args=(estimator, ansatz, h.total_hamiltonian),
-                method="COBYLA",
+                method="Powell",
                 options={"maxiter": 500, "disp": False},
                 tol=1e-5,
             )
@@ -121,7 +121,7 @@ def find_longest_path(args):
     previous_cost = np.inf
     cost_history = []
     loop_count = 0
-    max_loops = 15
+    max_loops = 30
 
     # Run initial optimization loop
     res, last_cost, previous_cost, x_0, loop_count, cost_history = loop_optimizer(
@@ -129,12 +129,12 @@ def find_longest_path(args):
     )
 
     # Helper function to check if a parameter is close to any of the non valid parameters
-    def is_close_to_any(x_0, no_valid_params, tol=1e-5):
+    def is_close_to_any(x_0, no_valid_params, tol=1e-2):
         return any(np.allclose(x_0, param, atol=tol) for param in no_valid_params)
 
     # Main refinement loop
     num_refinement_loops = 5
-    while last_cost > 0 and num_refinement_loops > 0:
+    while last_cost > h.graph.min_weight and num_refinement_loops > 0:
         # Set x_0 to random parameters not in the list of non valid parameters
         while True:
             x_0 = np.random.uniform(0, np.pi, ansatz.num_parameters)
@@ -142,37 +142,31 @@ def find_longest_path(args):
                 break
 
         # Run the optimizer
-        res, last_cost, previous_cost, x_0, loop_count, cost_history = loop_optimizer(
+        (
+            potential_res,
+            potential_last_cost,
+            potential_previous_cost,
+            potential_x_0,
+            loop_count,
+            potential_cost_history,
+        ) = loop_optimizer(
             loop_count, max_loops, previous_cost, epsilon, x_0, cost_history
         )
+        # If cost is growing, cancel the refinement loop, return the last result
+        if potential_last_cost > last_cost:
+            break
+        if potential_last_cost < last_cost:
+            last_cost = potential_last_cost
+            res = potential_res
+            previous_cost = potential_previous_cost
+            x_0 = potential_x_0
+            cost_history = potential_cost_history
 
         num_refinement_loops -= 1
 
-    # # Old way of minimising :
-    # # Cost function for the minimizer:--------------------------------------------------------------
-    # def cost_func(params, estimator, ansatz, hamiltonian):
-    #     cost = (
-    #         estimator.run(ansatz, hamiltonian, parameter_values=params)
-    #         .result()
-    #         .values[0]
-    #     )
-    #     return cost
-
-    # x0 = np.zeros(ansatz.num_parameters)
-
-    # # Minimize the cost function using COBYLA method:
-    # res = minimize(
-    #     cost_func,
-    #     x0,
-    #     args=(estimator, ansatz, h.total_hamiltonian),
-    #     method="COBYLA",
-    #     options={"maxiter": 5000, "disp": False},
-    #     tol=1e-4,
-    # )
-    # ----------------------------------------------------------------------------------------------------
-
+    # Save the minimum cost and the corresponding parameters
     min_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
-    print("parameters after optimization loop : ", res.x)
+    print("parameters after optimization loop : ", res.x, "Cost:", min_cost)
 
     # Plot cost function:
     plt.figure(figsize=(10, 6))
