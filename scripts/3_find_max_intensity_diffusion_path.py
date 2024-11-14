@@ -48,6 +48,27 @@ def _build_arg_parser():
         type=int,
     )
 
+    p.add_argument(
+        "--optimizer",
+        help="Optimizer to use for the QAOA algorithm",
+        default="COBYLA",
+        type=str,
+    )
+
+    p.add_argument(
+        "--refinement_loops",
+        help="Number of loops for the refinement optimization",
+        default=3,
+        type=int,
+    )
+
+    p.add_argument(
+        "--epsilon",
+        help="Epsilon value for the refinement optimization",
+        default=1e-5,
+        type=float,
+    )
+
     return p
 
 
@@ -71,7 +92,13 @@ def main():
 
         print("\n Calculating qubits as edges......................")
         multiprocess_qaoa_solver_edge(
-            hamiltonians, args.reps, args.number_processors, args.output_file
+            hamiltonians,
+            args.reps,
+            args.number_processors,
+            args.output_file,
+            args.optimizer,
+            args.refinement_loops,
+            args.epsilon,
         )
 
     # Construct Hamiltonian when qubits are set as nodes, then optimize with QAOA/scipy:
@@ -81,7 +108,13 @@ def main():
 
         print("\n Calculating qubits as nodes......................")
         multiprocess_qaoa_solver_node(
-            hamiltonians, args.reps, args.number_processors, args.output_file
+            hamiltonians,
+            args.reps,
+            args.number_processors,
+            args.output_file,
+            # args.optimizer,
+            # args.refinement_loops,
+            # args.epsilon,
         )
 
 
