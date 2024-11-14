@@ -11,7 +11,7 @@ def cost_func(params, estimator, ansatz, hamiltonian):
 
 
 # Optimizer function
-def COBYLA_loop_optimizer(
+def POWELL_loop_optimizer(
     loop_count,
     max_loops,
     previous_cost,
@@ -41,7 +41,7 @@ def COBYLA_loop_optimizer(
             cost_func,
             x_0,
             args=(estimator, ansatz, h.total_hamiltonian),
-            method="COBYLA",
+            method="Powell",
             options={"maxiter": 500, "disp": False},
             tol=1e-5,
         )
@@ -76,7 +76,7 @@ def COBYLA_loop_optimizer(
     return res, new_cost, previous_cost, x_0, loop_count, cost_history
 
 
-def COBYLA_refinement_optimization(
+def POWELL_refinement_optimization(
     loop_count,
     max_loops,
     estimator,
@@ -90,13 +90,14 @@ def COBYLA_refinement_optimization(
     cost_history,
     num_refinement_loops,
 ):
-    # Helper function to check if a parameter is close to any of the non valid parameters
     def is_close_to_any(x_0, no_valid_params, tol=1e-2):
         return any(np.allclose(x_0, param, atol=tol) for param in no_valid_params)
 
-    # Main refinement loop:
-    while last_cost > h.graph.min_weight and num_refinement_loops > 0:
-        # Set x_0 to random parameters not in the list of non valid parameters
+    second_last_cost = last_cost
+    best_res = 0
+
+    while last_cost > 0 and num_refinement_loops > 0:
+        # Generate new random parameters
         while True:
             x_0 = np.random.uniform(0, np.pi, ansatz.num_parameters)
             if not is_close_to_any(x_0, no_valid_params):
@@ -110,7 +111,7 @@ def COBYLA_refinement_optimization(
             potential_x_0,
             loop_count,
             potential_cost_history,
-        ) = COBYLA_loop_optimizer(
+        ) = POWELL_loop_optimizer(
             loop_count,
             max_loops,
             previous_cost,
@@ -121,14 +122,21 @@ def COBYLA_refinement_optimization(
             ansatz,
             h,
         )
-        # If cost is growing, cancel the refinement loop, return the last result
+
+        # If cost is increasing, stop the refinement loop and use the second-to-last result
         if potential_last_cost > last_cost:
             break
-        if potential_last_cost < last_cost:
+
+        # Update results if an improvement is found
+        elif potential_last_cost < last_cost:
+            second_last_cost = last_cost  # Update second-to-last cost
             last_cost = potential_last_cost
-            res = potential_res
+            best_res = potential_res  # Store the result
             previous_cost = potential_previous_cost
             x_0 = potential_x_0
             cost_history = potential_cost_history
 
         num_refinement_loops -= 1
+
+    # Return the best result found before the last iteration
+    return best_res, second_last_cost, previous_cost, x_0, loop_count, cost_history

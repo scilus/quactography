@@ -9,8 +9,10 @@ import numpy as np
 sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.solver.io import save_optimization_results
-from quactography.solver.optimization_loops import COBYLA_loop_optimizer
-from quactography.solver.optimization_loops import COBYLA_refinement_optimization
+from quactography.solver.optimization_loops import (
+    POWELL_loop_optimizer,
+    POWELL_refinement_optimization,
+)
 
 alpha_min_costs = []
 
@@ -67,7 +69,7 @@ def find_longest_path(args):
     sampler = Sampler(options={"shots": 1000000, "seed": 42})
     # -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    if optimizer == "COBYLA":
+    if optimizer == "Powell":
         # Initialize list of invalid parameters
         no_valid_params = []
 
@@ -77,13 +79,13 @@ def find_longest_path(args):
         previous_cost = np.inf
         cost_history = []
         loop_count = 0
-        max_loops = 30
+        max_loops = 50
         print(
-            f"Using COBYLA optimizer with {num_refinement_loops} refinement loops, epsilon = {epsilon}, and max_loops = {max_loops}"
+            f"Using Powell optimizer with {num_refinement_loops} refinement loops, epsilon = {epsilon}, and max_loops = {max_loops}"
         )
         # Run initial optimization loop
         res, last_cost, previous_cost, x_0, loop_count, cost_history = (
-            COBYLA_loop_optimizer(
+            POWELL_loop_optimizer(
                 loop_count,
                 max_loops,
                 previous_cost,
@@ -95,27 +97,29 @@ def find_longest_path(args):
                 h,
             )
         )
-
-        COBYLA_refinement_optimization(
-            loop_count,
-            max_loops,
-            estimator,
-            ansatz,
-            h,
-            no_valid_params,
-            epsilon,
-            x_0,
-            previous_cost,
-            last_cost,
-            cost_history,
-            num_refinement_loops,
-        )
+        if num_refinement_loops > 0:
+            res, last_cost, previous_cost, x_0, loop_count, cost_history = (
+                POWELL_refinement_optimization(
+                    loop_count,
+                    max_loops,
+                    estimator,
+                    ansatz,
+                    h,
+                    no_valid_params,
+                    epsilon,
+                    x_0,
+                    previous_cost,
+                    last_cost,
+                    cost_history,
+                    num_refinement_loops,
+                )
+            )  # type: ignore
 
     # if optimizer == "SPSA": TODO: Implement SPSA optimizer
 
     # Save the minimum cost and the corresponding parameters
-    min_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
-    print("parameters after optimization loop : ", res.x, "Cost:", min_cost)
+    min_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)  # type: ignore
+    print("parameters after optimization loop : ", res.x, "Cost:", min_cost)  # type: ignore
 
     # Plot cost function:
     plt.figure(figsize=(10, 6))
@@ -129,7 +133,7 @@ def find_longest_path(args):
 
     circ = ansatz.copy()
     circ.measure_all()
-    dist = sampler.run(circ, res.x).result().quasi_dists[0]
+    dist = sampler.run(circ, res.x).result().quasi_dists[0]  # type: ignore
     dist_binary_probabilities = dist.binary_probabilities()
 
     bin_str = list(map(int, max(dist.binary_probabilities(), key=dist.binary_probabilities().get)))  # type: ignore
@@ -151,7 +155,7 @@ def find_longest_path(args):
         outfile=outfile,
         opt_bin_str=opt_path,
         reps=reps,
-        opt_params=res.x,
+        opt_params=res.x,  # type: ignore
     )  # type: ignore
 
 

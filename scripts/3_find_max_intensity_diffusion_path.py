@@ -51,7 +51,7 @@ def _build_arg_parser():
     p.add_argument(
         "--optimizer",
         help="Optimizer to use for the QAOA algorithm",
-        default="COBYLA",
+        default="Powell",
         type=str,
     )
 
