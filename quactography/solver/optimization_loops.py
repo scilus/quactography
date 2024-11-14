@@ -1,9 +1,13 @@
 from scipy.optimize import minimize
 import numpy as np
-import sys
 
-sys.path.append(r"C:\Users\harsh\quactography")
-from quactography.solver.qaoa_solver_qu_edge import cost_func
+
+# Minimization cost function
+def cost_func(params, estimator, ansatz, hamiltonian):
+    cost = (
+        estimator.run(ansatz, hamiltonian, parameter_values=params).result().values[0]
+    )
+    return cost
 
 
 # Optimizer function
@@ -18,7 +22,17 @@ def COBYLA_loop_optimizer(
     ansatz,
     h,
 ):
+    # # Initialize list of invalid parameters
     no_valid_params = []
+
+    # # Initialize parameters for the optimizer
+    # x_0 = np.zeros(ansatz.num_parameters)
+    # epsilon = epsilon
+    # previous_cost = np.inf
+    # cost_history = []
+    # loop_count = 0
+    # max_loops = 30
+    # no_valid_params = []
     while loop_count < max_loops:
         print("Loop:", loop_count)
 
@@ -63,6 +77,7 @@ def COBYLA_loop_optimizer(
 
 
 def COBYLA_refinement_optimization(
+    loop_count,
     max_loops,
     estimator,
     ansatz,
@@ -71,6 +86,7 @@ def COBYLA_refinement_optimization(
     epsilon,
     x_0,
     previous_cost,
+    last_cost,
     cost_history,
     num_refinement_loops,
 ):

@@ -67,35 +67,37 @@ def find_longest_path(args):
     sampler = Sampler(options={"shots": 1000000, "seed": 42})
     # -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    # Initialize list of invalid parameters
-    no_valid_params = []
-
-    # Initialize parameters for the optimizer
-    x_0 = np.zeros(ansatz.num_parameters)
-    epsilon = epsilon
-    previous_cost = np.inf
-    cost_history = []
-    loop_count = 0
-    max_loops = 30
-
     if optimizer == "COBYLA":
+        # Initialize list of invalid parameters
+        no_valid_params = []
+
+        # Initialize parameters for the optimizer
+        x_0 = np.zeros(ansatz.num_parameters)
+        epsilon = epsilon
+        previous_cost = np.inf
+        cost_history = []
+        loop_count = 0
+        max_loops = 30
         print(
-            "Using COBYLA optimizer with {refinement_loops} refinement loops,\n epsilon={epsilon}, \n and max_loops={max_loops}"
+            f"Using COBYLA optimizer with {num_refinement_loops} refinement loops, epsilon = {epsilon}, and max_loops = {max_loops}"
         )
         # Run initial optimization loop
-        res, _, previous_cost, x_0, loop_count, cost_history = COBYLA_loop_optimizer(
-            loop_count,
-            max_loops,
-            previous_cost,
-            epsilon,
-            x_0,
-            cost_history,
-            estimator,
-            ansatz,
-            h,
+        res, last_cost, previous_cost, x_0, loop_count, cost_history = (
+            COBYLA_loop_optimizer(
+                loop_count,
+                max_loops,
+                previous_cost,
+                epsilon,
+                x_0,
+                cost_history,
+                estimator,
+                ansatz,
+                h,
+            )
         )
 
         COBYLA_refinement_optimization(
+            loop_count,
             max_loops,
             estimator,
             ansatz,
@@ -104,6 +106,7 @@ def find_longest_path(args):
             epsilon,
             x_0,
             previous_cost,
+            last_cost,
             cost_history,
             num_refinement_loops,
         )
