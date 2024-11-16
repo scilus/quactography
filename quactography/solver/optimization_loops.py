@@ -38,7 +38,7 @@ def POWELL_loop_optimizer(
             x_0,
             args=(estimator, ansatz, h.total_hamiltonian),
             method="Powell",
-            options={"maxiter": 1000, "disp": False},
+            options={"maxiter": 10, "disp": False},
             tol=1e-5,
         )
 
