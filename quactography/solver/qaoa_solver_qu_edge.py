@@ -80,7 +80,17 @@ def find_longest_path(args):
             f.write(
                 f"Hamiltonian alphas departure:  {h.alpha_d},  ending: {h.alpha_f}, int: {h.alpha_i}\n"
             )
-
+        np.savez(
+            "params_iterations.npz",
+            optimizer=optimizer,
+            num_refinement_loops=num_refinement_loops,
+            epsilon=epsilon,
+            number_edges=h.graph.number_of_edges,
+            reps=reps,
+            alpha_d=h.alpha_d,
+            alpha_f=h.alpha_f,
+            alpha_i=h.alpha_i,
+        )
         # Initialize list of invalid parameters
         no_valid_params = []
 

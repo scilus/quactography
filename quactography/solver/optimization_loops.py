@@ -83,6 +83,7 @@ def POWELL_loop_optimizer(
     # Add list of non-valid parameters to the text files
     with open("params_found_while_opt.txt", "a") as f:
         f.write(f"List of non-valid parameters: {no_valid_params}\n")
+    np.savez("params_found_while_opt.npz", no_valid_params=no_valid_params)
 
     return res, new_cost, previous_cost, x_0, loop_count, cost_history
 
