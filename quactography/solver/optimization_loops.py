@@ -44,7 +44,22 @@ def POWELL_loop_optimizer(
 
         # Optimized cost
         new_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
-        print("Loop:", loop_count, "Iterations:", res.nit, "Cost:", new_cost)
+        # print(
+        #     "Loop:",
+        #     loop_count,
+        #     "Iterations:",
+        #     res.nit,
+        #     "Cost:",
+        #     new_cost,
+        #     "Params found:",
+        #     res.x,
+        # )
+
+        # Save same data to a text file:
+        with open("params_iterations.txt", "a") as f:
+            f.write(
+                f"Loop: {loop_count}, Iterations: {res.nit}, Cost: {new_cost}, Params found: {res.x}\n"
+            )
 
         # Check for convergence
         if abs(previous_cost - new_cost) < epsilon:
@@ -63,7 +78,12 @@ def POWELL_loop_optimizer(
 
         loop_count += 1
 
-    print("List of non-valid parameters:", no_valid_params)
+    # print("List of non-valid parameters:", no_valid_params)
+
+    # Add list of non-valid parameters to the text files
+    with open("params_found_while_opt.txt", "a") as f:
+        f.write(f"List of non-valid parameters: {no_valid_params}\n")
+
     return res, new_cost, previous_cost, x_0, loop_count, cost_history
 
 

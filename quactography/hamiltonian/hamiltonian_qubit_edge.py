@@ -7,26 +7,22 @@ import numpy as np
 class Hamiltonian_qubit_edge:
     """Creates the Hamiltonian with qubits considered to be edges with the given graph and alpha value"""
 
-    def __init__(
-        self,
-        graph,
-        alpha,
-    ):
+    def __init__(self, graph, alpha):
         self.graph = graph
         self.mandatory_c = self.mandatory_cost()
         self.starting_node_c = self.starting_node_cost()
         self.ending_node_c = self.ending_node_cost()
         self.hint_c = self.intermediate_node_cost()
         self.alpha = alpha
+        self.alpha_d = 4 * self.alpha
+        self.alpha_f = 4 * self.alpha
+        self.alpha_i = self.alpha
         self.total_hamiltonian = (
             -self.mandatory_c
-            + self.alpha
-            * (
-                4 * (self.starting_node_c) ** 2
-                + 4 * (self.ending_node_c) ** 2
-                + self.hint_c
-            ).simplify()
-        )
+            + self.alpha_d * (self.starting_node_c) ** 2
+            + self.alpha_f * (self.ending_node_c) ** 2
+            + self.alpha_i * self.hint_c
+        ).simplify()
 
         # self.exact_cost, self.exact_path = self.get_exact_sol()
 

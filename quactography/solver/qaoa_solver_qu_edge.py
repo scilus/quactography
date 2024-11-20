@@ -70,6 +70,17 @@ def find_longest_path(args):
     # -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     if optimizer == "Powell":
+        # Indicate in txt file the optimization method used, and parameters:
+        with open("params_iterations.txt", "a") as f:
+            f.write(f"Optimizer: {optimizer} \n")
+            f.write(f"Max number of refinement loops: {num_refinement_loops} \n")
+            f.write(f"Epsilon: {epsilon} \n")
+            f.write(f"Number of edges in graph: {h.graph.number_of_edges} \n")
+            f.write(f"Number of reps, QAOA layers (p): {reps} \n")
+            f.write(
+                f"Hamiltonian alphas departure:  {h.alpha_d},  ending: {h.alpha_f}, int: {h.alpha_i}\n"
+            )
+
         # Initialize list of invalid parameters
         no_valid_params = []
 
