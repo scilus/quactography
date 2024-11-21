@@ -14,6 +14,10 @@ from quactography.solver.optimization_loops import (
     POWELL_refinement_optimization,
 )
 
+# !!!!!!!!!!! Optimal path returned from this optimisation is in
+# classical read (meaning the zeroth qubit is the first from left
+# term in binary string) !!!!!!!!!!!!!!!
+
 alpha_min_costs = []
 
 
@@ -174,7 +178,7 @@ def find_longest_path(args):
         min_cost=min_cost,
         hamiltonian=h,
         outfile=outfile,
-        opt_bin_str=opt_path,
+        opt_bin_str=opt_path,  # It is reversed as classical read to be compared to exact_path code when diagonalising Hamiltonian
         reps=reps,
         opt_params=res.x,  # type: ignore
     )  # type: ignore
