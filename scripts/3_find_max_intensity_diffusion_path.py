@@ -6,9 +6,10 @@ sys.path.append(r"C:\Users\harsh\quactography")
 from quactography.graph.undirected_graph import Graph
 from quactography.adj_matrix.io import load_graph
 from quactography.hamiltonian.hamiltonian_qubit_edge import Hamiltonian_qubit_edge
-from quactography.hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
 from quactography.solver.qaoa_solver_qu_edge import multiprocess_qaoa_solver_edge
-from quactography.solver.qaoa_solver_qu_node import multiprocess_qaoa_solver_node
+
+# from quactography.hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
+# from quactography.solver.qaoa_solver_qu_node import multiprocess_qaoa_solver_node
 
 
 def _build_arg_parser():
@@ -101,21 +102,21 @@ def main():
             args.epsilon,
         )
 
-    # Construct Hamiltonian when qubits are set as nodes, then optimize with QAOA/scipy:
-    elif args.hamiltonian == "node":
-        hamiltonians = [Hamiltonian_qubit_node(graph, alpha) for alpha in args.alphas]
-        print(hamiltonians[0].total_hamiltonian.simplify())
+    # # Construct Hamiltonian when qubits are set as nodes, then optimize with QAOA/scipy:
+    # elif args.hamiltonian == "node":
+    #     hamiltonians = [Hamiltonian_qubit_node(graph, alpha) for alpha in args.alphas]
+    #     print(hamiltonians[0].total_hamiltonian.simplify())
 
-        print("\n Calculating qubits as nodes......................")
-        multiprocess_qaoa_solver_node(
-            hamiltonians,
-            args.reps,
-            args.number_processors,
-            args.output_file,
-            # args.optimizer,
-            # args.refinement_loops,
-            # args.epsilon,
-        )
+    #     print("\n Calculating qubits as nodes......................")
+    #     multiprocess_qaoa_solver_node(
+    #         hamiltonians,
+    #         args.reps,
+    #         args.number_processors,
+    #         args.output_file,
+    #         # args.optimizer,
+    #         # args.refinement_loops,
+    #         # args.epsilon,
+    #     )
 
 
 if __name__ == "__main__":
