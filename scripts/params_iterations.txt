@@ -1,0 +1,52 @@
+Optimizer: Powell 
+Max number of refinement loops: 5 
+Epsilon: 1e-06 
+Number of edges in graph: 5 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  8.0,  ending: 8.0, int: 2.0
+Loop: 0, Iterations: 4, Cost: 8.797114292021693, Params found: [-0.75449612 -0.99236251]
+Loop: 1, Iterations: 4, Cost: 4.961793542857522, Params found: [-0.34461295  0.10478384]
+Loop: 2, Iterations: 2, Cost: 6.1002300067986015, Params found: [2.81153487 0.49316726]
+Loop: 2, Iterations: 3, Cost: 4.9617925836879095, Params found: [2.7970907  3.03681437]
+Loop: 3, Iterations: 3, Cost: 5.6026515374328385, Params found: [5.94189447 3.42526744]
+Loop: 3, Iterations: 5, Cost: 4.961792583687874, Params found: [3.48609462 3.24637095]
+Loop: 4, Iterations: 3, Cost: 6.10022999811563, Params found: [3.47164903 3.63475694]
+Optimizer: Powell 
+Max number of refinement loops: 5 
+Epsilon: 1e-06 
+Number of edges in graph: 5 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Loop: 0, Iterations: 4, Cost: 3.0910953497266735, Params found: [-0.34446933  0.13889278]
+Loop: 1, Iterations: 4, Cost: 4.562675355996665, Params found: [-0.31801258  0.65218803]
+Loop: 1, Iterations: 10, Cost: 4.572740985890368, Params found: [ 3.47314617 -0.65329255]
+Optimizer: Powell 
+Max number of refinement loops: 5 
+Epsilon: 1e-06 
+Number of edges in graph: 5 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Loop: 0, Iterations: 4, Cost: 3.0910953497266735, Params found: [-0.34446933  0.13889278]
+Loop: 1, Iterations: 4, Cost: 4.562675355996665, Params found: [-0.31801258  0.65218803]
+Loop: 1, Iterations: 2, Cost: 6.0953593974246845, Params found: [0.36121476 0.87294956]
+Optimizer: Powell 
+Max number of refinement loops: 5 
+Epsilon: 1e-06 
+Number of edges in graph: 5 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Loop: 0, Iterations: 4, Cost: 3.0910953497266735, Params found: [-0.34446933  0.13889278]
+Loop: 1, Iterations: 4, Cost: 4.562675355996665, Params found: [-0.31801258  0.65218803]
+Loop: 1, Iterations: 4, Cost: 3.912274861946979, Params found: [2.80198882 3.51622825]
+Loop: 1, Iterations: 3, Cost: 4.085685613978842, Params found: [0.78332284 1.82895893]
+Optimizer: Powell 
+Max number of refinement loops: 5 
+Epsilon: 1e-06 
+Number of edges in graph: 5 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Loop: 0, Iterations: 4, Cost: 3.0910953497266735, Params found: [-0.34446933  0.13889278]
+Loop: 1, Iterations: 4, Cost: 4.562675355996665, Params found: [-0.31801258  0.65218803]
+Loop: 1, Iterations: 3, Cost: 3.0910953497266727, Params found: [2.79712332 3.00269988]
+Loop: 2, Iterations: 3, Cost: 4.0856856139788436, Params found: [2.35826981 4.97055158]
+Loop: 2, Iterations: 4, Cost: 4.562675355996658, Params found: [0.31801258 3.79378068]

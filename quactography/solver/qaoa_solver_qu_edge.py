@@ -109,7 +109,7 @@ def find_longest_path(args):
             f"Using Powell optimizer with {num_refinement_loops} refinement loops, epsilon = {epsilon}, and max_loops = {max_loops}"
         )
         # Run initial optimization loop
-        res, last_cost, previous_cost, x_0, loop_count, cost_history = (
+        resx, last_cost, previous_cost, x_0, loop_count, cost_history = (
             POWELL_loop_optimizer(
                 loop_count,
                 max_loops,
@@ -123,7 +123,7 @@ def find_longest_path(args):
             )
         )
         if num_refinement_loops > 0:
-            res, last_cost, previous_cost, x_0, loop_count, cost_history = (
+            resx, last_cost, previous_cost, x_0, loop_count, cost_history = (
                 POWELL_refinement_optimization(
                     loop_count,
                     max_loops,
@@ -143,8 +143,8 @@ def find_longest_path(args):
     # if optimizer == "SPSA": TODO: Implement SPSA optimizer
 
     # Save the minimum cost and the corresponding parameters
-    min_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)  # type: ignore
-    print("parameters after optimization loop : ", res.x, "Cost:", min_cost)  # type: ignore
+    min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
+    print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
 
     # Plot cost function:
     plt.figure(figsize=(10, 6))
@@ -158,7 +158,7 @@ def find_longest_path(args):
 
     circ = ansatz.copy()
     circ.measure_all()
-    dist = sampler.run(circ, res.x).result().quasi_dists[0]  # type: ignore
+    dist = sampler.run(circ, resx).result().quasi_dists[0]  # type: ignore
     dist_binary_probabilities = dist.binary_probabilities()
 
     bin_str = list(map(int, max(dist.binary_probabilities(), key=dist.binary_probabilities().get)))  # type: ignore
@@ -180,7 +180,7 @@ def find_longest_path(args):
         outfile=outfile,
         opt_bin_str=opt_path,  # It is reversed as classical read to be compared to exact_path code when diagonalising Hamiltonian
         reps=reps,
-        opt_params=res.x,  # type: ignore
+        opt_params=resx,  # type: ignore
     )  # type: ignore
 
 

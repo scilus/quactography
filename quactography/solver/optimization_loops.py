@@ -85,7 +85,7 @@ def POWELL_loop_optimizer(
         f.write(f"List of non-valid parameters: {no_valid_params}\n")
     np.savez("params_found_while_opt.npz", no_valid_params=no_valid_params)
 
-    return res, new_cost, previous_cost, x_0, loop_count, cost_history
+    return res.x, new_cost, previous_cost, x_0, loop_count, cost_history
 
 
 def POWELL_refinement_optimization(
@@ -118,7 +118,7 @@ def POWELL_refinement_optimization(
 
         # Run the optimizer
         (
-            potential_res,
+            potential_resx,
             potential_last_cost,
             potential_previous_cost,
             potential_x_0,
@@ -144,7 +144,7 @@ def POWELL_refinement_optimization(
         elif potential_last_cost < last_cost:
             second_last_cost = last_cost  # Update second-to-last cost
             last_cost = potential_last_cost
-            res = potential_res  # Store the result
+            res_x = potential_resx  # Store the result
             previous_cost = potential_previous_cost
             x_0 = potential_x_0
             cost_history = potential_cost_history
@@ -152,4 +152,4 @@ def POWELL_refinement_optimization(
         num_refinement_loops -= 1
 
     # Return the best result found before the last iteration
-    return res, second_last_cost, previous_cost, x_0, loop_count, cost_history
+    return res_x, second_last_cost, previous_cost, x_0, loop_count, cost_history
