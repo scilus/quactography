@@ -151,5 +151,9 @@ def POWELL_refinement_optimization(
 
         num_refinement_loops -= 1
 
+        if res_x is None:
+            print("res not found")
+            res_x = 0
+
     # Return the best result found before the last iteration
     return res_x, second_last_cost, previous_cost, x_0, loop_count, cost_history
