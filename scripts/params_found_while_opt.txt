@@ -46,3 +46,18 @@ List of non-valid parameters: [array([-0.23600292, -0.20891809,  0.17738879, -0.
        -0.00792631]), array([ 2.65690752,  0.26990896,  0.1663681 , -0.46104117,  0.11781187,
         0.39027257]), array([ 3.2563938 ,  1.08094917,  0.20099961, -0.05755877,  0.52213222,
        -0.09888258])]
+List of non-valid parameters: [array([-0.28309413, -0.42755853]), array([0.325635  , 0.98360382])]
+List of non-valid parameters: [array([3.42409049, 3.24737705]), array([6.00068738, 3.03580826])]
+List of non-valid parameters: [array([3.92699074, 1.57079642])]
+List of non-valid parameters: [array([-1.37403897,  0.38421952]), array([-2.90857129, -2.4986499 ]), array([-0.82994007, -2.07302141])]
+List of non-valid parameters: [array([1.37276793, 3.01465297])]
+List of non-valid parameters: [array([0.21697729, 0.41517795])]
+List of non-valid parameters: [array([2.88517597, 1.1734514 ])]
+List of non-valid parameters: [array([-0.27855485, -1.51743552]), array([ 2.86303781, -1.51743552]), array([ 6.00463046, -1.51743552])]
+List of non-valid parameters: [array([2.85613572, 2.2836654 ]), array([5.99772838, 2.28366541]), array([9.13932102, 2.2836654 ]), array([12.28091367,  2.2836654 ]), array([15.42250634,  2.2836654 ])]
+List of non-valid parameters: [array([2.86001746, 0.37917281]), array([6.0016101 , 0.37917282])]
+List of non-valid parameters: [array([-0.28157517,  0.3791728 ]), array([2.86001745, 0.37917281])]
+List of non-valid parameters: [array([-0.27855485, -1.51743552]), array([ 2.86303781, -1.51743552]), array([ 6.00463046, -1.51743552])]
+List of non-valid parameters: [array([1.21348206, 3.28041147])]
+List of non-valid parameters: [array([-1.76791609,  0.44500857]), array([-0.21805915,  0.40106344]), array([1.3736561 , 0.44501928])]
+List of non-valid parameters: [array([-3.35964636,  0.40106219]), array([-1.76793655,  0.44501928])]

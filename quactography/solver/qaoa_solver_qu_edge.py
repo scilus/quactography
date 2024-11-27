@@ -96,7 +96,7 @@ def find_longest_path(args):
 
         # Call differential evolution with the modified cost function
         bounds = [[0, 2 * np.pi], [0, np.pi]]
-        res = differential_evolution(cost_func_with_args, bounds, disp=True)
+        res = differential_evolution(cost_func_with_args, bounds, disp=False)
         resx = res.x
 
     if optimizer == "Powell":
