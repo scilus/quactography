@@ -1,13 +1,6 @@
-import multiprocessing
-import itertools
-import sys
-from qiskit.primitives import Estimator, Sampler
-from qiskit.circuit.library import QAOAAnsatz
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.optimize import differential_evolution
 from functools import partial
-from mpl_toolkits.mplot3d import Axes3D
 
 
 # Minimization cost function
@@ -25,8 +18,8 @@ def plt_cost_func(estimator, ansatz, h):
         ansatz=ansatz,
         hamiltonian=h.total_hamiltonian,
     )
-    gamma_range = np.arange(0, 2 * np.pi, 0.1)
-    beta_range = np.arange(0, np.pi, 0.1)
+    gamma_range = np.arange(0, 2 * np.pi, 0.2)
+    beta_range = np.arange(0, np.pi, 0.2)
 
     # meshgrid:
     gamma, beta = np.meshgrid(gamma_range, beta_range)
@@ -61,5 +54,6 @@ def plt_cost_func(estimator, ansatz, h):
 
     # Save and show the plots
     plt.tight_layout()
-    plt.savefig("cost_function_landscape.png")
-    plt.show()
+    # plt.savefig("cost_function_landscape.png")
+    # plt.show()
+    return fig, ax1, ax2

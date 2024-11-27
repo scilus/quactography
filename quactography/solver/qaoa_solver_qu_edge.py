@@ -8,6 +8,7 @@ import numpy as np
 from scipy.optimize import differential_evolution
 from functools import partial
 from mpl_toolkits.mplot3d import Axes3D
+from functools import partial
 
 sys.path.append(r"C:\Users\harsh\quactography")
 
@@ -95,7 +96,7 @@ def find_longest_path(args):
 
         # Call differential evolution with the modified cost function
         bounds = [[0, 2 * np.pi], [0, np.pi]]
-        res = differential_evolution(cost_func_with_args, bounds, disp=False)
+        res = differential_evolution(cost_func_with_args, bounds, disp=True)
         resx = res.x
 
     if optimizer == "Powell":
@@ -179,6 +180,18 @@ def find_longest_path(args):
     # Save the minimum cost and the corresponding parameters
     min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
     print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
+
+    # Scatter optimal point--------------------------------------------------------------
+    fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
+    ax1.scatter(  # type: ignore
+        resx[0], resx[1], min_cost, color="red", marker="o", s=100, label="Optimal Point"  # type: ignore
+    )
+    ax2.scatter(  # type: ignore
+        resx[0], resx[1], s=100, color="red", marker="o", label="Optimal Point"  # type: ignore
+    )
+    plt.savefig("Opt_point_visu.png")
+    plt.show()
+    # ---------------------------------------------------------------------------------
 
     circ = ansatz.copy()
     circ.measure_all()
