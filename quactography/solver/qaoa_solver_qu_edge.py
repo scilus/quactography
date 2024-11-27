@@ -5,6 +5,9 @@ from qiskit.primitives import Estimator, Sampler
 from qiskit.circuit.library import QAOAAnsatz
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.optimize import differential_evolution
+from functools import partial
+from mpl_toolkits.mplot3d import Axes3D
 
 sys.path.append(r"C:\Users\harsh\quactography")
 
@@ -13,6 +16,7 @@ from quactography.solver.optimization_loops import (
     POWELL_loop_optimizer,
     POWELL_refinement_optimization,
 )
+from quactography.visu.plot_cost_landscape import plt_cost_func
 
 # !!!!!!!!!!! Optimal path returned from this optimisation is in
 # classical read (meaning the zeroth qubit is the first from left
@@ -49,9 +53,11 @@ def find_longest_path(args):
     optimizer = args[3]
     num_refinement_loops = args[4]
     epsilon = args[5]
+    cost_landscape = args[6]
     # Save output file name diffrerent for each alpha:
     outfile = outfile + "_alpha_" + str(h.alpha)
 
+    # # Exact path code:
     # # Pad with zeros to the left to have the same length as the number of edges:
     # for i in range(len(h.exact_path[0])):
     #     if len(h.exact_path[0]) < h.graph.number_of_edges:
@@ -72,6 +78,25 @@ def find_longest_path(args):
     estimator = Estimator(options={"shots": 1000000, "seed": 42})
     sampler = Sampler(options={"shots": 1000000, "seed": 42})
     # -----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    # PLOT OF COST LANDSCAPE IF WANTED
+    if cost_landscape == True:
+        plt_cost_func(estimator, ansatz, h)
+
+    if optimizer == "Differential":
+        # Reference: https://www.youtube.com/watch?v=o-OPrQmS1pU
+        # Define fixed arguments
+        cost_func_with_args = partial(
+            cost_func,
+            estimator=estimator,
+            ansatz=ansatz,
+            hamiltonian=h.total_hamiltonian,
+        )
+
+        # Call differential evolution with the modified cost function
+        bounds = [[0, 2 * np.pi], [0, np.pi]]
+        res = differential_evolution(cost_func_with_args, bounds, disp=False)
+        resx = res.x
 
     if optimizer == "Powell":
         # Indicate in txt file the optimization method used, and parameters:
@@ -139,22 +164,21 @@ def find_longest_path(args):
                     num_refinement_loops,
                 )
             )  # type: ignore
+        # Plot cost function:
+        plt.figure(figsize=(10, 6))
+        plt.plot(cost_history, label="Cost evolution")
+        plt.xlabel("Number of iteration")
+        plt.ylabel("Cost")
+        plt.title("Convergence of cost during optimisation")
+        plt.legend()
+        plt.grid(True)
+        plt.savefig("cost_history_plot")
 
-    # if optimizer == "SPSA": TODO: Implement SPSA optimizer
+    # elif optimizer == "SPSA": TODO: Implement SPSA optimizer
 
     # Save the minimum cost and the corresponding parameters
     min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
     print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
-
-    # Plot cost function:
-    plt.figure(figsize=(10, 6))
-    plt.plot(cost_history, label="Cost evolution")
-    plt.xlabel("Number of iteration")
-    plt.ylabel("Cost")
-    plt.title("Convergence of cost during optimisation")
-    plt.legend()
-    plt.grid(True)
-    plt.savefig("cost_history_plot")
 
     circ = ansatz.copy()
     circ.measure_all()
@@ -192,6 +216,7 @@ def multiprocess_qaoa_solver_edge(
     optimizer,
     number_refine_loops,
     epsilon,
+    cost_landscape,
 ):
     pool = multiprocessing.Pool(nbr_processes)
 
@@ -204,6 +229,7 @@ def multiprocess_qaoa_solver_edge(
             itertools.repeat(optimizer),  # type: ignore
             itertools.repeat(number_refine_loops),
             itertools.repeat(epsilon),
+            itertools.repeat(cost_landscape),
         ),
     )
     pool.close()

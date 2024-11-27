@@ -70,6 +70,13 @@ def _build_arg_parser():
         type=float,
     )
 
+    p.add_argument(
+        "--plt_cost_landscape",
+        help="Plot 3D and 2D of the cost landscape (for gamma and beta compact set over all possible angles-0.1 incrementation)",
+        default=False,
+        type=bool,
+    )
+
     return p
 
 
@@ -100,6 +107,7 @@ def main():
             args.optimizer,
             args.refinement_loops,
             args.epsilon,
+            args.plt_cost_landscape,
         )
 
     # # Construct Hamiltonian when qubits are set as nodes, then optimize with QAOA/scipy:

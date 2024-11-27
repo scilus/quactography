@@ -13,7 +13,7 @@ class Hamiltonian_qubit_edge:
         self.starting_node_c = self.starting_node_cost()
         self.ending_node_c = self.ending_node_cost()
         self.hint_c = self.intermediate_node_cost()
-        self.alpha = alpha * self.graph.all_weights_sum
+        self.alpha = alpha * self.graph.all_weights_sum / graph.number_of_edges
         self.alpha_d = 4 * self.alpha
         self.alpha_f = 4 * self.alpha
         self.alpha_i = self.alpha
