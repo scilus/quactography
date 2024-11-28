@@ -73,11 +73,11 @@ def visualize_optimal_paths_edge(
     edge_label = nx.get_edge_attributes(G, "weight")
     nx.draw_networkx_edge_labels(
         G,
-        pos=nx.planar_layout(G),
+        pos=nx.shell_layout(G),
         edge_labels=edge_label,
         bbox=dict(facecolor="white", edgecolor="none", alpha=0.65),
     )
-    nx.draw_planar(
+    nx.draw_shell(
         G,
         with_labels=True,
         node_size=200,
