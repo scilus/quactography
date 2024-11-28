@@ -176,18 +176,18 @@ def find_longest_path(args):
     min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
     print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
 
-    # # Scatter optimal point--------------------------------------------------------------
-    # if reps == 1:
-    #     fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
-    #     ax1.scatter(  # type: ignore
-    #         resx[0], resx[1], min_cost, color="red", marker="o", s=100, label="Optimal Point"  # type: ignore
-    #     )
-    #     ax2.scatter(  # type: ignore
-    #         resx[0], resx[1], s=100, color="red", marker="o", label="Optimal Point"  # type: ignore
-    #     )
-    #     plt.savefig("Opt_point_visu.png")
-    #     plt.show()
-    # # ---------------------------------------------------------------------------------
+    # Scatter optimal point--------------------------------------------------------------
+    if reps == 1:
+        fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
+        ax1.scatter(  # type: ignore
+            resx[0], resx[1], min_cost, color="red", marker="o", s=100, label="Optimal Point"  # type: ignore
+        )
+        ax2.scatter(  # type: ignore
+            resx[0], resx[1], s=100, color="red", marker="o", label="Optimal Point"  # type: ignore
+        )
+        plt.savefig("Opt_point_visu.png")
+        plt.show()
+    # ---------------------------------------------------------------------------------
 
     circ = ansatz.copy()
     circ.measure_all()
