@@ -218,3 +218,76 @@ Loop: 1, Iterations: 3, Cost: 2.145188387353452, Params found: [-0.21805915  0.4
 Loop: 2, Iterations: 3, Cost: 3.1074733518116537, Params found: [1.3736561  0.44501928]
 Loop: 2, Iterations: 3, Cost: 2.145188384859155, Params found: [-3.35964636  0.40106219]
 Loop: 3, Iterations: 3, Cost: 3.10747335181166, Params found: [-1.76793655  0.44501928]
+Optimizer: Powell 
+Max number of refinement loops: 3 
+Epsilon: 1e-05 
+Number of edges in graph: 5 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Loop: 0, Iterations: 3, Cost: 15.029911597224313, Params found: [-0.45272518  0.06863313]
+Loop: 1, Iterations: 4, Cost: 19.396012706819445, Params found: [  0.51221573 -89.38761948]
+Loop: 1, Iterations: 3, Cost: 12.57407486552091, Params found: [2.3868139  4.16991687]
+Loop: 2, Iterations: 3, Cost: 20.857337561777598, Params found: [3.81406599 4.55510764]
+Optimizer: Powell 
+Max number of refinement loops: 3 
+Epsilon: 1e-05 
+Number of edges in graph: 13 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Optimizer: Powell 
+Max number of refinement loops: 3 
+Epsilon: 1e-05 
+Number of edges in graph: 5 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Loop: 0, Iterations: 3, Cost: 15.029911597224313, Params found: [-0.45272518  0.06863313]
+Loop: 1, Iterations: 4, Cost: 19.396012706819445, Params found: [  0.51221573 -89.38761948]
+Loop: 1, Iterations: 6, Cost: 15.02991159722299, Params found: [2.68886766 0.06863313]
+Loop: 2, Iterations: 4, Cost: 15.029911597222606, Params found: [  3.59431771 -88.03322743]
+Loop: 3, Iterations: 3, Cost: 22.2931073204925, Params found: [  2.76461327 -87.66895464]
+Optimizer: Powell 
+Max number of refinement loops: 3 
+Epsilon: 1e-05 
+Number of edges in graph: 5 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Loop: 0, Iterations: 3, Cost: 15.029911597224313, Params found: [-0.45272518  0.06863313]
+Loop: 1, Iterations: 4, Cost: 19.396012706819445, Params found: [  0.51221573 -89.38761948]
+Loop: 1, Iterations: 10, Cost: 22.810588862051503, Params found: [-1.01508242  3.05178237]
+Optimizer: Powell 
+Max number of refinement loops: 0 
+Epsilon: 1e-05 
+Number of edges in graph: 5 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Loop: 0, Iterations: 3, Cost: 15.029911597224313, Params found: [-0.45272518  0.06863313]
+Loop: 1, Iterations: 4, Cost: 19.396012706819445, Params found: [  0.51221573 -89.38761948]
+Optimizer: Powell 
+Max number of refinement loops: 2 
+Epsilon: 1e-05 
+Number of edges in graph: 13 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Optimizer: Powell 
+Max number of refinement loops: 2 
+Epsilon: 1e-05 
+Number of edges in graph: 8 
+Number of reps, QAOA layers (p): 1 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Loop: 0, Iterations: 4, Cost: 44.91227645537455, Params found: [-10.11569828   1.10902751]
+Loop: 1, Iterations: 10, Cost: 24.0712961411593, Params found: [-9.9949568   0.04015716]
+Loop: 2, Iterations: 5, Cost: 61.3938706667891, Params found: [-8.93913687 -0.96151838]
+Loop: 2, Iterations: 4, Cost: 44.91227645542923, Params found: [2.45067172 1.10902757]
+Loop: 2, Iterations: 5, Cost: 44.91227645542688, Params found: [2.45067175 1.10902756]
+Optimizer: Powell 
+Max number of refinement loops: 2 
+Epsilon: 1e-05 
+Number of edges in graph: 8 
+Number of reps, QAOA layers (p): 2 
+Hamiltonian alphas departure:  6.0,  ending: 6.0, int: 1.5
+Loop: 0, Iterations: 7, Cost: 33.007326424799885, Params found: [-4.71692467 -0.78670623  0.83757284  1.25728277]
+Loop: 1, Iterations: 6, Cost: 70.41815599796982, Params found: [-3.40696179 -0.64710372  1.24494227  1.65978313]
+Loop: 1, Iterations: 9, Cost: 12.636112370628691, Params found: [0.84008307 1.6626685  4.1784694  0.21620632]
+Loop: 2, Iterations: 7, Cost: 54.068554181878426, Params found: [ 1.17400153  2.35223917  4.70701314 -0.04868485]
+Loop: 0, Iterations: 7, Cost: 33.007326424799885, Params found: [-4.71692467 -0.78670623  0.83757284  1.25728277]
+Loop: 2, Iterations: 6, Cost: 32.11200725664107, Params found: [2.47187258 1.76392573 1.03880644 0.50913493]

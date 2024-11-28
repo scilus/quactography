@@ -13,6 +13,8 @@ def cost_func(params, estimator, ansatz, hamiltonian):
 from scipy.optimize import minimize
 import numpy as np
 
+resx = 0
+
 
 # Optimizer function
 def POWELL_loop_optimizer(
@@ -55,11 +57,11 @@ def POWELL_loop_optimizer(
         #     res.x,
         # )
 
-        # Save same data to a text file:
-        with open("params_iterations.txt", "a") as f:
-            f.write(
-                f"Loop: {loop_count}, Iterations: {res.nit}, Cost: {new_cost}, Params found: {res.x}\n"
-            )
+        # # Save same data to a text file:
+        # with open("params_iterations.txt", "a") as f:
+        #     f.write(
+        #         f"Loop: {loop_count}, Iterations: {res.nit}, Cost: {new_cost}, Params found: {res.x}\n"
+        #     )
 
         # Check for convergence
         if abs(previous_cost - new_cost) < epsilon:
@@ -80,10 +82,10 @@ def POWELL_loop_optimizer(
 
     # print("List of non-valid parameters:", no_valid_params)
 
-    # Add list of non-valid parameters to the text files
-    with open("params_found_while_opt.txt", "a") as f:
-        f.write(f"List of non-valid parameters: {no_valid_params}\n")
-    np.savez("params_found_while_opt.npz", no_valid_params=no_valid_params)
+    # # Add list of non-valid parameters to the text files
+    # with open("params_found_while_opt.txt", "a") as f:
+    #     f.write(f"List of non-valid parameters: {no_valid_params}\n")
+    # np.savez("params_found_while_opt.npz", no_valid_params=no_valid_params)
 
     return res.x, new_cost, previous_cost, x_0, loop_count, cost_history
 
@@ -150,10 +152,6 @@ def POWELL_refinement_optimization(
             cost_history = potential_cost_history
 
         num_refinement_loops -= 1
-
-        if res_x is None:
-            print("res not found")
-            res_x = 0
 
     # Return the best result found before the last iteration
     return res_x, second_last_cost, previous_cost, x_0, loop_count, cost_history

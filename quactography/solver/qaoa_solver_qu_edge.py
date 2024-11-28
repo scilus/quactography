@@ -80,9 +80,12 @@ def find_longest_path(args):
     sampler = Sampler(options={"shots": 1000000, "seed": 42})
     # -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    # PLOT OF COST LANDSCAPE IF WANTED
-    if cost_landscape == True:
-        plt_cost_func(estimator, ansatz, h)
+    # # PLOT OF COST LANDSCAPE IF WANTED
+    # if cost_landscape == True:
+    #     if reps == 1:
+    #         plt_cost_func(estimator, ansatz, h)
+    #     else:
+    #         pass
 
     if optimizer == "Differential":
         # Reference: https://www.youtube.com/watch?v=o-OPrQmS1pU
@@ -95,32 +98,22 @@ def find_longest_path(args):
         )
 
         # Call differential evolution with the modified cost function
-        bounds = [[0, 2 * np.pi], [0, np.pi]]
+        bounds = [[0, 2 * np.pi], [0, np.pi]] * reps
         res = differential_evolution(cost_func_with_args, bounds, disp=False)
         resx = res.x
 
     if optimizer == "Powell":
-        # Indicate in txt file the optimization method used, and parameters:
-        with open("params_iterations.txt", "a") as f:
-            f.write(f"Optimizer: {optimizer} \n")
-            f.write(f"Max number of refinement loops: {num_refinement_loops} \n")
-            f.write(f"Epsilon: {epsilon} \n")
-            f.write(f"Number of edges in graph: {h.graph.number_of_edges} \n")
-            f.write(f"Number of reps, QAOA layers (p): {reps} \n")
-            f.write(
-                f"Hamiltonian alphas departure:  {h.alpha_d},  ending: {h.alpha_f}, int: {h.alpha_i}\n"
-            )
-        np.savez(
-            "params_iterations.npz",
-            optimizer=optimizer,
-            num_refinement_loops=num_refinement_loops,
-            epsilon=epsilon,
-            number_edges=h.graph.number_of_edges,
-            reps=reps,
-            alpha_d=h.alpha_d,
-            alpha_f=h.alpha_f,
-            alpha_i=h.alpha_i,
-        )
+        # # Indicate in txt file the optimization method used, and parameters:
+        # with open("params_iterations.txt", "a") as f:
+        #     f.write(f"Optimizer: {optimizer} \n")
+        #     f.write(f"Max number of refinement loops: {num_refinement_loops} \n")
+        #     f.write(f"Epsilon: {epsilon} \n")
+        #     f.write(f"Number of edges in graph: {h.graph.number_of_edges} \n")
+        #     f.write(f"Number of reps, QAOA layers (p): {reps} \n")
+        #     f.write(
+        #         f"Hamiltonian alphas departure:  {h.alpha_d},  ending: {h.alpha_f}, int: {h.alpha_i}\n"
+        #     )
+
         # Initialize list of invalid parameters
         no_valid_params = []
 
@@ -165,15 +158,17 @@ def find_longest_path(args):
                     num_refinement_loops,
                 )
             )  # type: ignore
-        # Plot cost function:
-        plt.figure(figsize=(10, 6))
-        plt.plot(cost_history, label="Cost evolution")
-        plt.xlabel("Number of iteration")
-        plt.ylabel("Cost")
-        plt.title("Convergence of cost during optimisation")
-        plt.legend()
-        plt.grid(True)
-        plt.savefig("cost_history_plot")
+
+        # # Plot cost HISTORY:-----------------------------------------------------------------
+        # plt.figure(figsize=(10, 6))
+        # plt.plot(cost_history, label="Cost evolution")
+        # plt.xlabel("Number of iteration")
+        # plt.ylabel("Cost")
+        # plt.title("Convergence of cost during optimisation")
+        # plt.legend()
+        # plt.grid(True)
+        # plt.savefig("cost_history_plot")
+        # --------------------------------------------------------------------------------------
 
     # elif optimizer == "SPSA": TODO: Implement SPSA optimizer
 
@@ -181,17 +176,18 @@ def find_longest_path(args):
     min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
     print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
 
-    # Scatter optimal point--------------------------------------------------------------
-    fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
-    ax1.scatter(  # type: ignore
-        resx[0], resx[1], min_cost, color="red", marker="o", s=100, label="Optimal Point"  # type: ignore
-    )
-    ax2.scatter(  # type: ignore
-        resx[0], resx[1], s=100, color="red", marker="o", label="Optimal Point"  # type: ignore
-    )
-    plt.savefig("Opt_point_visu.png")
-    plt.show()
-    # ---------------------------------------------------------------------------------
+    # # Scatter optimal point--------------------------------------------------------------
+    # if reps == 1:
+    #     fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
+    #     ax1.scatter(  # type: ignore
+    #         resx[0], resx[1], min_cost, color="red", marker="o", s=100, label="Optimal Point"  # type: ignore
+    #     )
+    #     ax2.scatter(  # type: ignore
+    #         resx[0], resx[1], s=100, color="red", marker="o", label="Optimal Point"  # type: ignore
+    #     )
+    #     plt.savefig("Opt_point_visu.png")
+    #     plt.show()
+    # # ---------------------------------------------------------------------------------
 
     circ = ansatz.copy()
     circ.measure_all()

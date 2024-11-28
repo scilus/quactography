@@ -13,6 +13,7 @@ class Hamiltonian_qubit_edge:
         self.starting_node_c = self.starting_node_cost()
         self.ending_node_c = self.ending_node_cost()
         self.hint_c = self.intermediate_node_cost()
+        self.hint_edge_c = self.intermediate_min_edge_cost()
         self.alpha = alpha * self.graph.all_weights_sum / graph.number_of_edges
         self.alpha_d = 4 * self.alpha
         self.alpha_f = 4 * self.alpha
@@ -22,6 +23,7 @@ class Hamiltonian_qubit_edge:
             + self.alpha_d * (self.starting_node_c) ** 2
             + self.alpha_f * (self.ending_node_c) ** 2
             + self.alpha_i * self.hint_c
+            + self.alpha_i * (self.hint_edge_c) ** 2
         ).simplify()
 
         # self.exact_cost, self.exact_path = self.get_exact_sol()
@@ -117,7 +119,7 @@ class Hamiltonian_qubit_edge:
 
         pauli_end_term = [("I" * self.graph.number_of_edges, len(qubit_end) * 0.5 - 1)]
 
-        # Z à la bonne position:
+        # Z at the right place:
         for _, value in enumerate(qubit_end):
             str2 = (
                 "I" * (self.graph.number_of_edges - (value + 1)) + "Z" + "I" * value,
@@ -196,6 +198,52 @@ class Hamiltonian_qubit_edge:
         # print(f"Sum of intermediate terms squared: {sum(intermediate_cost_h_terms)}")
         return sum(intermediate_cost_h_terms)
 
+    def intermediate_min_edge_cost(self):
+        """Constraint to limit the number of edges in graph because parity constraint is not enough
+        to get each edges once only in path, it tends to be trapped in cycles elsewise.
+        Returns:
+            Pauli str: Pauli operator which represents sum over int_nodes, sum over edges connected to that node over all edges, as bool variable,
+            being mapped to (I-Z_i)/2 in quantum gates formalism.
+        """
+        # Identify intermediate nodes
+        int_nodes = []
+        for node, value in enumerate(self.graph.starting_nodes):
+            if value != self.graph.starting_node and value != self.graph.ending_node:
+                if value not in int_nodes:
+                    int_nodes.append(value)
+        for node, value in enumerate(self.graph.ending_nodes):
+            if value != self.graph.starting_node and value != self.graph.ending_node:
+                if value not in int_nodes:
+                    int_nodes.append(value)
+
+        liste_qubits_int = [[] for _ in range(len(int_nodes))]
+        for i, int_node in enumerate(int_nodes):
+            for edge_idx, value in enumerate(self.graph.ending_nodes):
+                if value == int_node:
+                    liste_qubits_int[i].append(self.graph.edge_indices[edge_idx])
+            for edge_idx, value in enumerate(self.graph.starting_nodes):
+                if value == int_node:
+                    liste_qubits_int[i].append(self.graph.edge_indices[edge_idx])
+
+        pauli_int_min_edge_term = []
+
+        for edges in liste_qubits_int:
+            for edge in edges:
+                pauli_string = (
+                    "I" * edge + "Z" + "I" * (self.graph.number_of_edges - edge - 1)
+                )
+                pauli_int_min_edge_term.append((pauli_string, -0.5))
+
+        identity_term = (
+            "I" * self.graph.number_of_edges,
+            len(pauli_int_min_edge_term) * 0.5,
+        )
+        pauli_int_min_edge_term.append(identity_term)
+
+        int_nodes_min_edge_cost_h = SparsePauliOp.from_list(pauli_int_min_edge_term)
+
+        return int_nodes_min_edge_cost_h
+
     # def get_exact_sol(self):
     #     """Get the exact solution of the Hamiltonian
 
@@ -216,3 +264,95 @@ class Hamiltonian_qubit_edge:
 
     #     # costs and paths to all best solutions
     #     return eigenvalues[best_indices], binary_paths
+
+
+# # TEST:
+
+
+# mat = np.array([[0, 1, 1, 0], [1, 0, 0, 5], [1, 0, 0, 6], [0, 5, 6, 0]])
+
+# # # This is the given format you should use to save the graph, for mat:
+# # save_graph(mat, np.array([0, 1, 2, 3]), np.array([4, 4]), "rand_graph.npz")
+# import sys
+
+# sys.path.append(r"C:\Users\harsh\quactography")
+
+# from quactography.graph.undirected_graph import Graph
+# from quactography.adj_matrix.io import load_graph
+
+# # from quactography.hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
+# import numpy as np
+
+# from quactography.adj_matrix.io import save_graph
+
+# my_graph_class = Graph(
+#     np.array(
+#         [
+#             [0, 1, 1, 1, 1],
+#             [1, 0, 1, 0, 1],
+#             [1, 1, 0, 1, 1],
+#             [1, 0, 1, 0, 1],
+#             [1, 0, 1, 0, 1],
+#         ]
+#     ),
+#     1,
+#     0,
+# )
+
+# # my_graph_class = Graph(
+# #     np.array(
+# #         [
+# #             [0, 1, 1, 1],
+# #             [1, 0, 1, 0],
+# #             [1, 1, 0, 1],
+# #             [1, 0, 1, 0],
+# #         ]
+# #     ),
+# #     1,
+# #     0,
+# # )
+# print(my_graph_class.starting_nodes)
+# print(my_graph_class.ending_nodes)
+# print(my_graph_class.weights)
+# print(my_graph_class.edge_indices)
+
+# # Test mandatory_cost
+# h = Hamiltonian_qubit_node(my_graph_class, 1)
+
+# # print(h.mandatory_c)
+
+# # # Test starting_ending_node_cost
+# # print(h.starting_node_c)
+# # print(h.ending_node_c)
+
+# # Test intermediate_cost
+# print(h.hint_c)
+
+# print("total :", h.total_hamiltonian.simplify())
+# print(h.exact_cost)
+# print(h.exact_path)
+# from quactography.hamiltonian.validate import print_hamiltonian_circuit
+
+# print("total")
+# print_hamiltonian_circuit(h.total_hamiltonian, ["10101"])
+# print("mandatory")
+# print_hamiltonian_circuit(h.mandatory_c, ["10101"])
+# print("start")
+# print_hamiltonian_circuit(h.starting_node_c, ["10101"])
+# print("finish")
+# print_hamiltonian_circuit(h.ending_node_c, ["10101"])
+# print("int")
+# print_hamiltonian_circuit(h.hint_c, ["10101"])
+# # print()
+
+# # # print("total2")
+# # # print_hamiltonian_circuit(h.total_hamiltonian, ["11111"])
+# # # print("mandatory2")
+# # # print_hamiltonian_circuit(h.mandatory_c, ["11111"])
+# # # print("start2")
+# # # print_hamiltonian_circuit(h.starting_node_c, ["11111"])
+# # # print("finish2")
+# # # print_hamiltonian_circuit(h.ending_node_c, ["11111"])
+# # # print("int2")
+# # # print_hamiltonian_circuit(h.hint_c, ["11111"])
+# # # ------------------------------------------------------------------------------------------------------------------------------------------
