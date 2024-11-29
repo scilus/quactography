@@ -23,7 +23,7 @@ class Hamiltonian_qubit_edge:
             + self.alpha_d * (self.starting_node_c) ** 2
             + self.alpha_f * (self.ending_node_c) ** 2
             + self.alpha_i * self.hint_c
-            + 0.5 * (self.hint_edge_c) ** 2
+            + 0.5 * (self.hint_edge_c)  # ** 2
         ).simplify()
 
         self.exact_cost, self.exact_path = self.get_exact_sol()
