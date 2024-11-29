@@ -16,7 +16,6 @@ import numpy as np
 resx = 0
 
 
-# Optimizer function
 def POWELL_loop_optimizer(
     loop_count,
     max_loops,
@@ -46,16 +45,16 @@ def POWELL_loop_optimizer(
 
         # Optimized cost
         new_cost = cost_func(res.x, estimator, ansatz, h.total_hamiltonian)
-        # print(
-        #     "Loop:",
-        #     loop_count,
-        #     "Iterations:",
-        #     res.nit,
-        #     "Cost:",
-        #     new_cost,
-        #     "Params found:",
-        #     res.x,
-        # )
+        print(
+            "Loop:",
+            loop_count,
+            "Iterations:",
+            res.nit,
+            "Cost:",
+            new_cost,
+            "Params found:",
+            res.x,
+        )
 
         # # Save same data to a text file:
         # with open("params_iterations.txt", "a") as f:
@@ -110,15 +109,16 @@ def POWELL_refinement_optimization(
         return any(np.allclose(x_0, param, atol=tol) for param in no_valid_params)
 
     second_last_cost = last_cost
+    res_x = None
 
     while last_cost > 0 and num_refinement_loops > 0:
-        # Generate new random parameters
+        # Generate new random parameters:
         while True:
             x_0 = np.random.uniform(0, np.pi, ansatz.num_parameters)
             if not is_close_to_any(x_0, no_valid_params):
                 break
 
-        # Run the optimizer
+        # Run the optimizer:
         (
             potential_resx,
             potential_last_cost,
@@ -138,20 +138,21 @@ def POWELL_refinement_optimization(
             h,
         )
 
-        # If cost is increasing, stop the refinement loop and use the second-to-last result
-        if potential_last_cost > last_cost:
-            break
-
-        # Update results if an improvement is found
-        elif potential_last_cost < last_cost:
-            second_last_cost = last_cost  # Update second-to-last cost
+        # Update results if an improvement is found:
+        if potential_last_cost < last_cost:
+            second_last_cost = last_cost
             last_cost = potential_last_cost
-            res_x = potential_resx  # Store the result
+            res_x = potential_resx
             previous_cost = potential_previous_cost
             x_0 = potential_x_0
             cost_history = potential_cost_history
+        else:
+            break
 
         num_refinement_loops -= 1
 
-    # Return the best result found before the last iteration
+    # If no valid result was found, use the last known good parameters:
+    if res_x is None:
+        res_x = x_0
+
     return res_x, second_last_cost, previous_cost, x_0, loop_count, cost_history
