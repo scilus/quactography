@@ -24,12 +24,6 @@ def _build_arg_parser():
     p.add_argument("starting_node", help="Starting node of the graph", type=int)
     p.add_argument("ending_node", help="Ending node of the graph", type=int)
     p.add_argument("output_file", help="Output file name", type=str)
-
-    p.add_argument(
-        "hamiltonian",
-        help="Hamiltonian qubit representation to use for QAOA, either 'node' or 'edge' ",
-        type=str,
-    )
     p.add_argument(
         "--alphas", nargs="+", type=float, help="List of alphas", default=[1.1]
     )
@@ -52,29 +46,15 @@ def _build_arg_parser():
     p.add_argument(
         "--optimizer",
         help="Optimizer to use for the QAOA algorithm",
-        default="Powell",
+        default="Differential",
         type=str,
     )
 
     p.add_argument(
-        "--refinement_loops",
-        help="Number of loops for the refinement optimization",
-        default=3,
-        type=int,
-    )
-
-    p.add_argument(
-        "--epsilon",
-        help="Epsilon value for the refinement optimization",
-        default=1e-5,
-        type=float,
-    )
-
-    p.add_argument(
         "--plt_cost_landscape",
-        help="Plot 3D and 2D of the cost landscape (for gamma and beta compact set over all possible angles-0.1 incrementation)",
-        default=False,
-        type=bool,
+        help="Yes or No, Plot 3D and 2D of the cost landscape (for gamma and beta compact set over all possible angles-0.1 incrementation)",
+        default="No",
+        type=str,
     )
 
     return p
@@ -92,39 +72,20 @@ def main():
     graph = Graph(weighted_graph, args.starting_node, args.ending_node)
 
     # Construct Hamiltonian when qubits are set as edges, then optimize with QAOA/scipy:
-    if args.hamiltonian == "edge":
 
-        hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in args.alphas]
+    hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in args.alphas]
 
-        print(hamiltonians[0].total_hamiltonian.simplify())
+    # print(hamiltonians[0].total_hamiltonian.simplify())
 
-        print("\n Calculating qubits as edges......................")
-        multiprocess_qaoa_solver_edge(
-            hamiltonians,
-            args.reps,
-            args.number_processors,
-            args.output_file,
-            args.optimizer,
-            args.refinement_loops,
-            args.epsilon,
-            args.plt_cost_landscape,
-        )
-
-    # # Construct Hamiltonian when qubits are set as nodes, then optimize with QAOA/scipy:
-    # elif args.hamiltonian == "node":
-    #     hamiltonians = [Hamiltonian_qubit_node(graph, alpha) for alpha in args.alphas]
-    #     print(hamiltonians[0].total_hamiltonian.simplify())
-
-    #     print("\n Calculating qubits as nodes......................")
-    #     multiprocess_qaoa_solver_node(
-    #         hamiltonians,
-    #         args.reps,
-    #         args.number_processors,
-    #         args.output_file,
-    #         # args.optimizer,
-    #         # args.refinement_loops,
-    #         # args.epsilon,
-    #     )
+    print("\n Calculating qubits as edges......................")
+    multiprocess_qaoa_solver_edge(
+        hamiltonians,
+        args.reps,
+        args.number_processors,
+        args.output_file,
+        args.optimizer,
+        args.plt_cost_landscape,
+    )
 
 
 if __name__ == "__main__":

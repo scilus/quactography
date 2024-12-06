@@ -23,7 +23,7 @@ class Hamiltonian_qubit_edge:
             + self.alpha_d * (self.starting_node_c) ** 2
             + self.alpha_f * (self.ending_node_c) ** 2
             + self.alpha_i * self.hint_c
-            + 0.5 * (self.hint_edge_c) ** 2
+            + 0.5 * (self.hint_edge_c)  # ** 2
         ).simplify()
 
         self.exact_cost, self.exact_path = self.get_exact_sol()
@@ -226,7 +226,7 @@ class Hamiltonian_qubit_edge:
                     liste_qubits_int.append(self.graph.edge_indices[node])
 
         a = liste_qubits_int
-        print(f"Edges present and connected to each int node: q({a}) ")
+        # print(f"Edges present and connected to each int node: q({a}) ")
 
         pauli_int_edge_term = [("I" * self.graph.number_of_edges, len(int_nodes) * 0.5)]
 
@@ -238,7 +238,7 @@ class Hamiltonian_qubit_edge:
             )
             pauli_int_edge_term.append(str2)
         int_edge_cost_h = SparsePauliOp.from_list(pauli_int_edge_term)
-        print("int edge pauli", int_edge_cost_h)
+        # print("int edge pauli", int_edge_cost_h)
 
         # print(f"\n End constraint = {ending_node_constraint_cost_h}")
         return int_edge_cost_h
@@ -265,7 +265,7 @@ class Hamiltonian_qubit_edge:
         return eigenvalues[best_indices], binary_paths
 
 
-# # # # TEST:
+# # # # TEST:--------------------------------------------------------------------------
 
 
 # # # mat = np.array([[0, 1, 1, 0], [1, 0, 0, 5], [1, 0, 0, 6], [0, 5, 6, 0]])

@@ -23,12 +23,7 @@ def _build_arg_parser():
         help="Output file name for visualisation",
         type=str,
     )
-    p.add_argument(
-        "hamiltonian",
-        help="Hamiltonian qubit representation to use for plots, either 'node' or 'edge' ",
-        choices=["node", "edge"],
-        type=str,
-    )
+
     return p
 
 
@@ -38,13 +33,13 @@ def main():
     """
     parser = _build_arg_parser()
     args = parser.parse_args()
-    if args.hamiltonian == "edge":
-        for i in range(len(args.input_files)):
-            visualize_optimal_paths_edge(
-                args.mat_adj + ".npz",
-                args.input_files[i],
-                args.output_file + "_" + str(i),
-            )
+
+    for i in range(len(args.input_files)):
+        visualize_optimal_paths_edge(
+            args.mat_adj + ".npz",
+            args.input_files[i],
+            args.output_file + "_" + str(i),
+        )
 
 
 if __name__ == "__main__":

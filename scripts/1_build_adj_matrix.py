@@ -73,14 +73,14 @@ def main():
         adj_matrix, node_indices, sh, args.axis_name
     )
 
-    # Could be added in the code if needed:
-    # Select sub-graph and filter:__________________________________________________
-    select_1 = 30
-    select_2 = 200
+    # # Could be added in the code if needed:
+    # # Select sub-graph and filter:__________________________________________________
+    # select_1 = 30
+    # select_2 = 200
 
-    weighted_graph = weighted_graph[select_1:select_2, select_1:select_2]
-    print(weighted_graph)
-    # ________________________________________________________________________________
+    # weighted_graph = weighted_graph[select_1:select_2, select_1:select_2]
+    # # print(weighted_graph)
+    # # ________________________________________________________________________________
 
     # filter graph edges by weight
     weighted_graph[weighted_graph < args.threshold] = 0.0
@@ -96,7 +96,7 @@ def main():
     )
     plt.imshow(np.log(weighted_graph + 1))
     plt.show()
-    print("node indices", node_indices)
+    # print("node indices", node_indices)
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
 

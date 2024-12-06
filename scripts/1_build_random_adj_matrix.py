@@ -45,8 +45,8 @@ def main():
 
     if args.edges_matter == True:
         args.num_nodes = int((1 + np.sqrt(1 + 8 * args.num_edges)) / 2)
-    print(args.num_nodes)
-    print(args.num_edges)
+    # print(args.num_nodes)
+    # print(args.num_edges)
 
     if args.edges_matter == False:
         if args.num_edges > max_num_edges:
