@@ -71,3 +71,14 @@ which represent the weight between any pair of nodes in graph.
 Methodology 
 ------------------
 
+First, to have acces to the graph representation from diffusion data, we need script 1_build_adj_matrix.py and 
+datas and to visualize the graph, we need the script 2_draw_adj_matrix.py .
+
+Secondly, to build a random matrix (code still needs work to generate exactly asked number of nodes or edges) and visualize it, 
+we need scripts 1_build_random_adj_matrix.py and to visualize: 2_draw_random_adj_matrix.py .
+
+Thirdly, once either graph is generated randomly, with diffusion data or constructed manually (like toy_graphs adjacency matrices)
+it is possible to run QAOA and optimisation process with 3_find_max_intensity_diffusion_path.py (possibility of plotting cost landscape and optimal params found on cost landscape as option). 
+
+Finally, it is possible to visualize the solutions found by QAOA with scripts 4_plot_distribution_probabilities.py
+and 5_plot_optimal_paths.py . 
