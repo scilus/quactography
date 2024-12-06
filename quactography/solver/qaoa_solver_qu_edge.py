@@ -52,7 +52,7 @@ def find_longest_path(args):
     reps = args[1]
     outfile = args[2]
     optimizer = args[3]
-    cost_landscape = args[4]
+
     # Save output file name diffrerent for each alpha:
     outfile = outfile + "_alpha_" + str(h.alpha)
 
@@ -88,7 +88,7 @@ def find_longest_path(args):
     print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
 
     # Scatter optimal point on cost Landscape --------------------------------------------------------------
-    if cost_landscape == True:
+    if args[4] == "Yes":
         if reps == 1:
             fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
             ax1.scatter(  # type: ignore
@@ -99,6 +99,8 @@ def find_longest_path(args):
             )
             plt.savefig("Opt_point_visu.png")
             plt.show()
+    else:
+        pass
     # ---------------------------------------------------------------------------------
 
     circ = ansatz.copy()

@@ -52,9 +52,9 @@ def _build_arg_parser():
 
     p.add_argument(
         "--plt_cost_landscape",
-        help="Plot 3D and 2D of the cost landscape (for gamma and beta compact set over all possible angles-0.1 incrementation)",
-        default=False,
-        type=bool,
+        help="Yes or No, Plot 3D and 2D of the cost landscape (for gamma and beta compact set over all possible angles-0.1 incrementation)",
+        default="No",
+        type=str,
     )
 
     return p
@@ -75,7 +75,7 @@ def main():
 
     hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in args.alphas]
 
-    print(hamiltonians[0].total_hamiltonian.simplify())
+    # print(hamiltonians[0].total_hamiltonian.simplify())
 
     print("\n Calculating qubits as edges......................")
     multiprocess_qaoa_solver_edge(
