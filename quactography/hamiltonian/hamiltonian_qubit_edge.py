@@ -265,7 +265,7 @@ class Hamiltonian_qubit_edge:
         return eigenvalues[best_indices], binary_paths
 
 
-# # # # TEST:
+# # # # TEST:--------------------------------------------------------------------------
 
 
 # # # mat = np.array([[0, 1, 1, 0], [1, 0, 0, 5], [1, 0, 0, 6], [0, 5, 6, 0]])
