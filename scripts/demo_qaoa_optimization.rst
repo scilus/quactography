@@ -82,3 +82,22 @@ it is possible to run QAOA and optimisation process with 3_find_max_intensity_di
 
 Finally, it is possible to visualize the solutions found by QAOA with scripts 4_plot_distribution_probabilities.py
 and 5_plot_optimal_paths.py . 
+
+
+Graph generation and visualisation from Diffusion data
+----------------------------------------------------------
+
+
+
+Random graph generation and visualisation 
+-----------------------------------------------------------
+
+
+
+Run QAOA and extract results with toy graphs 
+-----------------------------------------------------------
+
+
+
+Visualize histogram of path that minimizes cost function and optimal path 
+---------------------------------------------------------------------------
