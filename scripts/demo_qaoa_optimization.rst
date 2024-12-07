@@ -93,7 +93,7 @@ In order to construct a graph from white matter mask and fodf peaks as mentionne
 Run this command in terminal : 
 ::
 
-   !python 1_build_adj_matrix.py ../data/simplePhantoms/fanning_2d_5bundles/wm_vf.nii.gz ../data/simplePhantoms/fanning_2d_5bundles/fods.nii.gz --threshold 0.02 graph
+   python 1_build_adj_matrix.py ../data/simplePhantoms/fanning_2d_5bundles/wm_vf.nii.gz ../data/simplePhantoms/fanning_2d_5bundles/fods.nii.gz --threshold 0.02 graph
 
 The option of --threshold was added to filter connexions with weights lower than 0.02, which is small, the weights' range is from 0 to 0.5. 
 This should generate a graph.npz file containing the adjacency matrix, the nodes indices as well as the volume dimension of the graph. 
@@ -104,7 +104,7 @@ The name of the output file is the last argument in command line.
 Then, in order to visualize the graph that was just constructed, run this command line in terminal: 
 ::
 
-    !python 2_draw_adj_matrix.py graph.npz
+    python 2_draw_adj_matrix.py graph.npz
 
 Which plots this image: 
 
@@ -121,14 +121,14 @@ the number of edges matters more than the number of nodes (work in progress, doe
 
 ::
 
-    !python 1_build_random_adj_matrix.py 3 3  False rand_graph
+    python 1_build_random_adj_matrix.py 3 3  False rand_graph
 
 Which should give a npz file name rand_graph.npz, 
 Then, to visualize the graph, args being name of entry graph (npz) followed by name of output image of graph: 
 
 ::
 
-    !python 2_draw_random_adj_matrix.py rand_graph rand_graph_visu
+    python 2_draw_random_adj_matrix.py rand_graph rand_graph_visu
 
 Which should plot : 
 
@@ -139,7 +139,7 @@ To visualize the toy graphs, first argument can be changed for any available gra
 
 ::
 
-    !python 2_draw_random_adj_matrix.py toy_graphs/weighted_17_edges_rand_graph weighted_17_rand_graph_visu
+    python 2_draw_random_adj_matrix.py toy_graphs/weighted_17_edges_rand_graph weighted_17_rand_graph_visu
 
 
 You should get those graphs, the weighted one with weights below 0.5, and unweighted ones, with weights all at 1: 
@@ -171,7 +171,7 @@ need 4 axis for 2 layers of QAOA, 6 axis for 3 layers etc.)
 
 ::
 
-    !python 3_find_max_intensity_diffusion_path.py toy_graphs/weighted_5_edges_rand_graph 0 3 qaoa_solver_infos --alphas  1.5   --reps 1  -npr 1 --optimizer Differential --plt_cost_landscape Yes
+    python 3_find_max_intensity_diffusion_path.py toy_graphs/weighted_5_edges_rand_graph 0 3 qaoa_solver_infos --alphas  1.5   --reps 1  -npr 1 --optimizer Differential --plt_cost_landscape Yes
 
 
 If --plt_cost_landscape was set to Yes, than you should get the following plot: 
@@ -199,7 +199,7 @@ run this command:
 
 ::
 
-    !python 4_plot_distribution_probabilities.py qaoa_solver_infos_alpha_0.5186155057328249.npz  visu_total_dist visu_selected_dist 
+    python 4_plot_distribution_probabilities.py qaoa_solver_infos_alpha_0.5186155057328249.npz  visu_total_dist visu_selected_dist 
 
 You should get two plots with the 10% selected being: 
 
@@ -211,7 +211,7 @@ To visualize first most probable to minimize cost function path, run:
 
 ::
 
-    !python 5_plot_optimal_paths.py toy_graphs/weighted_5_edges_rand_graph  qaoa_solver_infos_alpha_0.5186155057328249.npz opt_paths
+    python 5_plot_optimal_paths.py toy_graphs/weighted_5_edges_rand_graph  qaoa_solver_infos_alpha_0.5186155057328249.npz opt_paths
 
 
 Which should plot:
