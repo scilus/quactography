@@ -1,0 +1,4 @@
+Simulated version of the FiberCup for the MICCAI 2015 Tractography with Random Forests paper by Neher (see references.bib).
+This version has one "acquisition" at b-1000 with 30 gradient directions and a b0 at 3mm iso vox. 
+
+See https://www.nitrc.org/frs/shownotes.php?release_id=3455 for data
