@@ -217,7 +217,7 @@ To visualize first most probable to minimize cost function path, run:
 
 ::
 
-    plot_optimal_paths.py toy_graphs/weighted_5_edges_rand_graph  /
+    plot_optimal_paths.py [PATH_TO_QUACTO_DATA]/weighted_5_edges_rand_graph  /
                             qaoa_solver_infos_alpha_0.5186155057328249.npz opt_paths
 
 
