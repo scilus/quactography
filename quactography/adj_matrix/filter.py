@@ -17,7 +17,8 @@ def remove_orphan_nodes(graph, node_indices, keep_indices=None):
     return out_graph, out_indices
 
 
-# Remove nodes that do not add a change in direction between the two nodes it is connected to where the direction stays the same:
+# Remove nodes that do not add a change in direction between the two nodes 
+# it is connected to where the direction stays the same:
 def remove_intermediate_connections(graph, node_indices=None, keep_indices=None):
     skipped_at_least_one = True
     while skipped_at_least_one:
@@ -38,7 +39,8 @@ def remove_intermediate_connections(graph, node_indices=None, keep_indices=None)
     return graph
 
 
-# Remove nodes that do not add a change in direction between the two nodes it is connected to where the direction stays the same
+# Remove nodes that do not add a change in direction between the
+# two nodes it is connected to where the direction stays the same
 # by multiplying instead of adding the weights:
 def remove_intermediate_connections_prod_instead_sum(
     graph, node_indices=None, keep_indices=None

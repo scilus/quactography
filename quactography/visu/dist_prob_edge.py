@@ -5,7 +5,7 @@ from quactography.solver.io import load_optimization_results
 
 
 def plot_distribution_of_probabilities_edge(
-    in_file, visu_out_file_total, visu_out_file_selected
+    in_file, visu_out_file_total, visu_out_file_selected, save_only
 ):
 
     _, dist_binary_prob, min_cost, h, _, _, opt_params = load_optimization_results(
@@ -22,8 +22,11 @@ def plot_distribution_of_probabilities_edge(
         title="Distribution of probabilities",
         color="pink",
     )
+    if not save_only:
+        plt.show()
     # Save plot of distribution:
     plt.savefig(visu_out_file_total)
+    print("Distribution of probabilities saved in ", visu_out_file_total)
 
     # print(max(dist_binary_prob, key=dist_binary_prob.get))
     # bin_str = list(map(int, max(dist_binary_prob, key=dist_binary_prob.get)))
@@ -83,13 +86,15 @@ def plot_distribution_of_probabilities_edge(
         sort="value_desc",
         filename=visu_out_file_selected,
     )
+    print("Distribution of probabilities for selected paths saved in ", visu_out_file_selected)
+    if not save_only:
+        plt.show()
     # target_string=h.exact_path,)
     # if match_found:
     #     print(
-    #         "The optimal solution is in the subset of solutions found by QAOA.\n_______________________________________________________________________"
-    #     )
+    #         "The optimal solution is in the subset of solutions found by QAOA.\n______")
 
     # else:
     #     print(
-    #         "The solution is not in given subset of solutions found by QAOA.\n_______________________________________________________________________"
+    #         "The solution is not in given subset of solutions found by QAOA.\n_________________")
     #     )

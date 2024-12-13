@@ -1,15 +1,29 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 import argparse
 import numpy as np
 
 from quactography.adj_matrix.io import load_graph
 import matplotlib.pyplot as plt
 
-"""Tool to visualize the graph constructed with diffusion data (white matter mask and fodf peaks)"""
+
+"""
+Tool to visualize the graph constructed with 
+diffusion data (white matter mask and fodf peaks)
+"""
+
+
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
-    p.add_argument("in_graph", help="Graph file as a .npz archive.")
+    p.add_argument("in_graph", 
+                   help="Graph file (npz file)")
+    p.add_argument(
+        "--save_only",
+        help="Save only the figure without displaying it",
+        action="store_true",
+    )
     return p
 
 
@@ -43,8 +57,10 @@ def main():
                 )
 
     plt.scatter(x, y)
-    plt.savefig("graph_adj_mat.png")  # Save the plot as a PNG file
-    plt.show()
+    plt.savefig("graph_adj_mat.png")  
+    print(f"Graph saved as graph_adj_mat.png")
+    if not args.save_only:
+        plt.show()
 
 
 if __name__ == "__main__":

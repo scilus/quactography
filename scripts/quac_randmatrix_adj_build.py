@@ -1,23 +1,35 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 import numpy as np
 import argparse
 
 from quactography.adj_matrix.filter import remove_zero_columns_rows
 from quactography.adj_matrix.io import save_graph
 
-    """Tool to build random matrix with specified number of nodes or edges, work in progress (WIP) instead of diffusion data. 
-    """
+
+"""
+Tool to build random matrix with specified number of nodes or edges, work in progress (WIP) instead of diffusion data. 
+"""
+
+
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
-    p.add_argument("num_nodes", help="Number of nodes desired in the graph.", type=int)
-    p.add_argument("num_edges", help="Number of edges desired in the graph.", type=int)
+    p.add_argument("num_nodes", 
+                   help="Number of nodes desired in the graph.", 
+                   type=int)
+    p.add_argument("num_edges", 
+                   help="Number of edges desired in the graph.", 
+                   type=int)
     p.add_argument(
         "edges_matter",
         help="If True, num_edges is the exact number of edges in the graph, if False, num_edges is the maximum number of edges in the graph.",
         type=bool,
     )
-    p.add_argument("out_graph", help="Output graph file name.", type=str)
+    p.add_argument("out_graph", 
+                   help="Output graph file name (npz file)", 
+                   type=str)
 
     return p
 
@@ -29,7 +41,8 @@ def main():
     Args:
         num_nodes (int): number of nodes desired in the graph
         num_edges (int): number of edges desired in the graph
-        edges_matter (bool): If False, num_edges is the maximum number of edges in the graph,  if True , num_edges is the exact number of edges in the graph,
+        edges_matter (bool): If False, num_edges is the maximum number of edges in the graph,  
+        if True , num_edges is the exact number of edges in the graph,
 
     Returns:
         mat_adj (np.ndarray) : adjacency matrix of the graph
@@ -99,6 +112,7 @@ def main():
 
     # Save the graph:
     save_graph(mat, np.arange(mat.shape[0]), mat.shape, args.out_graph)
+    print("Graph saved in", args.out_graph)
 
 
 if __name__ == "__main__":

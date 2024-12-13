@@ -59,7 +59,8 @@ def POWELL_loop_optimizer(
         # # Save same data to a text file:
         # with open("params_iterations.txt", "a") as f:
         #     f.write(
-        #         f"Loop: {loop_count}, Iterations: {res.nit}, Cost: {new_cost}, Params found: {res.x}\n"
+        #         f"Loop: {loop_count}, Iterations: {res.nit}, 
+        # Cost: {new_cost}, Params found: {res.x}\n"
         #     )
 
         # Check for convergence

@@ -5,21 +5,25 @@ Motivation and general picture of this project :
 
 This project can be seen in two different research areas. First, the mapping from diffusion data
 with white matter masks and fiber orientation distribution functions peaks to a graph (found in data 
-file simplePhantoms or fodf.nii.gz and wm.nii.gz). Future works are left to do in this area to find 
-a best suited mapping between data to graph, how to filter the graph without loss of information and 
+folder simplePhantoms or fodf.nii.gz and wm.nii.gz). Future works are left to do in this area to find 
+a best suited mapping between diffusion-MRI data to graph, how to filter the graph without loss of information and 
 more. Then, as a second and mainly developped aspect in this project is the quantum mapping of the 
-optimisation problem at hand, which is, from any adjacency matrix which represents a connected graph, 
+optimisation problem at hand, which is : from any adjacency matrix which represents a connected graph, 
 find the path that maximizes the weights from start node to end nodewithout going through an intermediate 
-node more than once (maximum simple path). In order to do this, due to the limitation of graph size or 
+node more than once (maximum simple path). /
+
+In order to do this, due to the limitation of graph size or 
 number of qubits with which a local quantum algorithm can work with (which is our case with a local 
 quantum Algorithm called QAOA using Qiskit library and local simulation of quantum computer), we must 
 find a way to extract from diffusion data, regions where quantum algorithm could be useful, where local 
-tracking leads to potential false tracks; this code has yet to be implemented. For now, we have in 
-the data/test_graphs file ( or data/test_graphs) that were manually built which are the simplest 
-representations of the crossing regions; where a global tracking approach is of interest. With these 
-toy graphs, we can test multiple scripts which leads to the quantum solution of the optimal path for a 
+tracking leads to potential false tracks; this code has yet to be implemented. /
+
+For now, we have in 
+the data/test_graphs folder, graphs that were manually built which are the simplest 
+representations of the crossing fibers regions; where a global tracking approach is of interest. With these 
+toy graphs, we can test multiple scripts which leads to the the optimal path found by a quantum algorithm for a 
 given graph with a defined start and end node. Furthurmore, to get more information about the solutions 
-found by QAOA the Quatum Approximate Optimization Algorithm, there are scripts to plot the path, plot 
+found by QAOA (the Quatum Approximate Optimization Algorithm), there are scripts to plot the path, plot 
 the distribution of probabilities of solutions found, a histogram of the 10% most probable paths and 
 the cost landscape for the given graph if we require only one layer (reps) of QAOA gates in the 
 quantum circuit that is built with the quantum cost function to minimize (called Hamiltonian). 
@@ -73,29 +77,33 @@ which represent the weight between any pair of nodes in graph.
 Methodology 
 ------------------
 
-First, to have acces to the graph representation from diffusion data, we need script quac_matrix_adj_build.py and 
-datas and to visualize the graph, we need the script quac_matrix_adj_draw.py .
+First, to have acces to the graph representation from diffusion data, we need the script quac_matrix_adj_build.py and 
+datas (found in data folder) and to visualize the graph, we need the script quac_matrix_adj_draw.py .
 
-Secondly, to build a random matrix (code still needs work to generate exactly asked number of nodes or edges) and visualize it, 
-we need scripts quac_randmatrix_adj_build.py and to visualize: quac_randmatrix_adj_draw.py .
+Secondly, to build a random matrix (code still needs work to generate a graph with exactly asked number of nodes or edges) and visualize:  
+we need scripts quac_randmatrix_adj_build.py to build and to visualize: quac_randmatrix_adj_draw.py .
 
 Thirdly, once either graph is generated randomly, with diffusion data or constructed manually (like data/test_graphs adjacency matrices)
-it is possible to run QAOA and optimisation process with quac_optimal_path_find_max_intensity_diffusion.py (possibility of plotting cost landscape and optimal params found on cost landscape as option). 
+it is possible to run QAOA and optimisation process with quac_optimal_path_find_max_intensity_diffusion.py 
+(possibility of plotting cost landscape and optimal params found on cost landscape as option). 
 
 Finally, it is possible to visualize the solutions found by QAOA with scripts quac_histogram_plot.py
 and quac_optimal_paths_plot.py. 
 
-
+Set --save_only to False in order to save the output files and show the plots as well. 
 Graph generation and visualisation from Diffusion data
 ----------------------------------------------------------
 
-In order to construct a graph from white matter mask and fodf peaks as mentionned for the first step, with datas located in data file for a 5 bundles crossing region, 
+In order to construct a graph from white matter mask and fodf peaks as mentionned for the first step,
+with datas located in data file for a 5 bundles crossing region, 
 Run this command in terminal : 
 ::
 
-   quac_matrix_adj_build.py [PATH_TO_QUACTO_DATA]/data/simplePhantoms/fanning_2d_5bundles/wm_vf.nii.gz /
+   quac_matrix_adj_build [PATH_TO_QUACTO_DATA]/data/simplePhantoms/fanning_2d_5bundles/wm_vf.nii.gz /
                          [PATH_TO_QUACTO_DATA]/data/simplePhantoms/fanning_2d_5bundles/fods.nii.gz /
-                         --threshold 0.02 graph
+                         --threshold 0.02 graph --save_only 
+
+This should print : Graph saved.
 
 The option of --threshold was added to filter connexions with weights lower than 0.02, which is small, the weights' range is from 0 to 0.5. 
 This should generate a graph.npz file containing the adjacency matrix, the nodes indices as well as the volume dimension of the graph. 
@@ -106,7 +114,7 @@ The name of the output file is the last argument in command line.
 Then, in order to visualize the graph that was just constructed, run this command line in terminal: 
 ::
 
-    quac_matrix_adj_draw.py graph.npz
+    quac_matrix_adj_draw graph.npz --save_only 
 
 Which plots this image: 
 
@@ -123,14 +131,14 @@ the number of edges matters more than the number of nodes (work in progress, doe
 
 ::
 
-    quac_randmatrix_adj_build.py 3 3  False rand_graph
+    quac_randmatrix_adj_build 3 3  False rand_graph
 
 Which should give a npz file name rand_graph.npz, 
 Then, to visualize the graph, args being name of entry graph (npz) followed by name of output image of graph: 
 
 ::
 
-    quac_randmatrix_adj_draw.py rand_graph rand_graph_visu
+    quac_randmatrix_adj_draw rand_graph.npz rand_graph_visu --save_only
 
 Which should plot : 
 
@@ -141,7 +149,7 @@ To visualize the toy graphs, first argument can be changed for any available gra
 
 ::
 
-    quac_randmatrix_adj_draw.py [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_17_edges_rand_graph weighted_17_rand_graph_visu
+    quac_randmatrix_adj_draw [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_17_edges_rand_graph.npz weighted_17_rand_graph_visu --save_only
 
 
 You should get those graphs, the weighted one with weights below 0.5, and unweighted ones, with weights all at 1: 
@@ -167,16 +175,16 @@ the --alphas option let you decide a value for alpha the coefficient that will b
 multiplied by 0.5 for intermediate edges penalty and by 1 for intermediate nodes parity constraint which can 
 be seen in quactography/hamiltonian Hamiltonian class (you could add more than one alpha value to run QAOA on different Hamiltonians). 
 When more than one alpha is used, it is possible to use --npr to use more than one processor (parallel processing), for 
-now --optimizer has only Differential as an option, and --plt_cost_landscape (either Yes or No) plots the cost landscape of problem at hand with 
+now --optimizer has only Differential as an option, and --plt_cost_landscape (if present will plot, elso won't) plots the cost landscape of problem at hand with 
 a red dot at the optimal parameters actually found by QAOA, works only for 1 rep to be represented in 2D cost landscape (or else we would 
 need 4 axis for 2 layers of QAOA, 6 axis for 3 layers etc.) 
 
 ::
 
-    quac_optimal_path_find_max_intensity_diffusion.py [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_5_edges_rand_graph /
+    quac_optimal_path_find_max_intensity_diffusion [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_5_edges_rand_graph.npz /
                                             0 3 qaoa_solver_infos --alphas  1.5   /
                                             --reps 1  -npr 1 /
-                                            --optimizer Differential --plt_cost_landscape Yes
+                                            --optimizer Differential --plt_cost_landscape
 
 
 If --plt_cost_landscape was set to Yes, than you should get the following plot: 
@@ -204,8 +212,9 @@ run this command:
 
 ::
 
-    quac_histogram_plot.py qaoa_solver_infos_alpha_0.5186155057328249.npz  /
-                                       visu_total_dist visu_selected_dist 
+    quac_histogram_plot qaoa_solver_infos_alpha_0.5186155057328249.npz  /
+                                       visu_total_dist visu_selected_dist /
+                                       --save_only 
 
 You should get two plots with the 10% selected being: 
 
@@ -217,8 +226,8 @@ To visualize first most probable to minimize cost function path, run:
 
 ::
 
-    quac_optimal_paths_plot.py [PATH_TO_QUACTO_DATA]/weighted_5_edges_rand_graph  /
-                            qaoa_solver_infos_alpha_0.5186155057328249.npz opt_paths
+    quac_optimal_paths_plot [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_5_edges_rand_graph.npz  /
+                            qaoa_solver_infos_alpha_0.5186155057328249.npz opt_paths --save_only
 
 
 Which should plot:
