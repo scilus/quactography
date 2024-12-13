@@ -141,7 +141,7 @@ To visualize the toy graphs, first argument can be changed for any available gra
 
 ::
 
-    draw_random_adj_matrix.py [PATH_TO_QUACTO_DATA]/weighted_17_edges_rand_graph weighted_17_rand_graph_visu
+    draw_random_adj_matrix.py [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_17_edges_rand_graph weighted_17_rand_graph_visu
 
 
 You should get those graphs, the weighted one with weights below 0.5, and unweighted ones, with weights all at 1: 
@@ -173,7 +173,7 @@ need 4 axis for 2 layers of QAOA, 6 axis for 3 layers etc.)
 
 ::
 
-    find_max_intensity_diffusion_path.py [PATH_TO_QUACTO_DATA]/weighted_5_edges_rand_graph /
+    find_max_intensity_diffusion_path.py [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_5_edges_rand_graph /
                                             0 3 qaoa_solver_infos --alphas  1.5   /
                                             --reps 1  -npr 1 /
                                             --optimizer Differential --plt_cost_landscape Yes

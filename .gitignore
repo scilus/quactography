@@ -3,16 +3,5 @@
 *.npz
 output/*
 scripts/demo copy.ipynb
-# include graph files for testing: 
-!5_edges_rand_graph.npz
-!8_edges_rand_graph.npz
-!10_edges_rand_graph.npz
-!13_edges_rand_graph.npz
-!17_edges_rand_graph.npz
-!weighted_5_edges_rand_graph.npz
-!weighted_8_edges_rand_graph.npz
-!weighted_10_edges_rand_graph.npz
-!weighted_13_edges_rand_graph.npz
-!weighted_17_edges_rand_graph.npz
 !data/*
 __pycache__

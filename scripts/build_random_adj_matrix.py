@@ -1,8 +1,5 @@
 import numpy as np
 import argparse
-import sys
-
-sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.adj_matrix.filter import remove_zero_columns_rows
 from quactography.adj_matrix.io import save_graph
