@@ -41,7 +41,8 @@ def main():
     Args:
         num_nodes (int): number of nodes desired in the graph
         num_edges (int): number of edges desired in the graph
-        edges_matter (bool): If False, num_edges is the maximum number of edges in the graph,  if True , num_edges is the exact number of edges in the graph,
+        edges_matter (bool): If False, num_edges is the maximum number of edges in the graph,  
+        if True , num_edges is the exact number of edges in the graph,
 
     Returns:
         mat_adj (np.ndarray) : adjacency matrix of the graph

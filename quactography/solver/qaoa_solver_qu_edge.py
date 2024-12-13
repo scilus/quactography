@@ -62,11 +62,11 @@ def find_longest_path(args):
     # Plot the circuit layout:
     # ansatz.decompose(reps=3).draw()
 
-    # ----------------------------------------------------------------RUN LOCALLY: --------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------RUN LOCALLY: -----
     # Run on local estimator and sampler:
     estimator = Estimator(options={"shots": 1000000, "seed": 42})
     sampler = Sampler(options={"shots": 1000000, "seed": 42})
-    # -----------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------
 
     if optimizer == "Differential":
         # Reference: https://www.youtube.com/watch?v=o-OPrQmS1pU
@@ -87,7 +87,7 @@ def find_longest_path(args):
     min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
     print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
 
-    # Scatter optimal point on cost Landscape --------------------------------------------------------------
+    # Scatter optimal point on cost Landscape ----------------------------
     if args[4]:
         if reps == 1:
             fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
@@ -103,7 +103,7 @@ def find_longest_path(args):
                 plt.show()
     else:
         pass
-    # ---------------------------------------------------------------------------------
+    # -----------------------------------------------------
 
     circ = ansatz.copy()
     circ.measure_all()

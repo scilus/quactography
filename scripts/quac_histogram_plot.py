@@ -6,7 +6,8 @@ from quactography.visu.dist_prob_edge import plot_distribution_of_probabilities_
 
 
 """
-Tool to visualize 10% of most optimal paths found by QAOA, and all the histogram of paths as well in a second plot.  
+Tool to visualize 10% of most optimal paths found by QAOA, 
+and all the histogram of paths as well in a second plot.  
 """
 
 
@@ -40,8 +41,9 @@ def _build_arg_parser():
 
 def main():
     """
-    Plots histogram of results for a selected pool and also for every solutions found. Color pink if right path is found, blue elsewise
-    using matplotlib.
+    Plots histogram of results for a selected pool and 
+    also for every solutions found. Color pink if right 
+    path is found, blue elsewise using matplotlib.
     """
     parser = _build_arg_parser()
     args = parser.parse_args()

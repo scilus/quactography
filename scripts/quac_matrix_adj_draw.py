@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 
 
 """
-Tool to visualize the graph constructed with diffusion data (white matter mask and fodf peaks)
+Tool to visualize the graph constructed with 
+diffusion data (white matter mask and fodf peaks)
 """
 
 

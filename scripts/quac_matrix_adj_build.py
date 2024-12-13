@@ -5,10 +5,13 @@ import nibabel as nib
 import numpy as np
 import matplotlib.pyplot as plt
 
-from quactography.adj_matrix.reconst import build_adjacency_matrix, build_weighted_graph
+from quactography.adj_matrix.reconst import (
+                    build_adjacency_matrix, 
+                    build_weighted_graph
+)
 from quactography.adj_matrix.filter import (
-    remove_orphan_nodes,
-    remove_intermediate_connections,
+                    remove_orphan_nodes,
+                    remove_intermediate_connections,
 )
 from quactography.image.utils import slice_along_axis
 from quactography.adj_matrix.io import save_graph
@@ -65,23 +68,23 @@ def main():
     """
     parser = _build_arg_parser()
     args = parser.parse_args()
-    nodes_mask_im = nib.load(args.in_nodes_mask)  # type: ignore
-    sh_im = nib.load(args.in_sh)  # type: ignore
+    nodes_mask_im = nib.load(args.in_nodes_mask)  
+    sh_im = nib.load(args.in_sh)  
 
     nodes_mask = slice_along_axis(
-        nodes_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index  # type: ignore
+        nodes_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index  
     )
 
     keep_node_indices = None
     if args.keep_mask:
-        keep_mask_im = nib.load(args.keep_mask)  # type: ignore
+        keep_mask_im = nib.load(args.keep_mask)  
         keep_mask = slice_along_axis(
-            keep_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index  # type: ignore
+            keep_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index  
         )
         keep_node_indices = np.flatnonzero(keep_mask)
 
     # !! Careful, we remove a dimension, but the SH amplitudes still exist in 3D
-    sh = slice_along_axis(sh_im.get_fdata(), args.axis_name, args.slice_index)  # type: ignore
+    sh = slice_along_axis(sh_im.get_fdata(), args.axis_name, args.slice_index)  
 
     # adjacency graph
     adj_matrix, node_indices = build_adjacency_matrix(nodes_mask)

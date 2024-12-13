@@ -92,10 +92,9 @@ def plot_distribution_of_probabilities_edge(
     # target_string=h.exact_path,)
     # if match_found:
     #     print(
-    #         "The optimal solution is in the subset of solutions found by QAOA.\n_______________________________________________________________________"
-    #     )
+    #         "The optimal solution is in the subset of solutions found by QAOA.\n______")
 
     # else:
     #     print(
-    #         "The solution is not in given subset of solutions found by QAOA.\n_______________________________________________________________________"
+    #         "The solution is not in given subset of solutions found by QAOA.\n_________________")
     #     )

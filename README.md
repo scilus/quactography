@@ -16,5 +16,5 @@ Scripts are located in the `scripts` folder and are available from the command l
 quac_matrix_adj_build.py --help
 ```
 
-See demo for more instructions
+See docs for more instructions
 ![quactrography](https://github.com/scilus/quactography/assets/2171665/cfd6da68-699f-4761-8e30-395d0d8930ec)

@@ -37,7 +37,8 @@ def _build_arg_parser():
 
 def main():
     """
-    Plots of the resulting paths found and information on wether or not it is the right path that has been found or not.
+    Plots of the resulting paths found and information 
+    on wether or not it is the right path that has been found or not.
     """
     parser = _build_arg_parser()
     args = parser.parse_args()

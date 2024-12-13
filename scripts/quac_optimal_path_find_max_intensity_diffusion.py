@@ -70,8 +70,9 @@ def _build_arg_parser():
 
 def main():
     """
-    Uses QAOA with multiprocess as an option to find shortest path, with a given Graph, starting, ending node and Hamiltonian associated
-    to the graph.
+    Uses QAOA with multiprocess as an option to find shortest path, 
+    with a given Graph, starting, ending node and
+    Hamiltonian associated to the graph.
     """
     parser = _build_arg_parser()
     args = parser.parse_args()
@@ -79,7 +80,8 @@ def main():
     weighted_graph, _, _ = load_graph(args.in_graph )
     graph = Graph(weighted_graph, args.starting_node, args.ending_node)
 
-    # Construct Hamiltonian when qubits are set as edges, then optimize with QAOA/scipy:
+    # Construct Hamiltonian when qubits are set as edges, 
+    # then optimize with QAOA/scipy:
 
     hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in args.alphas]
 

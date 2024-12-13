@@ -67,7 +67,8 @@ class Hamiltonian_qubit_edge:
             number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
 
         Returns:
-            Sparse pauli op (str): Pauli string representing the cost associated with the constraint of having a single starting_nodesure connection
+            Sparse pauli op (str): Pauli string representing the cost associated with the constraint 
+            of having a single starting_nodesure connection
         """
 
         starting_qubit = []
@@ -106,7 +107,8 @@ class Hamiltonian_qubit_edge:
             number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
 
         Returns:
-        Sparse pauli op (str): Pauli string representing the cost associated with the constraint of having a single end connection
+        Sparse pauli op (str): Pauli string representing the cost associated 
+        with the constraint of having a single end connection
         """
         qubit_end = []
         for node, value in enumerate(self.graph.ending_nodes):
@@ -143,7 +145,8 @@ class Hamiltonian_qubit_edge:
             number_of_edges (int): Number of edges which is the same as the number of qubits in the graph
 
         Returns:
-            Sparse pauli op (str): Pauli string representing the cost associated with the constraint of having an even number of intermediate connections
+            Sparse pauli op (str): Pauli string representing the cost associated with the 
+            constraint of having an even number of intermediate connections
         """
         # Intermediate connections, constraints:
         int_nodes = []
@@ -202,7 +205,8 @@ class Hamiltonian_qubit_edge:
         """Constraint to limit the number of edges in graph because parity constraint is not enough
         to get each edges once only in path, it tends to be trapped in cycles elsewise.
         Returns:
-            Pauli str: Pauli operator which represents sum over int_nodes, sum over edges connected to that node over all edges, as bool variable,
+            Pauli str: Pauli operator which represents sum over int_nodes, sum over edges 
+            connected to that node over all edges, as bool variable,
             being mapped to (I-Z_i)/2 in quantum gates formalism.
         """
         # Identify intermediate nodes
@@ -248,7 +252,8 @@ class Hamiltonian_qubit_edge:
 
         Returns:
             list of cost values (int): Costs of the best solutions (multiple solutions possible if degenerate)
-            list of binary paths (str): Binary paths (QUANTUM READ) of the best solutions (multiple solutions possible if degenerate)
+            list of binary paths (str): Binary paths (QUANTUM READ) of the best solutions 
+            (multiple solutions possible if degenerate)
         """
         mat_hamiltonian = np.array(self.total_hamiltonian.to_matrix())
         eigenvalues, eigenvectors = np.linalg.eig(mat_hamiltonian)

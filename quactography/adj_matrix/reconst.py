@@ -26,7 +26,8 @@ def build_adjacency_matrix(nodes_mask):
     # List of every column in the image:
     labels_volume = np.zeros(nodes_mask.shape, dtype=int)
 
-    # Names every element in labels_volume as a node from bottom to top (lower y number to higher), column left to right (lower x to higher x)
+    # Names every element in labels_volume as a node from bottom to top 
+    # (lower y number to higher), column left to right (lower x to higher x)
     labels_volume[nodes_mask] = np.arange(len(node_indices))
 
     # Creates an empty adjacency matrix with the nodes as rows and columns (dimension)
