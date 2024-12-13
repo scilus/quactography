@@ -1,5 +1,4 @@
 from qiskit.visualization import plot_distribution
-import numpy as np
 import matplotlib.pyplot as plt
 
 from quactography.solver.io import load_optimization_results

@@ -1,6 +1,6 @@
 import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.primitives import Estimator, Sampler
+from qiskit.primitives import Estimator
 
 
 def print_hamiltonian_circuit(hamiltonian_term, binary_paths_classical_read):

@@ -1,7 +1,4 @@
 import argparse
-import sys
-
-sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.visu.optimal_paths_edge import visualize_optimal_paths_edge
 

@@ -1,10 +1,5 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-import numpy as np
-import rustworkx as rx
-import matplotlib
-from rustworkx.visualization import mpl_draw
-import argparse
 
 from quactography.solver.io import load_optimization_results
 from quactography.adj_matrix.io import load_graph

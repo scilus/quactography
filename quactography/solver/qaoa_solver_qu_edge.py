@@ -1,16 +1,16 @@
 import multiprocessing
 import itertools
-import sys
+
+# import sys
 from qiskit.primitives import Estimator, Sampler
 from qiskit.circuit.library import QAOAAnsatz
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import differential_evolution
 from functools import partial
-from mpl_toolkits.mplot3d import Axes3D
 from functools import partial
 
-sys.path.append(r"C:\Users\harsh\quactography")
+# sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.solver.io import save_optimization_results
 from quactography.solver.optimization_loops import (

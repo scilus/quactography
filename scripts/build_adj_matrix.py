@@ -1,10 +1,7 @@
 import argparse
 import nibabel as nib
 import numpy as np
-import sys
 import matplotlib.pyplot as plt
-
-sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.adj_matrix.reconst import build_adjacency_matrix, build_weighted_graph
 from quactography.adj_matrix.filter import (
