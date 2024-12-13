@@ -60,7 +60,7 @@ def find_longest_path(args):
     ansatz = QAOAAnsatz(h.total_hamiltonian, reps, name="QAOA")
 
     # Plot the circuit layout:
-    ansatz.decompose(reps=3).draw(output="mpl", style="iqp")
+    # ansatz.decompose(reps=3).draw()
 
     # ----------------------------------------------------------------RUN LOCALLY: --------------------------------------------------------------------------------------
     # Run on local estimator and sampler:
@@ -88,7 +88,7 @@ def find_longest_path(args):
     print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
 
     # Scatter optimal point on cost Landscape --------------------------------------------------------------
-    if args[4] == "Yes":
+    if args[4]:
         if reps == 1:
             fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
             ax1.scatter(  # type: ignore
@@ -98,7 +98,9 @@ def find_longest_path(args):
                 resx[0], resx[1], s=100, color="red", marker="o", label="Optimal Point"  # type: ignore
             )
             plt.savefig("Opt_point_visu.png")
-            plt.show()
+            print("Optimal point saved in Opt_point_visu.png")
+            if not args[5]:
+                plt.show()
     else:
         pass
     # ---------------------------------------------------------------------------------
@@ -138,6 +140,7 @@ def multiprocess_qaoa_solver_edge(
     output_file,
     optimizer,
     cost_landscape,
+    save_only,
 ):
     pool = multiprocessing.Pool(nbr_processes)
 
@@ -149,6 +152,7 @@ def multiprocess_qaoa_solver_edge(
             itertools.repeat(output_file),
             itertools.repeat(optimizer),
             itertools.repeat(cost_landscape),
+            itertools.repeat(save_only),
         ),
     )
     pool.close()

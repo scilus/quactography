@@ -9,6 +9,7 @@ def visualize_optimal_paths_edge(
     graph_file,
     in_file,
     out_file,
+    save_only
 ):
     """_summary_ :Visualize the path taken in the graph and save the figure in the output folder
 
@@ -90,15 +91,17 @@ def visualize_optimal_paths_edge(
     plt.legend(
         [
             f"alpha_factor = {(alpha):.2f},\n Cost: {min_cost:.2f}\n Starting node : {starting_node}, \n Ending node : {ending_node},\n reps : {reps},\n Actual path : {bin_str} "
-            #  \n Good path : {h.exact_path},
+            
         ],
         loc="upper right",
     )
-    # plt.show()
+    if not save_only:
+        plt.show()
+   
     plt.savefig(f"{out_file}_alpha_{alpha:.2f}.png")
+    print(f"Visualisation of the optimal path saved in {out_file}_alpha_{alpha:.2f}.png")
+    
     plt.close()
 
 
-def minimize_crossings():
-    """Create visulization of a graph with the minimum number of crossings with matplotlib"""
-    pass
+

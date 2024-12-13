@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 import argparse
 import nibabel as nib
 import numpy as np
@@ -11,30 +13,48 @@ from quactography.adj_matrix.filter import (
 from quactography.image.utils import slice_along_axis
 from quactography.adj_matrix.io import save_graph
 
-    """Tool to build adjacency matrix from diffusion data (white matter mask and fodf peaks)
-    """
+
+"""
+Tool to build adjacency matrix from diffusion data (white matter mask and fodf peaks)
+"""
+
+
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
-    p.add_argument("in_nodes_mask", help="Input nodes mask image")
-    p.add_argument("in_sh", help="Input SH image.")
-    p.add_argument("out_graph", help="Output graph file name.")
+    p.add_argument("in_nodes_mask", 
+                   help="Input nodes mask image (.nii.gz file)")
+    p.add_argument("in_sh", 
+                   help="Input SH image. (nii.gz file)")
+    p.add_argument("out_graph", 
+                   help="Output graph file name (npz file)")
 
-    p.add_argument("--keep_mask", help="Nodes that must not be filtered out.")
-
+    p.add_argument(
+        "--keep_mask", 
+        help="Nodes that must not be filtered out."
+        )
     p.add_argument(
         "--threshold",
         default=0.0,
         type=float,
         help="Cut all weights below a given threshold. [%(default)s]",
     )
-    p.add_argument("--slice_index", type=int, help="If None, midslice is taken.")
+    p.add_argument(
+        "--slice_index", 
+        type=int, 
+        help="If None, midslice is taken."
+        )
     p.add_argument(
         "--axis_name",
         default="axial",
         choices=["sagittal", "coronal", "axial"],
         help="Axis along which a slice is taken.",
+    )
+    p.add_argument(
+        "--save_only",
+        action="store_true",
+        help="Does not plot the matrix, only saves a copy of npz adjacency matrix file",
     )
     return p
 
@@ -92,11 +112,15 @@ def main():
     weighted_graph, node_indices = remove_orphan_nodes(
         weighted_graph, node_indices, keep_node_indices
     )
-    plt.imshow(np.log(weighted_graph + 1))
-    plt.show()
+    
+    if not args.save_only:
+        plt.imshow(np.log(weighted_graph + 1))
+        plt.show()
+    
     # print("node indices", node_indices)
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
+    print("Graph saved")
 
 
 if __name__ == "__main__":
