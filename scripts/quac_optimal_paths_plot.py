@@ -2,9 +2,8 @@ import argparse
 
 from quactography.visu.optimal_paths_edge import visualize_optimal_paths_edge
 
-# from quactography.visu.optimal_paths_node import visualize_optimal_paths_node
-
-
+    """Tool to visualize and plot the optimal path (most probable) on a graph. 
+    """
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter

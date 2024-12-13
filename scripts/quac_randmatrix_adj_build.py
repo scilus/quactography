@@ -4,7 +4,8 @@ import argparse
 from quactography.adj_matrix.filter import remove_zero_columns_rows
 from quactography.adj_matrix.io import save_graph
 
-
+    """Tool to build random matrix with specified number of nodes or edges, work in progress (WIP) instead of diffusion data. 
+    """
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter

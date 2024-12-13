@@ -6,7 +6,9 @@ import argparse
 
 from quactography.adj_matrix.io import load_graph
 
-
+    
+    """Tool to visualize the constructed random matrix built without diffusion data. 
+    """
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter

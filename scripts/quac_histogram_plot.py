@@ -2,9 +2,8 @@ import argparse
 
 from quactography.visu.dist_prob_edge import plot_distribution_of_probabilities_edge
 
-# from quactography.visu.dist_prob_node import plot_distribution_of_probabilities_node
-
-
+    """Tool to visualize 10% of most optimal paths found by QAOA, and all the histogram of paths as well in a second plot.  
+    """
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
