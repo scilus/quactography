@@ -11,7 +11,8 @@ from quactography.adj_matrix.filter import (
 from quactography.image.utils import slice_along_axis
 from quactography.adj_matrix.io import save_graph
 
-
+    """Tool to build adjacency matrix from diffusion data (white matter mask and fodf peaks)
+    """
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter

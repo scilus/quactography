@@ -4,7 +4,7 @@ import numpy as np
 from quactography.adj_matrix.io import load_graph
 import matplotlib.pyplot as plt
 
-
+"""Tool to visualize the graph constructed with diffusion data (white matter mask and fodf peaks)"""
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter

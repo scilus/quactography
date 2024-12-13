@@ -5,10 +5,8 @@ from quactography.adj_matrix.io import load_graph
 from quactography.hamiltonian.hamiltonian_qubit_edge import Hamiltonian_qubit_edge
 from quactography.solver.qaoa_solver_qu_edge import multiprocess_qaoa_solver_edge
 
-# from quactography.hamiltonian.hamiltonian_qubit_node import Hamiltonian_qubit_node
-# from quactography.solver.qaoa_solver_qu_node import multiprocess_qaoa_solver_node
-
-
+    """Tool to run QAOA, optimize parameters, plot cost landscape with optimal parameters found if only one reps, and returns the optimization results.
+    """
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
