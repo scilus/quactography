@@ -63,9 +63,6 @@ def _build_arg_parser():
 
 
 def main():
-    """
-    Build graph from SH image.
-    """
     parser = _build_arg_parser()
     args = parser.parse_args()
     nodes_mask_im = nib.load(args.in_nodes_mask)  

@@ -34,20 +34,8 @@ def _build_arg_parser():
     return p
 
 
-# New method to generate random adjacency matrix:
+
 def main():
-    """Generate a random adjacency matrix given number of nodes and edges.
-
-    Args:
-        num_nodes (int): number of nodes desired in the graph
-        num_edges (int): number of edges desired in the graph
-        edges_matter (bool): If False, num_edges is the maximum number of edges in the graph,  
-        if True , num_edges is the exact number of edges in the graph,
-
-    Returns:
-        mat_adj (np.ndarray) : adjacency matrix of the graph
-        adj_matrix_from_csv (pd.DataFrame) : adjacency matrix of the graph in pandas DataFrame format
-    """
     parser = _build_arg_parser()
     args = parser.parse_args()
 
