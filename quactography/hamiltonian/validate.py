@@ -4,6 +4,19 @@ from qiskit.primitives import Estimator
 
 
 def print_hamiltonian_circuit(hamiltonian_term, binary_paths_classical_read):
+    """
+    Cost function to minimize for the optimization of the quantum circuit.
+
+    Parameters
+    ----------
+    hamiltonian_term : PauliSum object from qiskit
+        Hamiltonian to minimize. Cost function in quantum Formalism.
+    binary_paths_classical_read : list of str
+        List of binary paths in classical read format (from left to right).
+    Returns
+    -------
+    None
+    """
     estimator = Estimator(options={"shots": 1000000, "seed": 42})
     circuit = QuantumCircuit(len(binary_paths_classical_read[0]))
     for i in range(len(binary_paths_classical_read)):
