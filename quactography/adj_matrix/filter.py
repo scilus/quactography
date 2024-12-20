@@ -3,6 +3,24 @@ import numpy as np
 
 # Filter out nodes that aren't connected to any other:
 def remove_orphan_nodes(graph, node_indices, keep_indices=None):
+    """
+    Remove nodes that are not connected to any other node.
+
+    Parameters
+    ----------
+    graph : np.ndarray
+        Adjacency matrix of the graph.
+    node_indices : np.ndarray
+        Indices of the nodes in the graph.
+    keep_indices : np.ndarray, optional
+        Indices of the nodes to keep in the graph. The default is None.
+    Returns
+    -------
+    out_graph : np.ndarray
+        Adjacency matrix of the graph with orphan nodes removed.
+    out_indices : np.ndarray
+        Indices of the nodes in the graph with orphan nodes removed.
+    """
     out_graph = []
     out_it = []
     for it, graph_row in enumerate(graph):
@@ -20,6 +38,22 @@ def remove_orphan_nodes(graph, node_indices, keep_indices=None):
 # Remove nodes that do not add a change in direction between the two nodes 
 # it is connected to where the direction stays the same:
 def remove_intermediate_connections(graph, node_indices=None, keep_indices=None):
+    """
+    Remove nodes that do not add a change in direction between the two nodes it is connected to where the direction stays the same.
+
+    Parameters
+    ----------
+    graph : np.ndarray
+        Adjacency matrix of the graph.
+    node_indices : np.ndarray, optional
+        Indices of the nodes in the graph. The default is None.
+    keep_indices : np.ndarray, optional
+        Indices of the nodes to keep in the graph. The default is None.
+    Returns
+    -------
+    graph : np.ndarray
+        Adjacency matrix of the graph with intermediate nodes removed.  
+    """
     skipped_at_least_one = True
     while skipped_at_least_one:
         skipped_at_least_one = False
@@ -45,6 +79,22 @@ def remove_intermediate_connections(graph, node_indices=None, keep_indices=None)
 def remove_intermediate_connections_prod_instead_sum(
     graph, node_indices=None, keep_indices=None
 ):
+    """
+    Remove nodes that do not add a change in direction between the two nodes it is connected to where the direction stays the same by multiplying instead of adding the weights.
+
+    Parameters
+    ----------
+    graph : np.ndarray
+        Adjacency matrix of the graph.
+    node_indices : np.ndarray, optional
+        Indices of the nodes in the graph. The default is None.
+    keep_indices : np.ndarray, optional
+        Indices of the nodes to keep in the graph. The default is None.
+    Returns
+    -------
+    graph : np.ndarray
+        Adjacency matrix of the graph with intermediate nodes removed.
+    """
     skipped_at_least_one = True
     while skipped_at_least_one:
         skipped_at_least_one = False
@@ -73,13 +123,17 @@ def _test_removable_indice(it, node_indices, keep_indices):
 
 # Remove all-zero columns and rows from the adjacency matrix:
 def remove_zero_columns_rows(mat: np.ndarray):
-    """Remove all-zero columns and rows from the adjacency matrix.
+    """
+    Remove all-zero columns and rows from the adjacency matrix.
 
-    Args:
-        mat (np.ndarray): adjacency matrix
-
-    Returns:
-        mat (np.ndarray) : adjacency matrix with all-zero columns and rows removed
+    Parameters
+    ----------
+    mat : np.ndarray
+        Adjacency matrix of the graph
+    Returns
+    -------
+    np.ndarray
+        Adjacency matrix of the graph with all-zero columns and rows removed.
     """
     zero_cols = np.all(mat == 0, axis=0)  # type: ignore
     zero_rows = np.all(mat == 0, axis=1)

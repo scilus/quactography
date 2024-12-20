@@ -4,6 +4,24 @@ import numpy as np
 
 # Minimization cost function
 def cost_func(params, estimator, ansatz, hamiltonian):
+    """
+    Cost function to minimize for the optimization of the quantum circuit.
+
+    Parameters
+    ----------
+    params : list
+        List of parameters for the quantum circuit. (gamma, beta) angles depending on the number of layers.
+    estimator : Estimator from qiskit
+        Estimator used to evaluate the cost function.
+    ansatz : QuantumCircuit object from qiskit
+        Quantum circuit used to generate the ansatz.
+    hamiltonian : PauliSum object from qiskit
+        Hamiltonian to minimize. Cost function in quantum Formalism.
+    Returns
+    -------
+    cost : float
+        Value of the cost function for the given parameters.
+    """
     cost = (
         estimator.run(ansatz, hamiltonian, parameter_values=params).result().values[0]
     )
@@ -27,6 +45,44 @@ def POWELL_loop_optimizer(
     ansatz,
     h,
 ):
+    """
+    Main optimization loop for the Powell optimizer.
+
+    Parameters
+    ----------
+    loop_count : int
+        Current loop count.
+    max_loops : int
+        Maximum number of loops.
+    previous_cost : float
+        Previous cost value.
+    epsilon : float
+        Tolerance for the convergence criterion.
+    x_0 : list
+        Initial parameters for the quantum circuit.
+    cost_history : list
+        List of cost values.
+    estimator : Estimator from qiskit
+        Estimator used to evaluate the cost function.
+    ansatz : QuantumCircuit object from qiskit
+        Quantum circuit used to generate the ansatz.
+    h : Hamiltonian object from quactography library, Hamiltonian_qubit_edge
+        Object containing total Hamiltonian function to minimize. Cost function in quantum Formalism.
+    Returns
+    -------
+    res.x : list of floats
+        Final optimized parameters.
+    new_cost : float
+        New cost value.
+    previous_cost : float
+        Previous cost value.
+    x_0 : list of floats
+        Initial parameters for the quantum circuit for the next iteration.
+    loop_count : int 
+        Current loop count.
+    cost_history : list of floats
+        List of cost values updated.
+    """
     # # Initialize list of invalid parameters
     no_valid_params = []
 
@@ -104,6 +160,50 @@ def POWELL_refinement_optimization(
     cost_history,
     num_refinement_loops,
 ):
+    """
+    Refinement optimization loop for the Powell optimizer. Unused for now, issues to be fixed. 
+
+    Parameters
+    ----------
+    loop_count : int
+        Current loop count.
+    max_loops : int
+        Maximum number of loops.
+    estimator : Estimator from qiskit
+        Estimator used to evaluate the cost function.
+    ansatz : QuantumCircuit object from qiskit
+        Quantum circuit used to generate the ansatz.
+    h : Hamiltonian object from quactography library, Hamiltonian_qubit_edge
+        Object containing total Hamiltonian function to minimize. Cost function in quantum Formalism.
+    no_valid_params : list
+        List of non-valid parameters.
+    epsilon : float
+        Tolerance for the convergence criterion.
+    x_0 : list
+        Initial parameters for the quantum circuit.
+    previous_cost : float
+        Previous cost value.
+    last_cost : float
+        Last cost value.
+    cost_history : list
+        List of cost values.
+    num_refinement_loops : int
+        Number of refinement loops to perform.
+    Returns
+    -------
+    res_x : list
+        Final optimized parameters.
+    second_last_cost : float
+        Second last cost value.
+    previous_cost : float
+        Previous cost value.
+    x_0 : list
+        Initial parameters for the quantum circuit for the next iteration.
+    loop_count : int
+        Current loop count.
+    cost_history : list
+        List of cost values updated.
+    """
     print("Starting refinement optimization...")
 
     def is_close_to_any(x_0, no_valid_params, tol=1e-2):

@@ -19,19 +19,32 @@ class Graph:
         self.min_weight = min(np.tril(mat_adj).flatten())
 
     def connexions_edges(self, mat_adj, num_nodes):
-        """Determine different connexions between nodes and the number of edges in the graph
-
-        Args:
-            mat_adj (nparray): adjacency matrix
-            num_nodes (int): number of nodes in the graph
-        Returns:
-            number_of_edges (int): number of edges in the graph
-            weights (list): list of weights
-            starting_nodes (list): list of nodes of starting_nodesure
-            ending_nodes (list): list of ending_nodes nodes
-            edge_indices (list): list of indices corresponding to the edges same as the qubit indices
-            all_weights_sum (float): sum of all weights in the graph
         """
+    Function to determine the connexions between nodes and the edges of the graph, with their weights and indices.
+
+    Parameters
+    ----------
+    mat_adj : np.array of float
+        Adjacency matrix of the graph.
+    num_nodes : int
+        Number of nodes in the graph.
+    Returns
+    -------
+    number_of_edges : int
+        Number of edges in the graph.
+    weights : list of float
+        List of weights for each edge.
+    starting_nodes : list of int
+        List of starting nodes for each edge.
+    ending_nodes : list of int
+        List of ending nodes for each edge.
+    edge_indices : list of int
+        List of indices for each edge.
+    all_weights_sum : float
+        Sum of all weights in the graph.
+    max_weight : float 
+        Maximum weight in the graph
+    """
         mat_triang_sup = np.triu(mat_adj)
 
         # Determine edges indices and weights:

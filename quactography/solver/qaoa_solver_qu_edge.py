@@ -28,6 +28,25 @@ alpha_min_costs = []
 
 # Minimization cost function
 def cost_func(params, estimator, ansatz, hamiltonian):
+    """
+    Cost function to minimize for the optimization of the quantum circuit.
+
+    Parameters
+    ----------
+    params : list
+        List of parameters for the quantum circuit. (gamma, beta) angles depending on the number of layers.
+    estimator : Estimator from qiskit
+        Estimator used to evaluate the cost function.
+    ansatz : QuantumCircuit object from qiskit
+        Quantum circuit used to generate the ansatz.
+    hamiltonian : PauliSum object from qiskit
+        Hamiltonian to minimize. Cost function in quantum Formalism.
+    Returns
+    -------
+    cost : float
+        Value of the cost function for the given parameters.
+    """
+    
     cost = (
         estimator.run(ansatz, hamiltonian, parameter_values=params).result().values[0]
     )
@@ -36,17 +55,22 @@ def cost_func(params, estimator, ansatz, hamiltonian):
 
 # Function to find the shortest path in a graph using QAOA algorithm with parallel processing:
 def find_longest_path(args):
-    """Summary :  Usage of QAOA algorithm to find the shortest path in a graph.
+     """
+    Find the longest path in a graph using the QAOA algorithm, with a plot of the cost landscape if reps=1 and the optimal point if cost_landscape=True.
 
-    Args:
-        h (Sparse Pauli list):  Hamiltonian in QUBO representation
-        reps (int): number of layers to add to quantum circuit (p layers)
-        outfile ( str) : name of output file to save optimization results
+    Parameters
+    ----------
+    args : tuple
+        Tuple containing the Hamiltonian object from quactography library,
+        Hamiltonian_qubit_edge, the number of repetitions for the QAOA algorithm, 
+        the output file name for the optimization results in .npz format, the optimizer
+        to use for the QAOA algorithm, a boolean to plot the cost landscape with 
+        the optimal point if reps=1, and a boolean to save the figure without displaying it.
+    
 
-    Returns:
-        res (minimize):  Results of the minimization
-        min_cost (float):  Minimum cost
-        alpha_min_cost (list):  List of alpha, minimum cost and binary path
+    Returns
+    -------
+    None
     """
     h = args[0]
     reps = args[1]
@@ -142,6 +166,30 @@ def multiprocess_qaoa_solver_edge(
     cost_landscape,
     save_only,
 ):
+     """
+    Solve the optimization problem using the QAOA algorithm with multiprocessing on the alpha values. 
+
+    Parameters
+    ----------
+    hamiltonians : list
+        List of Hamiltonian objects from quactography library, Hamiltonian_qubit_edge.
+    reps : int
+        Number of repetitions for the QAOA algorithm, determines the number of sets of gamma and beta angles.
+    nbr_processes : int
+        Number of cpu to use for multiprocessing. default=1
+    output_file : str
+        The output file name for the optimization results in .npz format.
+    optimizer : str
+        Optimizer to use for the QAOA algorithm. default="Differential"
+    cost_landscape : bool
+        Plot the cost landscape with the optimal point if reps=1. default=False
+    save_only : bool
+        If True, the figure is saved without displaying it. default=False
+
+    Returns
+    -------
+    None
+    """
     pool = multiprocessing.Pool(nbr_processes)
 
     results = pool.map(

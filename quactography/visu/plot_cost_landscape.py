@@ -5,6 +5,24 @@ from functools import partial
 
 # Minimization cost function
 def cost_func(params, estimator, ansatz, hamiltonian):
+     """
+    Cost function to minimize for the optimization of the quantum circuit.
+
+    Parameters
+    ----------
+    params : list
+        List of parameters for the quantum circuit. (gamma, beta) angles depending on the number of layers.
+    estimator : Estimator from qiskit
+        Estimator used to evaluate the cost function.
+    ansatz : QuantumCircuit object from qiskit
+        Quantum circuit used to generate the ansatz.
+    hamiltonian : PauliSum object from qiskit
+        Hamiltonian to minimize. Cost function in quantum Formalism.
+    Returns
+    -------
+    cost : float
+        Value of the cost function for the given parameters.
+    """
     cost = (
         estimator.run(ansatz, hamiltonian, parameter_values=params).result().values[0]
     )
@@ -12,6 +30,27 @@ def cost_func(params, estimator, ansatz, hamiltonian):
 
 
 def plt_cost_func(estimator, ansatz, h):
+     """
+    Plot the cost function landscape for the given Hamiltonian. The cost function is evaluated for all possible values of gamma and beta for only one layer.(reps=1)
+
+    Parameters
+    ----------
+    estimator : Estimator from qiskit
+        Estimator used to evaluate the cost function.
+    ansatz : QuantumCircuit object from qiskit
+        Quantum circuit used to generate the ansatz.
+    h : Hamiltonian object from quactography library, Hamiltonian_qubit_edge 
+        Object containing total Hamiltonian function to minimize. Cost function in quantum Formalism.
+
+    Returns
+    -------
+    fig : image
+        Figure object containing the plots.
+    ax1 : image
+        3D plot of the cost function landscape.
+    ax2 : image
+        2D contour plot of the cost function landscape.
+    """
     cost_func_with_args = partial(
         cost_func,
         estimator=estimator,

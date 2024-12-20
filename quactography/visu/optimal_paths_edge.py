@@ -11,14 +11,22 @@ def visualize_optimal_paths_edge(
     out_file,
     save_only
 ):
-    """_summary_ :Visualize the path taken in the graph and save the figure in the output folder
-
-    Args:
-        starting_nodes (list int): list of starting points
-        ending_nodes (list int): list of ending_nodes points
-        mat_adj (np array):  adjacency matrix
-        list(map(int, bin_str)) (liste int): list of 0 and 1 representing the path taken
     """
+    Visualize the optimal path on a graph.
+
+    Parameters
+    ----------
+    graph_file: str
+        The input file containing the graph in .npz format.
+    in_file: str
+        The input file containing the optimization results in .npz format
+    out_file: str
+        The output file name for the visualisation in .png format.
+    save_only: bool
+        If True, the figure is saved without displaying it
+    Returns
+    -------
+    None """
     _, _, min_cost, h, bin_str, reps, opt_params = load_optimization_results(in_file)
     min_cost = min_cost.item()
     h = h.item()

@@ -18,6 +18,18 @@ DIRECTIONS_2D = np.array(
 
 
 def build_adjacency_matrix(nodes_mask):
+    """
+    Build the adjacency matrix for a given set of nodes in a 2D image.
+
+    Parameters
+    ----------
+    nodes_mask : np.ndarray
+        Binary mask of the nodes.
+    Returns
+    -------
+    adj_matrix : np.ndarray
+        Adjacency matrix of the nodes.
+    """
     assert len(nodes_mask.shape) == 2
 
     # 1st. Assign labels to non-zero voxels (nodes)
@@ -64,6 +76,26 @@ def build_adjacency_matrix(nodes_mask):
 
 
 def build_weighted_graph(adj_matrix, node_indices, sh, axis_name):
+    """
+    Build the weighted graph for a given set of nodes in a 2D image.
+
+    Parameters
+    ----------
+    adj_matrix : np.ndarray
+        Adjacency matrix of the nodes.
+    node_indices : np.ndarray
+        Indices of the nodes in the graph.
+    sh : np.ndarray
+        Spherical harmonics coefficients, set to 12th order here, needs to be changed if needed.
+    axis_name : str
+        Name of the axis, can be "sagittal", "coronal" or "axial".
+    Returns
+    -------
+    weighted_graph : np.ndarray
+        Weighted adjacency matrix of the nodes.
+    node_indices : np.ndarray
+        Indices of the nodes in the graph.
+    """
     # Get directions depending if we are in axial, coronal or sagittal :
     sphere = _get_sphere_for_axis(axis_name)
     sf = sh_to_sf(sh, sphere, sh_order=12, basis_type="tournier07")

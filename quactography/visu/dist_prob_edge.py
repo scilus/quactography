@@ -7,6 +7,24 @@ from quactography.solver.io import load_optimization_results
 def plot_distribution_of_probabilities_edge(
     in_file, visu_out_file_total, visu_out_file_selected, save_only
 ):
+    """
+    Plot the distribution of probabilities for the optimal path and the selected paths.
+
+    Parameters
+    ----------
+    in_file: str
+        The input file containing the optimization results.
+    visu_out_file_total: str
+        The output file name for the histogram of all paths.
+    visu_out_file_selected: str
+        The output file name for the histogram of selected paths.
+    save_only: bool
+        If True, the figure is saved without displaying it.
+
+    Returns
+    -------
+    None
+    """
 
     _, dist_binary_prob, min_cost, h, _, _, opt_params = load_optimization_results(
         in_file
