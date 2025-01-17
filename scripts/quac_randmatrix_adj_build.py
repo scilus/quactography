@@ -41,7 +41,6 @@ def main():
 
     num_nodes = args.num_nodes
     num_edges = args.num_edges
-    num_edges_too_much = (((num_nodes * num_nodes) - num_nodes) / 2) - num_edges # used in a situation where the maximum number of edges in a matrix is more than desired
     # print(f"max number of edges: {max_num_edges}")
 
     if args.edges_matter:
@@ -53,6 +52,8 @@ def main():
 
     # print("num edges wanted", args.num_edges)
     mat = np.zeros((num_nodes, num_nodes), dtype=float)
+    num_edges_too_much = (((num_nodes * num_nodes) - num_nodes) / 2) - num_edges # used in a situation where the maximum number of edges in a matrix is more than desired
+
 
     for i in range(int(num_edges_too_much)):
         for j in range(i):
