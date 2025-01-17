@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+import ast
 import numpy as np
 import argparse
 
@@ -25,14 +26,13 @@ def _build_arg_parser():
     p.add_argument(
         "edges_matter",
         help="If True, num_edges is the exact number of edges in the graph, if False, num_edges is the maximum number of edges in the graph.",
-        type=bool,
+        type=ast.literal_eval,
     )
     p.add_argument("out_graph", 
                    help="Output graph file name (npz file)", 
                    type=str)
 
     return p
-
 
 
 def main():
@@ -42,14 +42,12 @@ def main():
     max_num_edges = ((args.num_nodes * args.num_nodes) - args.num_nodes) / 2
     # print(f"max number of edges: {max_num_edges}")
 
-    if args.edges_matter == True:
+    if args.edges_matter:
         args.num_nodes = int((1 + np.sqrt(1 + 8 * args.num_edges)) / 2)
     # print(args.num_nodes)
     # print(args.num_edges)
-
-    if args.edges_matter == False:
-        if args.num_edges > max_num_edges:
-            args.num_edges = max_num_edges  # type: ignore
+    else
+        args.num_edges = max_num_edges  # type: ignore
 
     # print("num edges wanted", args.num_edges)
     mat = np.zeros((args.num_nodes, args.num_nodes), dtype=float)
