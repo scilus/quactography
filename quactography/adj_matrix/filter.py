@@ -39,7 +39,8 @@ def remove_orphan_nodes(graph, node_indices, keep_indices=None):
 # it is connected to where the direction stays the same:
 def remove_intermediate_connections(graph, node_indices=None, keep_indices=None):
     """
-    Remove nodes that do not add a change in direction between the two nodes it is connected to where the direction stays the same.
+    Remove nodes that do not add a change in direction between the two nodes
+      it is connected to where the direction stays the same.
 
     Parameters
     ----------

@@ -25,7 +25,8 @@ def _build_arg_parser():
                    type=int)
     p.add_argument(
         "edges_matter",
-        help="If True, num_edges is the exact number of edges in the graph, if False, num_edges is the maximum number of edges in the graph.",
+        help="If True, num_edges is the exact number of edges in the graph,"
+          "if False, num_edges is the maximum number of edges in the graph.",
         type=ast.literal_eval,
     )
     p.add_argument("out_graph", 
@@ -52,7 +53,9 @@ def main():
 
     # print("num edges wanted", args.num_edges)
     mat = np.zeros((num_nodes, num_nodes), dtype=float)
-    num_edges_too_much = (((num_nodes * num_nodes) - num_nodes) / 2) - num_edges # used in a situation where the maximum number of edges in a matrix is more than desired
+    # used in a situation where the maximum number of edges in a matrix is more than desired
+    num_edges_too_much = (((num_nodes * num_nodes) - num_nodes) / 2) - num_edges 
+    
 
 
     for i in range(int(num_edges_too_much)):
