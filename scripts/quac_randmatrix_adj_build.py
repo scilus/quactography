@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+import ast
 import numpy as np
 import argparse
 
@@ -24,8 +25,9 @@ def _build_arg_parser():
                    type=int)
     p.add_argument(
         "edges_matter",
-        help="If True, num_edges is the exact number of edges in the graph, if False, num_edges is the maximum number of edges in the graph.",
-        type=bool,
+        help="If True, num_edges is the exact number of edges in the graph,"
+          "if False, num_edges is the maximum number of edges in the graph.",
+        type=ast.literal_eval,
     )
     p.add_argument("out_graph", 
                    help="Output graph file name (npz file)", 
@@ -34,66 +36,39 @@ def _build_arg_parser():
     return p
 
 
-
 def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
 
-    max_num_edges = ((args.num_nodes * args.num_nodes) - args.num_nodes) / 2
+    num_nodes = args.num_nodes
+    num_edges = args.num_edges
     # print(f"max number of edges: {max_num_edges}")
 
-    if args.edges_matter == True:
-        args.num_nodes = int((1 + np.sqrt(1 + 8 * args.num_edges)) / 2)
+    if args.edges_matter:
+        num_nodes = int(np.ceil((1 + np.sqrt(1 + 8 * num_edges)) / 2))
     # print(args.num_nodes)
     # print(args.num_edges)
-
-    if args.edges_matter == False:
-        if args.num_edges > max_num_edges:
-            args.num_edges = max_num_edges  # type: ignore
+    else:
+        num_edges = ((num_nodes * num_nodes) - num_nodes) / 2  # type: ignore
 
     # print("num edges wanted", args.num_edges)
-    mat = np.zeros((args.num_nodes, args.num_nodes), dtype=float)
-    for i in range(args.num_nodes):
-        for j in range(args.num_nodes):
-            if i is not j:
-                mat[i, j] = np.random.randint(1, 3 + 1)
-                mat[j, i] = mat[i, j]
+    mat = np.zeros((num_nodes, num_nodes), dtype=float)
+    # used in a situation where the maximum number of edges in a matrix is more than desired
+    num_edges_too_much = (((num_nodes * num_nodes) - num_nodes) / 2) - num_edges 
+    
 
-    num_edges_in_mat = 0
-    mat_flatten = mat.flatten()
-    for i in mat_flatten:
-        if i != 0:
-            num_edges_in_mat += 1
-    num_edges_in_mat = num_edges_in_mat / 2
-    num_edges_too_much = num_edges_in_mat - args.num_edges
+
+    for i in range(int(num_edges_too_much)):
+        for j in range(i):
+            mat[i, j] = 0
+            mat[j, i] = mat[i, j]
+    
+    for k in range(int(num_edges_too_much),num_nodes):
+        for j in range(k):
+            mat[k, j] = np.random.randint(1, 3 + 1)
+            mat[j, k] = mat[k, j]
+
     # print("num edges to delete:", num_edges_too_much)
-
-    # print(mat_flatten)
-    mat_triu = np.triu(mat)
-    mat_triu_flatten = mat_triu.flatten()
-    # print(num_edges_too_much)
-    if num_edges_too_much > 0:
-        while num_edges_too_much > 0:
-            for pos, value in enumerate(mat_triu_flatten):
-                if value != 0:
-                    first_non_zero_pos_upper_mat = pos
-                    break
-
-            # print(first_non_zero_pos_upper_mat)
-            mat_flatten[first_non_zero_pos_upper_mat] = 0
-            mat_triu_flatten[first_non_zero_pos_upper_mat] = 0
-            # print(mat_flatten)
-            mat = mat_flatten.reshape((args.num_nodes, args.num_nodes))
-
-            for i in range(args.num_nodes):
-                for j in range(args.num_nodes):
-                    if i is not j:
-                        mat[j, i] = mat[i, j]
-            # print(num_edges_too_much)
-            num_edges_too_much -= 1
-
-    # print(num_edges_too_much)
-    # print(mat_triu_flatten)
 
     # Remove all-zero columns and rows
     mat = remove_zero_columns_rows(mat)
