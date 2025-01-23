@@ -55,7 +55,7 @@ def cost_func(params, estimator, ansatz, hamiltonian):
 
 # Function to find the shortest path in a graph using QAOA algorithm with parallel processing:
 def find_longest_path(args):
-     """
+    """
     Find the longest path in a graph using the QAOA algorithm, 
     with a plot of the cost landscape if reps=1 and the optimal point if cost_landscape=True.
 
@@ -73,27 +73,27 @@ def find_longest_path(args):
     -------
     None
     """
-     h = args[0]
-     reps = args[1]
-     outfile = args[2]
-     optimizer = args[3]
+    h = args[0]
+    reps = args[1]
+    outfile = args[2]
+    optimizer = args[3]
 
     # Save output file name diffrerent for each alpha:
-     outfile = outfile + "_alpha_" + str(h.alpha)
+    outfile = outfile + "_alpha_" + str(h.alpha)
 
     # Create QAOA circuit.
-     ansatz = QAOAAnsatz(h.total_hamiltonian, reps, name="QAOA")
+    ansatz = QAOAAnsatz(h.total_hamiltonian, reps, name="QAOA")
 
     # Plot the circuit layout:
     # ansatz.decompose(reps=3).draw()
 
     # ----------------------------------------------------------------RUN LOCALLY: -----
     # Run on local estimator and sampler:
-     estimator = Estimator(options={"shots": 1000000, "seed": 42})
-     sampler = Sampler(options={"shots": 1000000, "seed": 42})
+    estimator = Estimator(options={"shots": 1000000, "seed": 42})
+    sampler = Sampler(options={"shots": 1000000, "seed": 42})
     # -----------------------------------------------------------------------------------
 
-     if optimizer == "Differential":
+    if optimizer == "Differential":
         # Reference: https://www.youtube.com/watch?v=o-OPrQmS1pU
         # Define fixed arguments
         cost_func_with_args = partial(
@@ -109,11 +109,11 @@ def find_longest_path(args):
         resx = res.x
 
     # Save the minimum cost and the corresponding parameters
-     min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
-     print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
+    min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
+    print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
 
     # Scatter optimal point on cost Landscape ----------------------------
-     if args[4]:
+    if args[4]:
         if reps == 1:
             fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
             ax1.scatter(  # type: ignore
@@ -126,27 +126,27 @@ def find_longest_path(args):
             print("Optimal point saved in Opt_point_visu.png")
             if not args[5]:
                 plt.show()
-     else:
+    else:
         pass
     # -----------------------------------------------------
 
-     circ = ansatz.copy()
-     circ.measure_all()
-     dist = sampler.run(circ, resx).result().quasi_dists[0]  # type: ignore
-     dist_binary_probabilities = dist.binary_probabilities()
+    circ = ansatz.copy()
+    circ.measure_all()
+    dist = sampler.run(circ, resx).result().quasi_dists[0]  # type: ignore
+    dist_binary_probabilities = dist.binary_probabilities()
 
-     bin_str = list(map(int, max(dist.binary_probabilities(), key=dist.binary_probabilities().get)))  # type: ignore
-     bin_str_reversed = bin_str[::-1]
-     bin_str_reversed = np.array(bin_str_reversed)  # type: ignore
+    bin_str = list(map(int, max(dist.binary_probabilities(), key=dist.binary_probabilities().get)))  # type: ignore
+    bin_str_reversed = bin_str[::-1]
+    bin_str_reversed = np.array(bin_str_reversed)  # type: ignore
 
     # Concatenate the binary path to a string:
-     str_path_reversed = ["".join(map(str, bin_str_reversed))]  # type: ignore
-     str_path_reversed = str_path_reversed[0]  # type: ignore
+    str_path_reversed = ["".join(map(str, bin_str_reversed))]  # type: ignore
+    str_path_reversed = str_path_reversed[0]  # type: ignore
 
     # Save parameters alpha and min_cost with path in csv file:
-     opt_path = str_path_reversed
+    opt_path = str_path_reversed
 
-     save_optimization_results(
+    save_optimization_results(
         dist=dist,
         dist_binary_probabilities=dist_binary_probabilities,
         min_cost=min_cost,
@@ -167,7 +167,7 @@ def multiprocess_qaoa_solver_edge(
     cost_landscape,
     save_only,
 ):
-     """
+    """
     Solve the optimization problem using the QAOA algorithm with multiprocessing on the alpha values. 
 
     Parameters
@@ -191,9 +191,9 @@ def multiprocess_qaoa_solver_edge(
     -------
     None
     """
-     pool = multiprocessing.Pool(nbr_processes)
+    pool = multiprocessing.Pool(nbr_processes)
 
-     results = pool.map(
+    results = pool.map(
         find_longest_path,
         zip(
             hamiltonians,
@@ -204,9 +204,9 @@ def multiprocess_qaoa_solver_edge(
             itertools.repeat(save_only),
         ),
     )
-     pool.close()
-     pool.join()
+    pool.close()
+    pool.join()
 
-     print(
+    print(
         "------------------------MULTIPROCESS SOLVER FINISHED-------------------------------"
     )
