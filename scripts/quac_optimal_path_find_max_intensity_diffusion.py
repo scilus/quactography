@@ -9,7 +9,8 @@ from quactography.solver.qaoa_solver_qu_edge import multiprocess_qaoa_solver_edg
 
 
 """
-Tool to run QAOA, optimize parameters, plot cost landscape with optimal parameters found if only one reps, and returns the optimization results.
+Tool to run QAOA, optimize parameters, plot cost landscape with optimal parameters found if only one reps,
+ and returns the optimization results.
 """
 
 
@@ -56,7 +57,8 @@ def _build_arg_parser():
     )
     p.add_argument(
         "--plt_cost_landscape",
-        help="True or False, Plot 3D and 2D of the cost landscape (for gamma and beta compact set over all possible angles-0.1 incrementation)",
+        help="True or False, Plot 3D and 2D of the cost landscape"
+         " (for gamma and beta compact set over all possible angles-0.1 incrementation)",
         action="store_false",
     )
     p.add_argument(

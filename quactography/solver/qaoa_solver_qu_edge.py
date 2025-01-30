@@ -55,8 +55,9 @@ def cost_func(params, estimator, ansatz, hamiltonian):
 
 # Function to find the shortest path in a graph using QAOA algorithm with parallel processing:
 def find_longest_path(args):
-     """
-    Find the longest path in a graph using the QAOA algorithm, with a plot of the cost landscape if reps=1 and the optimal point if cost_landscape=True.
+    """
+    Find the longest path in a graph using the QAOA algorithm, 
+    with a plot of the cost landscape if reps=1 and the optimal point if cost_landscape=True.
 
     Parameters
     ----------
@@ -166,7 +167,7 @@ def multiprocess_qaoa_solver_edge(
     cost_landscape,
     save_only,
 ):
-     """
+    """
     Solve the optimization problem using the QAOA algorithm with multiprocessing on the alpha values. 
 
     Parameters

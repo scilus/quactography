@@ -30,14 +30,16 @@ class Hamiltonian_qubit_edge:
 
     def mandatory_cost(self):
         """
-    Cost term of having a single edge connected to each node of the graph in the given path, cost of the weights of the edges taken without penalty.
+    Cost term of having a single edge connected to each node of the graph in the given path,
+      cost of the weights of the edges taken without penalty.
 
     Parameters
     ----------
     self : Hamiltonian_qubit_edge object
     Returns
     -------
-    SparsePauliOp: Pauli string representing the cost associated with the sum of the weights of the edges taken without penalty.
+    SparsePauliOp: Pauli string representing the cost associated with the sum of the weights
+      of the edges taken without penalty.
     """
 
         pauli_weight_first_term = [
@@ -129,7 +131,8 @@ class Hamiltonian_qubit_edge:
 
     def intermediate_node_cost(self):
         """
-        Cost term of having a  pair number of connections to each intermediate node (one edge connected to each intermediate node) 
+        Cost term of having a  pair number of connections to each intermediate node 
+        (one edge connected to each intermediate node) 
 
         Parameters
         ----------
@@ -201,7 +204,8 @@ class Hamiltonian_qubit_edge:
         self : Hamiltonian_qubit_edge object
         Returns
         -------
-        SparsePauliOp: Pauli string representing the cost associated with the constraint of having a connection to each intermediate node"""
+        SparsePauliOp: Pauli string representing the cost associated with the constraint of
+          having a connection to each intermediate node"""
         # Identify intermediate nodes
         int_nodes = []
         for node, value in enumerate(self.graph.starting_nodes):

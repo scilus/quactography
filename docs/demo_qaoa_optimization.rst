@@ -127,7 +127,7 @@ Random graph generation and visualisation
 -----------------------------------------------------------
 
 Run this command to build a random adjacency matrix, with first number being the number of nodes and second number of edges, and bool argument to True if
-the number of edges matters more than the number of nodes (work in progress, does not always work), than the name of file to save the adjacency matrix of new graph: 
+the number of edges matters more than the number of nodes, than the name of file to save the adjacency matrix of new graph: 
 
 ::
 

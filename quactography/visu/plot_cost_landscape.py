@@ -5,7 +5,7 @@ from functools import partial
 
 # Minimization cost function
 def cost_func(params, estimator, ansatz, hamiltonian):
-     """
+    """
     Cost function to minimize for the optimization of the quantum circuit.
 
     Parameters
@@ -30,8 +30,9 @@ def cost_func(params, estimator, ansatz, hamiltonian):
 
 
 def plt_cost_func(estimator, ansatz, h):
-     """
-    Plot the cost function landscape for the given Hamiltonian. The cost function is evaluated for all possible values of gamma and beta for only one layer.(reps=1)
+    """
+    Plot the cost function landscape for the given Hamiltonian. 
+    The cost function is evaluated for all possible values of gamma and beta for only one layer.(reps=1)
 
     Parameters
     ----------
@@ -80,7 +81,7 @@ def plt_cost_func(estimator, ansatz, h):
     fig.colorbar(surf, ax=ax1, shrink=0.5, aspect=5)
     ax1.set_xlabel("Gamma")
     ax1.set_ylabel("Beta")
-    # ax1.set_zlabel("Cost Function Value")  # type: ignore
+     # ax1.set_zlabel("Cost Function Value")  # type: ignore
     ax1.set_title("3D Cost Function Surface")
 
     # 2D Contour Plot
