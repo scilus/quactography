@@ -62,7 +62,7 @@ def main():
         while num_edges_too_much > 0:
             for i in range(1,num_nodes):
                 for j in range(i):
-                    if(np.random.randint(0, 2)  == 1 and num_edges_too_much > 0):
+                    if(np.random.randint(0, 10)  > 2 and num_edges_too_much > 0):
                         mat[i, j] = 0
                         mat[j, i] = mat[i, j]
                         num_edges_too_much -= 1
