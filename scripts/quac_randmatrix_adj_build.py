@@ -58,15 +58,22 @@ def main():
     
 
 
-    for i in range(int(num_edges_too_much)):
-        for j in range(i):
-            mat[i, j] = 0
-            mat[j, i] = mat[i, j]
-    
-    for k in range(int(num_edges_too_much),num_nodes):
-        for j in range(k):
-            mat[k, j] = np.random.randint(1, 3 + 1)
-            mat[j, k] = mat[k, j]
+    if num_edges_too_much > 0:
+        while num_edges_too_much > 0:
+            for i in range(1,num_nodes):
+                for j in range(i):
+                    if(np.random.randint(0, 2)  == 1 and num_edges_too_much > 0):
+                        mat[i, j] = 0
+                        mat[j, i] = mat[i, j]
+                        num_edges_too_much -= 1
+                    else:
+                        mat[i, j] = np.random.randint(1, 3 + 1)
+                        mat[j, i] = mat[i, j]
+    else:
+        for i in range(num_nodes):
+            for j in range(i):
+                mat[i, j] = np.random.randint(1, 3 + 1)
+                mat[j, i] = mat[i, j]
 
     # print("num edges to delete:", num_edges_too_much)
 
