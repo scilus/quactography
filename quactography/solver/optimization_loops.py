@@ -28,12 +28,6 @@ def cost_func(params, estimator, ansatz, hamiltonian):
     return cost
 
 
-from scipy.optimize import minimize
-import numpy as np
-
-resx = 0
-
-
 def POWELL_loop_optimizer(
     loop_count,
     max_loops,
