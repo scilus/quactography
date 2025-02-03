@@ -111,6 +111,3 @@ def visualize_optimal_paths_edge(
     print(f"Visualisation of the optimal path saved in {out_file}_alpha_{alpha:.2f}.png")
     
     plt.close()
-
-
-
