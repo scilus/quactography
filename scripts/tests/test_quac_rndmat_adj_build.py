@@ -1,21 +1,22 @@
-import subprocess
 import os
 import numpy as np
-import pytest
 
 
-def test_quac_rndmat_adj_build():
-    script_path = os.path.abspath(
-        "/home/kevin-da/LibrairiesQuack/Quackto/quactography/scripts/quac_randmatrix_adj_build.py"
-    )
+
+def test_help_option(script_runner):
+    ret = script_runner.run('quac_randmatrix_adj_build.py', '-h')
+    assert ret.success
+
+
+def test_quac_rndmat_adj_build(script_runner):
+    #script_path = str_path + "/scripts/quac_randmatrix_adj_build.py"
+
     output_file = "test_output_graph.npz"
 
     # Test case 1: edges_matter is True
-    result = subprocess.run(
-        ["python3", script_path, "7", "10", "True", output_file],
-        capture_output=True,
-        text=True,
-    )
+    result = script_runner.run(
+        'quac_randmatrix_adj_build.py', "7", "10", "True", output_file
+        )
     assert result.returncode == 0
     assert os.path.exists(output_file)
     data = np.load(output_file)
@@ -27,10 +28,8 @@ def test_quac_rndmat_adj_build():
     os.remove(output_file)
 
     # Test case 2: edges_matter is False
-    result = subprocess.run(
-        ["python3", script_path, "5", "6", "False", output_file],
-        capture_output=True,
-        text=True,
+    result = script_runner.run(
+        'quac_randmatrix_adj_build.py', "5", "6", "False", output_file
     )
     assert result.returncode == 0
     assert os.path.exists(output_file)
@@ -42,17 +41,12 @@ def test_quac_rndmat_adj_build():
     os.remove(output_file)
 
 
-def test_quac_rndmat_adj_build_NOT():
-    script_path = os.path.abspath(
-        "/home/kevin-da/LibrairiesQuack/Quackto/quactography/scripts/quac_randmatrix_adj_build.py"
-    )
+def test_quac_rndmat_adj_build_NOT(script_runner):
     output_file = "test_output_graph.npz"
 
     # Test case 1: edges_matter is True
-    result = subprocess.run(
-        ["python3", script_path, "6", "11", "True", output_file],
-        capture_output=True,
-        text=True,
+    result = script_runner.run(
+        'quac_randmatrix_adj_build.py', "6", "11", "True", output_file
     )
     assert result.returncode == 0
     assert os.path.exists(output_file)
