@@ -32,3 +32,13 @@ def test_quac_mat_adj_build(script_runner):
 
     # Clean up
     os.remove(output_file)
+    
+def test_missing_args(script_runner):
+    
+    output_file = "test_output_graph.npz"
+    # Test case : missing args
+    result = script_runner.run(
+        'quac_matrix_adj_build.py', output_file
+    )
+    assert not result.returncode == 0
+    assert not os.path.exists(output_file)
