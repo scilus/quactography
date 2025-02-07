@@ -72,7 +72,6 @@ def remove_intermediate_connections(graphR, node_indices=None, keep_indices=None
     return graph
 
 
-
 def remove_intermediate_connections_prod_instead_sum(
     graphR, node_indices=None, keep_indices=None
 ):

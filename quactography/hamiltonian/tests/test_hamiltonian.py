@@ -1,4 +1,3 @@
-import pytest
 from quactography.hamiltonian.hamiltonian_qubit_edge import *
 from quactography.graph.undirected_graph import *
 from qiskit.quantum_info import PauliList

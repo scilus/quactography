@@ -6,7 +6,7 @@ from quactography.visu.optimal_paths_edge import visualize_optimal_paths_edge
 
 
 """
-Tool to visualize and plot the optimal path (most probable) on a graph. 
+Tool to visualize and plot the optimal path (most probable) on a graph.
 """
 
 
@@ -14,7 +14,7 @@ def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
-    p.add_argument("in_mat_adj", 
+    p.add_argument("in_mat_adj",
                    help="Adjacency matrix (npz file)", type=str)
     p.add_argument(
         "in_opt_res",

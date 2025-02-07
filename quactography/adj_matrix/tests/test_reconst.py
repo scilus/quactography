@@ -3,7 +3,6 @@ import numpy as np
 import nibabel as nib
 import quactography.image.utils as utils
 import pytest
-import os
 from quactography.adj_matrix.reconst import *
 
 FILE_PATH = pathlib.Path(
@@ -32,8 +31,10 @@ test_data = [
                 1220, 1222, 1251, 1252, 1253, 1257, 1259, 1288, 1289, 1294]))
      )]
 
-@pytest.mark.parametrize("node_mask, expected", test_data) 
+
+@pytest.mark.parametrize("node_mask, expected", test_data)
 def test_build_adjacency_matrix(node_mask, expected):
+
     nodes_mask_im = utils.slice_along_axis(
         node_mask.get_fdata().astype(bool), 'coronal', None
     )

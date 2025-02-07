@@ -1,16 +1,19 @@
-import subprocess
 import pathlib
 import os
 import numpy as np
 
-DIR_PATH = pathlib.Path(__file__).parent.parent.parent
+DIR_PATH = str(pathlib.Path(__file__).parent.parent.parent /
+               'data/simplePhantoms/fanning_2d_5bundles')
 
-str_path = str(DIR_PATH)
+
+def test_help_option(script_runner):
+    ret = script_runner.run('quac_randmatrix_adj_build.py', '-h')
+    assert ret.success
 
 
 def test_quac_mat_adj_build(script_runner):
-    wm_path = str_path + "/data/simplePhantoms/fanning_2d_5bundles/wm_vf.nii.gz"
-    fods_path = str_path + "/data/simplePhantoms/fanning_2d_5bundles/fods.nii.gz"
+    wm_path = DIR_PATH + "/wm_vf.nii.gz"
+    fods_path = DIR_PATH + "/fods.nii.gz"
     output_file = "test_output_graph.npz"
 
     # Test case 1: edges_matter is True
@@ -26,15 +29,14 @@ def test_quac_mat_adj_build(script_runner):
     assert result.returncode == 0
     assert os.path.exists(output_file)
     data = np.load(output_file)
-    print(data.files)
     assert "adjacency_matrix" in data
     assert data["adjacency_matrix"].shape[0] == 582
 
     # Clean up
     os.remove(output_file)
-    
+
+
 def test_missing_args(script_runner):
-    
     output_file = "test_output_graph.npz"
     # Test case : missing args
     result = script_runner.run(

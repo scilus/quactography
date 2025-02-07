@@ -6,8 +6,8 @@ from quactography.visu.dist_prob_edge import plot_distribution_of_probabilities_
 
 
 """
-Tool to visualize 10% of most optimal paths found by QAOA, 
-and all the histogram of paths as well in a second plot.  
+Tool to visualize 10% of most optimal paths found by QAOA,
+and all the histogram of paths as well in a second plot.
 """
 
 
