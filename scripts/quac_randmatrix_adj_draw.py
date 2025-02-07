@@ -37,6 +37,7 @@ def main():
     weighted_graph, node_indices, _ = load_graph(args.in_graph)
     graph = rx.PyGraph(multigraph=False)
     num_nodes = len(node_indices)
+    graph.add_nodes_from((range(num_nodes)))
     # Add edges :
     edges = []
     for i in range(num_nodes):
