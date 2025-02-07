@@ -4,6 +4,7 @@ import numpy as np
 
 DIR_PATH = str(pathlib.Path(__file__).parent.parent.parent /
                'data/simplePhantoms/fanning_2d_5bundles')
+output_file = "test_output_graph.npz"
 
 
 def test_help_option(script_runner):
@@ -14,7 +15,6 @@ def test_help_option(script_runner):
 def test_quac_mat_adj_build(script_runner):
     wm_path = DIR_PATH + "/wm_vf.nii.gz"
     fods_path = DIR_PATH + "/fods.nii.gz"
-    output_file = "test_output_graph.npz"
 
     # Test case 1: edges_matter is True
     result = script_runner.run(
@@ -37,7 +37,6 @@ def test_quac_mat_adj_build(script_runner):
 
 
 def test_missing_args(script_runner):
-    output_file = "test_output_graph.npz"
     # Test case : missing args
     result = script_runner.run(
         'quac_matrix_adj_build.py', output_file

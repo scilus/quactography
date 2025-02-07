@@ -1,6 +1,8 @@
 import os
 import numpy as np
 
+output_file = "test_output_graph.npz"
+
 
 def test_help_option(script_runner):
     ret = script_runner.run('quac_randmatrix_adj_build.py', '-h')
@@ -8,8 +10,6 @@ def test_help_option(script_runner):
 
 
 def test_quac_rndmat_adj_build(script_runner):
-    output_file = "test_output_graph.npz"
-
     # Test case 1: edges_matter is True
     result = script_runner.run(
         'quac_randmatrix_adj_build.py', "7", "10", "True", output_file
@@ -37,8 +37,6 @@ def test_quac_rndmat_adj_build(script_runner):
 
 
 def test_quac_rndmat_adj_build_NOT(script_runner):
-    output_file = "test_output_graph.npz"
-
     # Test case 1: edges_matter is True
     result = script_runner.run(
         'quac_randmatrix_adj_build.py', "6", "11", "True", output_file
@@ -54,7 +52,6 @@ def test_quac_rndmat_adj_build_NOT(script_runner):
 
 
 def test_missing_args(script_runner):
-    output_file = "test_output_graph.npz"
     # Test case : missing args
     result = script_runner.run(
         'quac_randmatrix_adj_build.py', "6", "True", output_file
