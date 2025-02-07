@@ -9,7 +9,8 @@ from quactography.adj_matrix.io import save_graph
 
 
 """
-Tool to build random matrix with specified number of nodes or edges, work in progress (WIP) instead of diffusion data. 
+Tool to build random matrix with specified number of nodes or edges,
+work in progress (WIP) instead of diffusion data.
 """
 
 
@@ -17,20 +18,20 @@ def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
-    p.add_argument("num_nodes", 
-                   help="Number of nodes desired in the graph.", 
+    p.add_argument("num_nodes",
+                   help="Number of nodes desired in the graph.",
                    type=int)
-    p.add_argument("num_edges", 
-                   help="Number of edges desired in the graph.", 
+    p.add_argument("num_edges",
+                   help="Number of edges desired in the graph.",
                    type=int)
     p.add_argument(
         "edges_matter",
         help="If True, num_edges is the exact number of edges in the graph,"
-          "if False, num_edges is the maximum number of edges in the graph.",
+        "if False, num_edges is the maximum number of edges in the graph.",
         type=ast.literal_eval,
     )
-    p.add_argument("out_graph", 
-                   help="Output graph file name (npz file)", 
+    p.add_argument("out_graph",
+                   help="Output graph file name (npz file)",
                    type=str)
 
     return p
@@ -54,19 +55,25 @@ def main():
     # print("num edges wanted", args.num_edges)
     mat = np.zeros((num_nodes, num_nodes), dtype=float)
     # used in a situation where the maximum number of edges in a matrix is more than desired
-    num_edges_too_much = (((num_nodes * num_nodes) - num_nodes) / 2) - num_edges 
-    
+    num_edges_too_much = (((num_nodes * num_nodes) - num_nodes) / 2) - num_edges
 
-
-    for i in range(int(num_edges_too_much)):
-        for j in range(i):
-            mat[i, j] = 0
-            mat[j, i] = mat[i, j]
-    
-    for k in range(int(num_edges_too_much),num_nodes):
-        for j in range(k):
-            mat[k, j] = np.random.randint(1, 3 + 1)
-            mat[j, k] = mat[k, j]
+    if num_edges_too_much > 0:
+        while num_edges_too_much > 0:
+            for i in range(1, num_nodes):
+                for j in range(i):
+                    if (np.random.randint(0, 10) > 2
+                       and num_edges_too_much > 0):
+                        mat[i, j] = 0
+                        mat[j, i] = mat[i, j]
+                        num_edges_too_much -= 1
+                    else:
+                        mat[i, j] = np.random.randint(1, 3 + 1)
+                        mat[j, i] = mat[i, j]
+    else:
+        for i in range(num_nodes):
+            for j in range(i):
+                mat[i, j] = np.random.randint(1, 3 + 1)
+                mat[j, i] = mat[i, j]
 
     # print("num edges to delete:", num_edges_too_much)
 

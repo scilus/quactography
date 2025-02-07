@@ -25,5 +25,5 @@ def slice_along_axis(arr, axis_name, slice_index):
         Slice of the input array, along the specified axis
     """
     ax_id = AXES_MAPPING[axis_name.lower()]
-    slice_idx = slice_index if slice_index is not None else arr.shape[ax_id]
+    slice_idx = slice_index if slice_index is not None else arr.shape[ax_id] // 2
     return np.take(arr, slice_idx, ax_id)
