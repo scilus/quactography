@@ -1,5 +1,7 @@
 from qiskit.visualization import plot_distribution
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import cm
+import numpy
 
 from quactography.solver.io import load_optimization_results
 
@@ -25,6 +27,8 @@ def plot_distribution_of_probabilities_edge(
     -------
     None
     """
+    
+
 
     _, dist_binary_prob, min_cost, h, _, _, opt_params = load_optimization_results(
         in_file
@@ -72,20 +76,11 @@ def plot_distribution_of_probabilities_edge(
         # Select paths with probability higher than percentage of the maximal probability:
         if probability > percentage:
             selected_paths.extend([path, probability])
+    
     # Sort the selected paths by probability from most probable to least probable:
-
     selected_paths = sorted(
         selected_paths[::2], key=lambda x: dist_binary_prob[x], reverse=True
     )
-
-    # print("_______________________________________________________________________\n")
-    # print(
-    #     f"Selected paths among {percentage*100} % of solutions (right=q0) from most probable to least probable: {selected_paths}"
-    # )
-
-    # print(
-    #     f"Optimal path obtained by diagonal hamiltonian minimum costs (right=q0): {h.exact_path}"
-    # )
 
     # match_found = False
     # for i in selected_paths:
@@ -116,3 +111,88 @@ def plot_distribution_of_probabilities_edge(
     #     print(
     #         "The solution is not in given subset of solutions found by QAOA.\n_________________")
     #     )
+
+        
+        
+def plot_distribution_comparison(
+    in_file, visu_out_file_selected, save_only
+):
+    """
+    Plot the distribution of probabilities for the optimal path and the selected paths.
+
+    Parameters
+    ----------
+    in_file: str
+        The input file containing the optimization results.
+    visu_out_file_selected: str
+        The output file name for the histogram of selected paths.
+    save_only: bool
+        If True, the figure is saved without displaying it.
+
+    Returns
+    -------
+    None
+    """
+    counts = []
+    for i in range(len(in_file)):
+        _, dist_binary_prob, min_cost, h, _, _, opt_params = load_optimization_results(
+            in_file[i]
+        )
+        dist_binary_prob = dist_binary_prob.item()
+        min_cost = min_cost.item()
+        h = h.item()
+        sorted(
+        dist_binary_prob, key=dist_binary_prob.get, reverse=True
+    )
+        
+        max_probability = max(dist_binary_prob.values())
+        selected_paths = []
+        count = []
+
+        for path, probability in dist_binary_prob.items():
+
+            probability = probability / max_probability
+            dist_binary_prob[path] = probability
+
+            percentage = 0.7
+            # Select paths with probability higher than percentage of the maximal probability:
+            if probability > percentage:
+                selected_paths.extend([path, probability])
+        
+        # Sort the selected paths by probability from most probable to least probable:
+        selected_paths = sorted(
+            selected_paths[::2], key=lambda x: dist_binary_prob[x], reverse=True
+            )
+        count.append({key: dist_binary_prob[key] for key in selected_paths})
+        counts.append(count)
+
+    # match_found = False
+    # for i in selected_paths:
+    #     if i in h.exact_path:
+    #         match_found = True
+    #         break
+    
+    plots = []
+    legend = []
+    colors = []
+    color = iter(cm.rainbow(numpy.linspace(0,1,len(in_file))))
+    for j in range(len(in_file)):
+        plots.append(counts[j][0])
+        legend.append("File_" + str(j+1))
+        colors.append(next(color))
+    
+    plot_distribution(
+        plots,
+        figsize=(16, 14),
+        title=("Distribution of probabilities for selected paths"),
+        # \n Right path FOUND (quantum read): {h.exact_path}"
+        # if match_found
+        # else f"Distribution of probabilities for selected paths \n Right path NOT FOUND (quantum read): {h.exact_path}"
+        color=colors,  # if match_found else "lightblue",
+        sort="value_desc",
+        legend=legend,
+        filename=visu_out_file_selected,
+    )
+    if not save_only:
+            plt.show()
+        

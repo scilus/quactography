@@ -6,6 +6,7 @@ from qiskit.primitives import Estimator, Sampler
 from qiskit.circuit.library import QAOAAnsatz
 import matplotlib.pyplot as plt
 import numpy as np
+from qiskit.quantum_info import SparsePauliOp
 from scipy.optimize import differential_evolution
 from functools import partial
 from functools import partial
@@ -74,16 +75,31 @@ def find_longest_path(args):
     None
     """
     h = args[0]
-    reps = args[1]
-    outfile = args[2]
-    optimizer = args[3]
+    count = args[1]
+    reps = args[2]
+    outfile = args[3]
+    optimizer = args[4]
 
     # Save output file name diffrerent for each alpha:
-    outfile = outfile + "_alpha_" + str(h.alpha)
+    outfile = outfile + "_alpha_" + str(h.alpha) + "_reps_" + str(reps) + "_count_" + str(count)
+    
+    pauli_weight_first_term = [
+            ("I" * h.graph.number_of_edges, h.graph.all_weights_sum / 2)
+        ]
+
+        # Z à la bonne position:
+    for i in range(1,h.graph.number_of_edges):
+            str1 = (
+                "I" * (i-1) + "XY" + "I" * (h.graph.number_of_edges - i - 1),
+                -h.graph.weights[0][i] / 2,
+            )
+            pauli_weight_first_term.append(str1)
+
+    
+    mixer = SparsePauliOp.from_list(pauli_weight_first_term)
 
     # Create QAOA circuit.
-    ansatz = QAOAAnsatz(h.total_hamiltonian, reps, name="QAOA")
-
+    ansatz = QAOAAnsatz(h.total_hamiltonian, reps, mixer_operator=mixer, name="QAOA",flatten=True)
     # Plot the circuit layout:
     # ansatz.decompose(reps=3).draw()
 
@@ -113,7 +129,7 @@ def find_longest_path(args):
     print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
 
     # Scatter optimal point on cost Landscape ----------------------------
-    if args[4]:
+    if args[5]:
         if reps == 1:
             fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
             ax1.scatter(  # type: ignore
@@ -160,6 +176,7 @@ def find_longest_path(args):
 
 def multiprocess_qaoa_solver_edge(
     hamiltonians,
+    batch_count,
     reps,
     nbr_processes,
     output_file,
@@ -174,6 +191,8 @@ def multiprocess_qaoa_solver_edge(
     ----------
     hamiltonians : list
         List of Hamiltonian objects from quactography library, Hamiltonian_qubit_edge.
+    batch_count : int
+        Number of time the command will be ran 
     reps : int
         Number of repetitions for the QAOA algorithm, determines the number of sets of gamma and beta angles.
     nbr_processes : int
@@ -197,6 +216,7 @@ def multiprocess_qaoa_solver_edge(
         find_longest_path,
         zip(
             hamiltonians,
+            itertools.repeat(batch_count),
             itertools.repeat(reps),
             itertools.repeat(output_file),
             itertools.repeat(optimizer),

@@ -19,6 +19,12 @@ def _build_arg_parser():
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
     p.add_argument(
+        "loop_count", 
+        help="How many time is the command is ran",
+        type=int,
+        default=1
+        )
+    p.add_argument(
         "in_graph",
         help="Adjacency matrix which graph we want path that maximizes weights in graph, (npz file)",
         type=str,
@@ -38,9 +44,10 @@ def _build_arg_parser():
     )
     p.add_argument(
         "--reps",
-        help="Number of repetitions for the QAOA algorithm",
+        nargs="+",
         type=int,
-        default=1,
+        help="Number of repetitions for the QAOA algorithm",
+        default=[1],
     )
     p.add_argument(
         "-npr",
@@ -85,15 +92,18 @@ def main():
     # print(hamiltonians[0].total_hamiltonian.simplify())
 
     print("\n Calculating qubits as edges......................")
-    multiprocess_qaoa_solver_edge(
-        hamiltonians,
-        args.reps,
-        args.number_processors,
-        args.output_file,
-        args.optimizer,
-        args.plt_cost_landscape,
-        args.save_only,
-    )
+    for j in range(args.loop_count):
+        for i in range(len(args.reps)):
+            multiprocess_qaoa_solver_edge(
+                hamiltonians,
+                j,
+                args.reps[i],
+                args.number_processors,
+                args.output_file,
+                args.optimizer,
+                args.plt_cost_landscape,
+                args.save_only,
+            )
 
 
 if __name__ == "__main__":
