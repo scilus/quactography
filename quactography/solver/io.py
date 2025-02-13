@@ -69,7 +69,8 @@ def load_optimization_results(in_file):
     opt_bin_str : str
         The optimal binary string of the path.
     reps : int
-        The number of repetitions of the optimization, determines the number of sets of gamma and beta angles.
+        The number of repetitions of the optimization,
+        determines the number of sets of gamma and beta angles.
     opt_params : list of floats
         The optimal parameters for the quantum circuit.
     """

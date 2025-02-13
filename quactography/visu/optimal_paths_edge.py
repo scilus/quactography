@@ -39,12 +39,12 @@ def visualize_optimal_paths_edge(
     ending_node = graph.ending_node
     starting_nodes = graph.starting_nodes
     ending_nodes = graph.ending_nodes
-    all_weights_sum = graph.all_weights_sum
     alpha = h.alpha
 
     bin_str = list(map(int, bin_str))
 
-    # Create a graph where the edges taken are in green and the edges not taken are in black
+    # Create a graph where the edges taken are in green
+    # and the edges not taken are in black
     G = nx.Graph()
     edges_taken = []
     edges_not_taken = []
@@ -98,19 +98,18 @@ def visualize_optimal_paths_edge(
     # plt.tight_layout()
     plt.legend(
         [
-            f"alpha_factor = {(alpha):.2f},\n Cost: {min_cost:.2f}\n Starting node : {starting_node},
-              \n Ending node : {ending_node},\n reps : {reps},\n Actual path : {bin_str} "
-            
+            f"alpha_factor = {(alpha):.2f},\n Cost: {min_cost:.2f}"
+            f"\n Starting node : {starting_node},"
+            f"\n Ending node : {ending_node},"
+            f"\n reps : {reps},\n Actual path : {bin_str} "
+
         ],
         loc="upper right",
     )
     if not save_only:
         plt.show()
-   
+
     plt.savefig(f"{out_file}_alpha_{alpha:.2f}.png")
     print(f"Visualisation of the optimal path saved in {out_file}_alpha_{alpha:.2f}.png")
-    
+
     plt.close()
-
-
-
