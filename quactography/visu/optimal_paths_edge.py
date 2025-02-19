@@ -55,7 +55,7 @@ def visualize_optimal_paths_edge(
                 starting_nodes[i],
                 ending_nodes[i],
                 {
-                    "weight": mat_adj[starting_nodes[i], ending_nodes[i]],
+                    "weight": round(mat_adj[starting_nodes[i], ending_nodes[i]],4),
                     "color": "green",
                 },
             )
@@ -65,7 +65,7 @@ def visualize_optimal_paths_edge(
                 starting_nodes[i],
                 ending_nodes[i],
                 {
-                    "weight": mat_adj[starting_nodes[i], ending_nodes[i]],
+                    "weight": round(mat_adj[starting_nodes[i], ending_nodes[i]],4),
                     "color": "black",
                 },
             )
