@@ -10,7 +10,8 @@ def cost_func(params, estimator, ansatz, hamiltonian):
     Parameters
     ----------
     params : list
-        List of parameters for the quantum circuit. (gamma, beta) angles depending on the number of layers.
+        List of parameters for the quantum circuit.
+        (gamma, beta) angles depending on the number of layers.
     estimator : Estimator from qiskit
         Estimator used to evaluate the cost function.
     ansatz : QuantumCircuit object from qiskit
@@ -61,7 +62,8 @@ def POWELL_loop_optimizer(
     ansatz : QuantumCircuit object from qiskit
         Quantum circuit used to generate the ansatz.
     h : Hamiltonian object from quactography library, Hamiltonian_qubit_edge
-        Object containing total Hamiltonian function to minimize. Cost function in quantum Formalism.
+        Object containing total Hamiltonian function to minimize.
+        Cost function in quantum Formalism.
     Returns
     -------
     res.x : list of floats
@@ -155,7 +157,8 @@ def POWELL_refinement_optimization(
     num_refinement_loops,
 ):
     """
-    Refinement optimization loop for the Powell optimizer. Unused for now, issues to be fixed. 
+    Refinement optimization loop for the Powell optimizer.
+    Unused for now, issues to be fixed. 
 
     Parameters
     ----------
@@ -168,7 +171,8 @@ def POWELL_refinement_optimization(
     ansatz : QuantumCircuit object from qiskit
         Quantum circuit used to generate the ansatz.
     h : Hamiltonian object from quactography library, Hamiltonian_qubit_edge
-        Object containing total Hamiltonian function to minimize. Cost function in quantum Formalism.
+        Object containing total Hamiltonian function to minimize.
+        Cost function in quantum Formalism.
     no_valid_params : list
         List of non-valid parameters.
     epsilon : float
