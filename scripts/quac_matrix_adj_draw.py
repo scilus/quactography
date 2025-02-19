@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 
 """
-Tool to visualize the graph constructed with 
+Tool to visualize the graph constructed with
 diffusion data (white matter mask and fodf peaks)
 """
 
@@ -17,7 +17,7 @@ def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
-    p.add_argument("in_graph", 
+    p.add_argument("in_graph",
                    help="Graph file (npz file)")
     p.add_argument(
         "--save_only",
@@ -54,8 +54,8 @@ def main():
                 )
 
     plt.scatter(x, y)
-    plt.savefig("graph_adj_mat.png")  
-    print(f"Graph saved as graph_adj_mat.png")
+    plt.savefig("graph_adj_mat.png")
+    print("Graph saved as graph_adj_mat.png")
     if not args.save_only:
         plt.show()
 
