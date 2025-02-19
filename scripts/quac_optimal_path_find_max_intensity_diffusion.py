@@ -9,8 +9,8 @@ from quactography.solver.qaoa_solver_qu_edge import multiprocess_qaoa_solver_edg
 
 
 """
-Tool to run QAOA, optimize parameters, plot cost landscape with optimal parameters found if only one reps,
- and returns the optimization results.
+Tool to run QAOA, optimize parameters, plot cost landscape with optimal
+parameters found if only one reps, and returns the optimization results.
 """
 
 
@@ -29,17 +29,17 @@ def _build_arg_parser():
         help="Adjacency matrix which graph we want path that maximizes weights in graph, (npz file)",
         type=str,
     )
-    p.add_argument("starting_node", 
+    p.add_argument("starting_node",
                    help="Starting node of the graph", type=int)
-    p.add_argument("ending_node", 
+    p.add_argument("ending_node",
                    help="Ending node of the graph", type=int)
-    p.add_argument("output_file", 
+    p.add_argument("output_file",
                    help="Output file name (npz file)", type=str)
     p.add_argument(
-        "--alphas", 
-        nargs="+", 
-        type=float, 
-        help="List of alphas", 
+        "--alphas",
+        nargs="+",
+        type=float,
+        help="List of alphas",
         default=[1.2]
     )
     p.add_argument(
@@ -65,7 +65,7 @@ def _build_arg_parser():
     p.add_argument(
         "--plt_cost_landscape",
         help="True or False, Plot 3D and 2D of the cost landscape"
-         " (for gamma and beta compact set over all possible angles-0.1 incrementation)",
+        "(for gamma and beta compact set over all possible angles-0.1 incrementation)",
         action="store_false",
     )
     p.add_argument(
@@ -81,10 +81,10 @@ def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
 
-    weighted_graph, _, _ = load_graph(args.in_graph )
+    weighted_graph, _, _ = load_graph(args.in_graph)
     graph = Graph(weighted_graph, args.starting_node, args.ending_node)
 
-    # Construct Hamiltonian when qubits are set as edges, 
+    # Construct Hamiltonian when qubits are set as edges,
     # then optimize with QAOA/scipy:
 
     hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in args.alphas]

@@ -35,7 +35,8 @@ def cost_func(params, estimator, ansatz, hamiltonian):
     Parameters
     ----------
     params : list
-        List of parameters for the quantum circuit. (gamma, beta) angles depending on the number of layers.
+        List of parameters for the quantum circuit.
+        (gamma, beta) angles depending on the number of layers.
     estimator : Estimator from qiskit
         Estimator used to evaluate the cost function.
     ansatz : QuantumCircuit object from qiskit
@@ -47,7 +48,7 @@ def cost_func(params, estimator, ansatz, hamiltonian):
     cost : float
         Value of the cost function for the given parameters.
     """
-    
+
     cost = (
         estimator.run(ansatz, hamiltonian, parameter_values=params).result().values[0]
     )
@@ -57,18 +58,20 @@ def cost_func(params, estimator, ansatz, hamiltonian):
 # Function to find the shortest path in a graph using QAOA algorithm with parallel processing:
 def find_longest_path(args):
     """
-    Find the longest path in a graph using the QAOA algorithm, 
-    with a plot of the cost landscape if reps=1 and the optimal point if cost_landscape=True.
+    Find the longest path in a graph using the QAOA algorithm,
+    with a plot of the cost landscape if reps=1 and
+    the optimal point if cost_landscape=True.
 
     Parameters
     ----------
     args : tuple
         Tuple containing the Hamiltonian object from quactography library,
-        Hamiltonian_qubit_edge, the number of repetitions for the QAOA algorithm, 
+        Hamiltonian_qubit_edge, the number of repetitions for the QAOA algorithm,
         the output file name for the optimization results in .npz format, the optimizer
-        to use for the QAOA algorithm, a boolean to plot the cost landscape with 
-        the optimal point if reps=1, and a boolean to save the figure without displaying it.
-    
+        to use for the QAOA algorithm, a boolean to plot the cost landscape with
+        the optimal point if reps=1, and a boolean to save the figure
+        without displaying it.
+
 
     Returns
     -------
@@ -133,10 +136,12 @@ def find_longest_path(args):
         if reps == 1:
             fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
             ax1.scatter(  # type: ignore
-                resx[0], resx[1], min_cost, color="red", marker="o", s=100, label="Optimal Point"  # type: ignore
+                resx[0], resx[1], min_cost, color="red",
+                marker="o", s=100, label="Optimal Point"  # type: ignore
             )
             ax2.scatter(  # type: ignore
-                resx[0], resx[1], s=100, color="red", marker="o", label="Optimal Point"  # type: ignore
+                resx[0], resx[1], s=100, color="red",
+                marker="o", label="Optimal Point"  # type: ignore
             )
             plt.savefig("Opt_point_visu.png")
             print("Optimal point saved in Opt_point_visu.png")
@@ -151,7 +156,8 @@ def find_longest_path(args):
     dist = sampler.run(circ, resx).result().quasi_dists[0]  # type: ignore
     dist_binary_probabilities = dist.binary_probabilities()
 
-    bin_str = list(map(int, max(dist.binary_probabilities(), key=dist.binary_probabilities().get)))  # type: ignore
+    bin_str = list(map(int, max(dist.binary_probabilities(),
+                                key=dist.binary_probabilities().get)))  # type: ignore
     bin_str_reversed = bin_str[::-1]
     bin_str_reversed = np.array(bin_str_reversed)  # type: ignore
 
@@ -168,9 +174,10 @@ def find_longest_path(args):
         min_cost=min_cost,
         hamiltonian=h,
         outfile=outfile,
-        opt_bin_str=opt_path,  # It is reversed as classical read to be compared to exact_path code when diagonalising Hamiltonian
+        # It is reversed as classical read to be compared to exact_path code when diagonalising Hamiltonian
+        opt_bin_str=opt_path,
         reps=reps,
-        opt_params=resx,  # type: ignore
+        opt_params=resx  # type: ignore
     )  # type: ignore
 
 
@@ -185,7 +192,8 @@ def multiprocess_qaoa_solver_edge(
     save_only,
 ):
     """
-    Solve the optimization problem using the QAOA algorithm with multiprocessing on the alpha values. 
+    Solve the optimization problem using the QAOA algorithm
+    with multiprocessing on the alpha values.
 
     Parameters
     ----------
@@ -194,7 +202,8 @@ def multiprocess_qaoa_solver_edge(
     batch_count : int
         Number of time the command will be ran 
     reps : int
-        Number of repetitions for the QAOA algorithm, determines the number of sets of gamma and beta angles.
+        Number of repetitions for the QAOA algorithm,
+        determines the number of sets of gamma and beta angles.
     nbr_processes : int
         Number of cpu to use for multiprocessing. default=1
     output_file : str
@@ -212,7 +221,7 @@ def multiprocess_qaoa_solver_edge(
     """
     pool = multiprocessing.Pool(nbr_processes)
 
-    results = pool.map(
+    pool.map(
         find_longest_path,
         zip(
             hamiltonians,
@@ -228,5 +237,5 @@ def multiprocess_qaoa_solver_edge(
     pool.join()
 
     print(
-        "------------------------MULTIPROCESS SOLVER FINISHED-------------------------------"
+        "------------------MULTIPROCESS SOLVER FINISHED-------------------------"
     )
