@@ -18,8 +18,7 @@ def _build_arg_parser():
     )
     p.add_argument(
         "in_opt_res",
-        nargs="+",
-        help="List of input files to plot distribution",
+        help="Directory of input files to plot distribution",
     )
     p.add_argument(
         "visual_dist_output_file_selected",
