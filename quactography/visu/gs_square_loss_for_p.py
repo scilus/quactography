@@ -38,8 +38,10 @@ def visualize_optimal_paths_edge(
         reps.append(rep)
         square_loss.append((min_cost - h.exact_cost)**2)
         
-    fig, ax = plt.subplots()
-    ax.plot(reps,square_loss)
+    plt.scatter(reps,square_loss)
+    plt.xlabel("Repetitions")
+    plt.ylabel("Square loss")
+    plt.title("Square loss vs repetitions")
     plt.show()
         
 

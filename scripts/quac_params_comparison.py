@@ -18,8 +18,8 @@ def _build_arg_parser():
                    help="Adjacency matrix (npz file)", type=str)
     p.add_argument(
         "in_opt_res",
-        nargs="+",
-        help="List of input files to plot optimal paths (npz files)",
+        help="Directory of input files to plot squareloss for the hamiltonian "
+            +"by repetition  (npz files)",
     )
     p.add_argument(
         "out_visu_path",
