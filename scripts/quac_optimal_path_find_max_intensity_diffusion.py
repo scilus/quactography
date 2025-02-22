@@ -92,17 +92,16 @@ def main():
     # print(hamiltonians[0].total_hamiltonian.simplify())
 
     print("\n Calculating qubits as edges......................")
-    for j in range(args.loop_count):
-        for i in range(len(args.reps)):
-            multiprocess_qaoa_solver_edge(
-                hamiltonians,
-                j,
-                args.reps[i],
-                args.number_processors,
-                args.output_file,
-                args.optimizer,
-                args.plt_cost_landscape,
-                args.save_only,
+    for i in range(len(args.reps)):
+        multiprocess_qaoa_solver_edge(
+            hamiltonians,
+            args.loop_count,
+            args.reps[i],
+            args.number_processors,
+            args.output_file,
+            args.optimizer,
+            args.plt_cost_landscape,
+            args.save_only,
             )
 
 

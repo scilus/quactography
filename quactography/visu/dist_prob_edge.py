@@ -1,7 +1,9 @@
 from qiskit.visualization import plot_distribution
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
+from pathlib import Path
 import numpy
+
 
 from quactography.solver.io import load_optimization_results
 
@@ -134,9 +136,14 @@ def plot_distribution_comparison(
     None
     """
     counts = []
-    for i in range(len(in_file)):
+    sumDir = 0
+    path = Path(in_file)
+
+    glob_path = path.glob('*')
+
+    for in_file_path in glob_path:
         _, dist_binary_prob, min_cost, h, _, _, opt_params = load_optimization_results(
-            in_file[i]
+            in_file_path
         )
         dist_binary_prob = dist_binary_prob.item()
         min_cost = min_cost.item()
@@ -165,6 +172,7 @@ def plot_distribution_comparison(
             )
         count.append({key: dist_binary_prob[key] for key in selected_paths})
         counts.append(count)
+        sumDir += 1
 
     # match_found = False
     # for i in selected_paths:
@@ -175,8 +183,8 @@ def plot_distribution_comparison(
     plots = []
     legend = []
     colors = []
-    color = iter(cm.rainbow(numpy.linspace(0,1,len(in_file))))
-    for j in range(len(in_file)):
+    color = iter(cm.rainbow(numpy.linspace(0,1,sumDir)))
+    for j in range(sumDir):
         plots.append(counts[j][0])
         legend.append("File_" + str(j+1))
         colors.append(next(color))

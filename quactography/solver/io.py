@@ -37,7 +37,7 @@ def save_optimization_results(
     None
     """
     np.savez(
-        outfile,
+        "data/output_graphs/"+outfile,
         dist=dist,
         dist_binary_probabilities=dist_binary_probabilities,
         min_cost=min_cost,

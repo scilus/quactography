@@ -80,11 +80,10 @@ def find_longest_path(args):
     h = args[0]
     count = args[1]
     reps = args[2]
-    outfile = args[3]
+    outfileI = args[3]
     optimizer = args[4]
 
-    # Save output file name diffrerent for each alpha:
-    outfile = outfile + "_alpha_" + str(h.alpha) + "_reps_" + str(reps) + "_count_" + str(count)
+    
     
     pauli_weight_first_term = [
             ("I" * h.graph.number_of_edges, h.graph.all_weights_sum / 2)
@@ -108,82 +107,85 @@ def find_longest_path(args):
 
     # ----------------------------------------------------------------RUN LOCALLY: -----
     # Run on local estimator and sampler:
-    estimator = Estimator(options={"shots": 1000000, "seed": 42})
-    sampler = Sampler(options={"shots": 1000000, "seed": 42})
-    # -----------------------------------------------------------------------------------
+    for s in range(count):
+        # Save output file name diffrerent for each alpha and loop:
+        outfile = outfileI + "_alpha_" + str(h.alpha) + "_reps_" + str(reps) + "_count_" + str(s)
+        estimator = Estimator(options={"shots": 1000000, "seed": s})
+        sampler = Sampler(options={"shots": 1000000, "seed": s})
+        # -----------------------------------------------------------------------------------
 
-    if optimizer == "Differential":
-        # Reference: https://www.youtube.com/watch?v=o-OPrQmS1pU
-        # Define fixed arguments
-        cost_func_with_args = partial(
-            cost_func,
-            estimator=estimator,
-            ansatz=ansatz,
-            hamiltonian=h.total_hamiltonian,
-        )
-
-        # Call differential evolution with the modified cost function
-        bounds = [[0, 2 * np.pi], [0, np.pi]] * reps
-        res = differential_evolution(cost_func_with_args, bounds, disp=False)
-        resx = res.x
-
-    # Save the minimum cost and the corresponding parameters
-    min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
-    print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
-
-    # Scatter optimal point on cost Landscape ----------------------------
-    if args[5]:
-        if reps == 1:
-            fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
-            ax1.scatter(  # type: ignore
-                resx[0], resx[1], min_cost, color="red",
-                marker="o", s=100, label="Optimal Point"  # type: ignore
+        if optimizer == "Differential":
+            # Reference: https://www.youtube.com/watch?v=o-OPrQmS1pU
+            # Define fixed arguments
+            cost_func_with_args = partial(
+                cost_func,
+                estimator=estimator,
+                ansatz=ansatz,
+                hamiltonian=h.total_hamiltonian,
             )
-            ax2.scatter(  # type: ignore
-                resx[0], resx[1], s=100, color="red",
-                marker="o", label="Optimal Point"  # type: ignore
-            )
-            plt.savefig("Opt_point_visu.png")
-            print("Optimal point saved in Opt_point_visu.png")
-            if not args[5]:
-                plt.show()
-    else:
-        pass
-    # -----------------------------------------------------
 
-    circ = ansatz.copy()
-    circ.measure_all()
-    dist = sampler.run(circ, resx).result().quasi_dists[0]  # type: ignore
-    dist_binary_probabilities = dist.binary_probabilities()
+            # Call differential evolution with the modified cost function
+            bounds = [[0, 2 * np.pi], [0, np.pi]] * reps
+            res = differential_evolution(cost_func_with_args, bounds, disp=False)
+            resx = res.x
 
-    bin_str = list(map(int, max(dist.binary_probabilities(),
-                                key=dist.binary_probabilities().get)))  # type: ignore
-    bin_str_reversed = bin_str[::-1]
-    bin_str_reversed = np.array(bin_str_reversed)  # type: ignore
+        # Save the minimum cost and the corresponding parameters
+        min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
+        print("parameters after optimization loop : ", resx, "Cost:", min_cost)  # type: ignore
 
-    # Concatenate the binary path to a string:
-    str_path_reversed = ["".join(map(str, bin_str_reversed))]  # type: ignore
-    str_path_reversed = str_path_reversed[0]  # type: ignore
+        # Scatter optimal point on cost Landscape ----------------------------
+        if args[5]:
+            if reps == 1:
+                fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
+                ax1.scatter(  # type: ignore
+                    resx[0], resx[1], min_cost, color="red",
+                    marker="o", s=100, label="Optimal Point"  # type: ignore
+                )
+                ax2.scatter(  # type: ignore
+                    resx[0], resx[1], s=100, color="red",
+                    marker="o", label="Optimal Point"  # type: ignore
+                )
+                plt.savefig("Opt_point_visu.png")
+                print("Optimal point saved in Opt_point_visu.png")
+                if not args[5]:
+                    plt.show()
+        else:
+            pass
+        # -----------------------------------------------------
 
-    # Save parameters alpha and min_cost with path in csv file:
-    opt_path = str_path_reversed
+        circ = ansatz.copy()
+        circ.measure_all()
+        dist = sampler.run(circ, resx).result().quasi_dists[0]  # type: ignore
+        dist_binary_probabilities = dist.binary_probabilities()
 
-    save_optimization_results(
-        dist=dist,
-        dist_binary_probabilities=dist_binary_probabilities,
-        min_cost=min_cost,
-        hamiltonian=h,
-        outfile=outfile,
-        # It is reversed as classical read to be compared to exact_path code when diagonalising Hamiltonian
-        opt_bin_str=opt_path,
-        reps=reps,
-        opt_params=resx  # type: ignore
-    )  # type: ignore
+        bin_str = list(map(int, max(dist.binary_probabilities(),
+                                    key=dist.binary_probabilities().get)))  # type: ignore
+        bin_str_reversed = bin_str[::-1]
+        bin_str_reversed = np.array(bin_str_reversed)  # type: ignore
+
+        # Concatenate the binary path to a string:
+        str_path_reversed = ["".join(map(str, bin_str_reversed))]  # type: ignore
+        str_path_reversed = str_path_reversed[0]  # type: ignore
+
+        # Save parameters alpha and min_cost with path in csv file:
+        opt_path = str_path_reversed
+
+        save_optimization_results(
+            dist=dist,
+            dist_binary_probabilities=dist_binary_probabilities,
+            min_cost=min_cost,
+            hamiltonian=h,
+            outfile=outfile,
+            # It is reversed as classical read to be compared to exact_path code when diagonalising Hamiltonian
+            opt_bin_str=opt_path,
+            reps=reps,
+            opt_params=resx  # type: ignore
+        )  # type: ignore
 
 
 def multiprocess_qaoa_solver_edge(
     hamiltonians,
-    batch_count,
+    loop_count,
     reps,
     nbr_processes,
     output_file,
@@ -225,7 +227,7 @@ def multiprocess_qaoa_solver_edge(
         find_longest_path,
         zip(
             hamiltonians,
-            itertools.repeat(batch_count),
+            itertools.repeat(loop_count),
             itertools.repeat(reps),
             itertools.repeat(output_file),
             itertools.repeat(optimizer),
