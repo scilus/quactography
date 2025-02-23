@@ -3,6 +3,7 @@
 import argparse
 
 from quactography.visu.dist_prob_edge import plot_distribution_comparison
+from quactography.visu.optimal_path_odds import *
 
 
 """
@@ -38,7 +39,7 @@ def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
 
-    plot_distribution_comparison(
+    visualize_optimal_paths_prob(
         args.in_opt_res,
         args.visual_dist_output_file_selected,
         args.save_only,

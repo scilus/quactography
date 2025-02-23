@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-from quactography.visu.gs_square_loss_for_p import visualize_optimal_paths_edge
+from quactography.visu.gs_square_loss_for_p import *
+from quactography.visu.optimal_path_odds import *
 
 
 """
@@ -14,8 +15,6 @@ def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
-    p.add_argument("in_mat_adj", 
-                   help="Adjacency matrix (npz file)", type=str)
     p.add_argument(
         "in_opt_res",
         help="Directory of input files to plot squareloss for the hamiltonian "
@@ -24,6 +23,11 @@ def _build_arg_parser():
     p.add_argument(
         "out_visu_path",
         help="Output file name for visualisation (png image)",
+        type=str,
+    )
+    p.add_argument(
+        "comparator",
+        help="plot the square loss for either repetitions or alphas parameter [rep,alpha]",
         type=str,
     )
     p.add_argument(
@@ -39,12 +43,30 @@ def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
 
-    visualize_optimal_paths_edge(
-            args.in_mat_adj,
-            args.in_opt_res,
-            args.out_visu_path,
-            args.save_only
+    if args.comparator == "alpha":
+        visualize_optimal_paths_edge_alpha(
+                args.in_opt_res,
+                args.out_visu_path,
+                args.save_only
+            )
+        visualize_optimal_prob_alpha(
+                args.in_opt_res,
+                args.out_visu_path,
+                args.save_only
         )
+
+    else:
+        visualize_optimal_paths_edge_rep(
+                args.in_opt_res,
+                args.out_visu_path,
+                args.save_only
+        )
+        visualize_optimal_prob_rep(
+                args.in_opt_res,
+                args.out_visu_path,
+                args.save_only
+        )
+        
 
 
 if __name__ == "__main__":
