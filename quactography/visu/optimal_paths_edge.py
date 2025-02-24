@@ -27,7 +27,7 @@ def visualize_optimal_paths_edge(
     Returns
     -------
     None """
-    _, _, min_cost, h, bin_str, reps, opt_params = load_optimization_results(in_file)
+    _, _, min_cost, h, bin_str, reps, _ = load_optimization_results(in_file)
     min_cost = min_cost.item()
     h = h.item()
     bin_str = bin_str.item()
@@ -55,7 +55,7 @@ def visualize_optimal_paths_edge(
                 starting_nodes[i],
                 ending_nodes[i],
                 {
-                    "weight": round(mat_adj[starting_nodes[i], ending_nodes[i]],4),
+                    "weight": round(mat_adj[starting_nodes[i], ending_nodes[i]], 4),
                     "color": "green",
                 },
             )
@@ -65,7 +65,7 @@ def visualize_optimal_paths_edge(
                 starting_nodes[i],
                 ending_nodes[i],
                 {
-                    "weight": round(mat_adj[starting_nodes[i], ending_nodes[i]],4),
+                    "weight": round(mat_adj[starting_nodes[i], ending_nodes[i]], 4),
                     "color": "black",
                 },
             )

@@ -1,4 +1,3 @@
-import networkx as nx
 import numpy
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
@@ -46,20 +45,19 @@ def visualize_optimal_prob_rep(
         hprobs.append(dist_binary_prob[exact_path])
         reps.append(rep)
 
-    
-    plt.scatter(reps,probs)
+    plt.scatter(reps, probs)
     plt.scatter(reps, hprobs)
     plt.xlabel("Repitition")
     plt.ylabel("Quasi-probability")
     plt.title("Prob vs reps")
-        
+
     if not save_only:
         plt.show()
-   
+
     plt.savefig(f"{out_file}_prob_for_reps.png")
-    print("Visualisation of the distance form optimal energy for different seeds"
-           f"and repetitions on identical alphas saved in {out_file}_prob_reps.png")
-    
+    print("Visualisation of the distance form optimal energy for different seeds "
+            f"and repetitions on identical alphas saved in {out_file}_prob_reps.png")
+
 
 def visualize_optimal_prob_alpha(
     in_file,
@@ -96,24 +94,24 @@ def visualize_optimal_prob_alpha(
         h = h.item()
         probs.append(dist_binary_prob[opt_path])
         exact_path = h.exact_path[0].zfill(11)
-        hprobs.append(dist_binary_prob[exact_path]) 
+        hprobs.append(dist_binary_prob[exact_path])
         alphas.append(h.alpha)
-        
-        
-    plt.scatter(alphas,probs)
+
+    plt.scatter(alphas, probs)
     plt.scatter(alphas, hprobs)
     plt.xlabel("alphas")
     plt.ylabel("Quasi-probability")
     plt.title("Prob vs alphas")
-        
+
     if not save_only:
         plt.show()
-   
+
     plt.savefig(f"{out_file}_prob_for_alphas.png")
     print("Visualisation of the distance from optimal energy for different seeds"
           f" and alphas on uniform repetition saved in {out_file}_prob_for_alphas.png")
-    
+
     plt.close()
+
 
 def visualize_optimal_paths_prob(
     in_file,
@@ -155,14 +153,13 @@ def visualize_optimal_paths_prob(
         for key in path:
             mercy.update(key)
         paths.append({key: mercy[key] for key in mercy})
-        sumDir+=1
+        sumDir += 1
 
-    
     legend = []
     colors = []
     last_key = list(paths[0])[-1]
     print(list(paths[0])[-1])
-    color = iter(cm.rainbow(numpy.linspace(0,1,sumDir+1)))
+    color = iter(cm.rainbow(numpy.linspace(0, 1, sumDir+1)))
 
     for j in range(sumDir):
         legend.append("File_" + str(j+1))
@@ -176,10 +173,10 @@ def visualize_optimal_paths_prob(
         color=colors,
         target_string=last_key
     )
-        
+
     if not save_only:
         plt.show()
-   
+
     plt.savefig(f"{out_file}_prob_for_reps.png")
-    print("Visualisation of the distance form optimal energy for different seeds"
-           f"and repetitions on identical alphas saved in {out_file}_prob_reps.png")
+    print("Visualisation of the distance form optimal energy for different seeds "
+            f"and repetitions on identical alphas saved in {out_file}_prob_reps.png")

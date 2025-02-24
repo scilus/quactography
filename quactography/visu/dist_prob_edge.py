@@ -29,10 +29,8 @@ def plot_distribution_of_probabilities_edge(
     -------
     None
     """
-    
 
-
-    _, dist_binary_prob, min_cost, h, _, _, opt_params = load_optimization_results(
+    _, dist_binary_prob, min_cost, h, _, _, _ = load_optimization_results(
         in_file
     )
     # convert dist_binary_prob a dictionary
@@ -58,7 +56,7 @@ def plot_distribution_of_probabilities_edge(
     # bin_str_reversed = np.array(bin_str_reversed)
 
     # Check if optimal path in a subset of most probable paths:
-    sorted_list_of_mostprobable_paths = sorted(
+    sorted(
         dist_binary_prob, key=dist_binary_prob.get, reverse=True
     )
 
@@ -78,7 +76,7 @@ def plot_distribution_of_probabilities_edge(
         # Select paths with probability higher than percentage of the maximal probability:
         if probability > percentage:
             selected_paths.extend([path, probability])
-    
+
     # Sort the selected paths by probability from most probable to least probable:
     selected_paths = sorted(
         selected_paths[::2], key=lambda x: dist_binary_prob[x], reverse=True
@@ -96,7 +94,8 @@ def plot_distribution_of_probabilities_edge(
         title=("Distribution of probabilities for selected paths"),
         # \n Right path FOUND (quantum read): {h.exact_path}"
         # if match_found
-        # else f"Distribution of probabilities for selected paths \n Right path NOT FOUND (quantum read): {h.exact_path}"
+        # else f"Distribution of probabilities for selected paths
+        # \n Right path NOT FOUND (quantum read): {h.exact_path}"
         color="pink",  # if match_found else "lightblue",
         sort="value_desc",
         filename=visu_out_file_selected,
@@ -111,16 +110,16 @@ def plot_distribution_of_probabilities_edge(
 
     # else:
     #     print(
-    #         "The solution is not in given subset of solutions found by QAOA.\n_________________")
+    #         "The solution is not in given subset of solutions found by QAOA.\n____")
     #     )
 
-        
-        
+ 
 def plot_distribution_comparison(
     in_file, visu_out_file_selected, save_only
 ):
     """
-    Plot the distribution of probabilities for the optimal path and the selected paths.
+    Plot the distribution of probabilities for the optimal path
+    and the selected paths.
 
     Parameters
     ----------
@@ -142,16 +141,16 @@ def plot_distribution_comparison(
     glob_path = path.glob('*')
 
     for in_file_path in glob_path:
-        _, dist_binary_prob, min_cost, h, _, _, opt_params = load_optimization_results(
+        _, dist_binary_prob, min_cost, h, _, _, _ = load_optimization_results(
             in_file_path
         )
         dist_binary_prob = dist_binary_prob.item()
         min_cost = min_cost.item()
         h = h.item()
         sorted(
-        dist_binary_prob, key=dist_binary_prob.get, reverse=True
-    )
-        
+            dist_binary_prob, key=dist_binary_prob.get, reverse=True
+        )
+
         max_probability = max(dist_binary_prob.values())
         selected_paths = []
         count = []
@@ -165,7 +164,7 @@ def plot_distribution_comparison(
             # Select paths with probability higher than percentage of the maximal probability:
             if probability > percentage:
                 selected_paths.extend([path, probability])
-        
+
         # Sort the selected paths by probability from most probable to least probable:
         selected_paths = sorted(
             selected_paths[::2], key=lambda x: dist_binary_prob[x], reverse=True
@@ -179,28 +178,28 @@ def plot_distribution_comparison(
     #     if i in h.exact_path:
     #         match_found = True
     #         break
-    
+
     plots = []
     legend = []
     colors = []
-    color = iter(cm.rainbow(numpy.linspace(0,1,sumDir)))
+    color = iter(cm.rainbow(numpy.linspace(0, 1, sumDir)))
     for j in range(sumDir):
         plots.append(counts[j][0])
         legend.append("File_" + str(j+1))
         colors.append(next(color))
-    
+
     plot_distribution(
         plots,
         figsize=(16, 14),
         title=("Distribution of probabilities for selected paths"),
         # \n Right path FOUND (quantum read): {h.exact_path}"
         # if match_found
-        # else f"Distribution of probabilities for selected paths \n Right path NOT FOUND (quantum read): {h.exact_path}"
+        # else f"Distribution of probabilities for selected paths
+        # \n Right path NOT FOUND (quantum read): {h.exact_path}"
         color=colors,  # if match_found else "lightblue",
         sort="value_desc",
         legend=legend,
         filename=visu_out_file_selected,
     )
     if not save_only:
-            plt.show()
-        
+        plt.show()

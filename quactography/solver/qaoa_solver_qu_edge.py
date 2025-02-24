@@ -1,7 +1,6 @@
 import multiprocessing
 import itertools
 
-# import sys
 from qiskit.primitives import Estimator, Sampler
 from qiskit.circuit.library import QAOAAnsatz
 import matplotlib.pyplot as plt
@@ -9,9 +8,7 @@ import numpy as np
 from qiskit.quantum_info import SparsePauliOp
 from scipy.optimize import differential_evolution
 from functools import partial
-from functools import partial
 
-# sys.path.append(r"C:\Users\harsh\quactography")
 
 from quactography.solver.io import save_optimization_results
 from quactography.solver.optimization_loops import (
@@ -50,12 +47,14 @@ def cost_func(params, estimator, ansatz, hamiltonian):
     """
 
     cost = (
-        estimator.run(ansatz, hamiltonian, parameter_values=params).result().values[0]
+        estimator.run(ansatz, hamiltonian, parameter_values=params)
+        .result().values[0]
     )
     return cost
 
 
-# Function to find the shortest path in a graph using QAOA algorithm with parallel processing:
+# Function to find the shortest path in a graph
+# using QAOA algorithm with parallel processing:
 def find_longest_path(args):
     """
     Find the longest path in a graph using the QAOA algorithm,
@@ -83,25 +82,22 @@ def find_longest_path(args):
     outfileI = args[3]
     optimizer = args[4]
 
-    
-    
     pauli_weight_first_term = [
             ("I" * h.graph.number_of_edges, h.graph.all_weights_sum / 2)
         ]
 
-        # Z à la bonne position:
-    for i in range(1,h.graph.number_of_edges):
-            str1 = (
-                "I" * (i-1) + "XY" + "I" * (h.graph.number_of_edges - i - 1),
-                -h.graph.weights[0][i] / 2,
-            )
-            pauli_weight_first_term.append(str1)
+    # Z à la bonne position:
+    for i in range(1, h.graph.number_of_edges):
+        str1 = (
+            "I" * (i-1) + "XY" + "I" * (h.graph.number_of_edges - i - 1),
+            h.graph.weights[0][i] / 2,
+        )
+        pauli_weight_first_term.append(str1)
 
-    
     mixer = SparsePauliOp.from_list(pauli_weight_first_term)
 
     # Create QAOA circuit.
-    ansatz = QAOAAnsatz(h.total_hamiltonian, reps, mixer_operator=mixer, name="QAOA",flatten=True)
+    ansatz = QAOAAnsatz(h.total_hamiltonian, reps, mixer_operator=mixer, name="QAOA", flatten=True)
     # Plot the circuit layout:
     # ansatz.decompose(reps=3).draw()
 
@@ -202,7 +198,7 @@ def multiprocess_qaoa_solver_edge(
     hamiltonians : list
         List of Hamiltonian objects from quactography library, Hamiltonian_qubit_edge.
     batch_count : int
-        Number of time the command will be ran 
+        Number of time the command will be ran
     reps : int
         Number of repetitions for the QAOA algorithm,
         determines the number of sets of gamma and beta angles.

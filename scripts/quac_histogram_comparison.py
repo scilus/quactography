@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-from quactography.visu.dist_prob_edge import plot_distribution_comparison
 from quactography.visu.optimal_path_odds import *
 
 
 """
 Tool to visualize 10% of most optimal paths found by QAOA
 from multiple simulation for comparison. User responsibility
-to make sure data file are for the same graph. 
+to make sure data file are for the same graph.
 """
 
 

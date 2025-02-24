@@ -74,7 +74,7 @@ def POWELL_loop_optimizer(
         Previous cost value.
     x_0 : list of floats
         Initial parameters for the quantum circuit for the next iteration.
-    loop_count : int 
+    loop_count : int
         Current loop count.
     cost_history : list of floats
         List of cost values updated.
@@ -111,7 +111,7 @@ def POWELL_loop_optimizer(
         # # Save same data to a text file:
         # with open("params_iterations.txt", "a") as f:
         #     f.write(
-        #         f"Loop: {loop_count}, Iterations: {res.nit}, 
+        #         f"Loop: {loop_count}, Iterations: {res.nit},
         # Cost: {new_cost}, Params found: {res.x}\n"
         #     )
 
@@ -158,7 +158,7 @@ def POWELL_refinement_optimization(
 ):
     """
     Refinement optimization loop for the Powell optimizer.
-    Unused for now, issues to be fixed. 
+    Unused for now, issues to be fixed.
 
     Parameters
     ----------

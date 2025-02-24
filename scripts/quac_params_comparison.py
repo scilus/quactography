@@ -7,7 +7,7 @@ from quactography.visu.optimal_path_odds import *
 
 
 """
-Tool to visualize and plot the optimal path (most probable) on a graph. 
+Tool to visualize and plot the optimal path (most probable) on a graph.
 """
 
 
@@ -18,7 +18,7 @@ def _build_arg_parser():
     p.add_argument(
         "in_opt_res",
         help="Directory of input files to plot squareloss for the hamiltonian "
-            +"by repetition  (npz files)",
+        "by repetition  (npz files)",
     )
     p.add_argument(
         "out_visu_path",
@@ -27,7 +27,8 @@ def _build_arg_parser():
     )
     p.add_argument(
         "comparator",
-        help="plot the square loss for either repetitions or alphas parameter [rep,alpha]",
+        help="plot the square loss for either repetitions "
+        "or alphas parameter [rep,alpha]",
         type=str,
     )
     p.add_argument(
@@ -66,7 +67,6 @@ def main():
                 args.out_visu_path,
                 args.save_only
         )
-        
 
 
 if __name__ == "__main__":

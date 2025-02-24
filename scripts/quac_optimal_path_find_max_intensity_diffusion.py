@@ -19,7 +19,7 @@ def _build_arg_parser():
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
     p.add_argument(
-        "loop_count", 
+        "loop_count",
         help="How many time is the command is ran",
         type=int,
         default=1
