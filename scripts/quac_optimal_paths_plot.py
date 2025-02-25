@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-from quactography.visu.optimal_paths_edge import visualize_optimal_paths_edge
+from quactography.visu.optimal_path_odds import *
 
 
 """
-Tool to visualize and plot the optimal path (most probable) on a graph.
+Tool to visualize 10% of most optimal paths found by QAOA
+from multiple simulation for comparison. User responsibility
+to make sure data file are for the same graph.
 """
 
 
@@ -14,18 +16,16 @@ def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
-    p.add_argument("in_mat_adj",
-                   help="Adjacency matrix (npz file)", type=str)
     p.add_argument(
         "in_opt_res",
-        nargs="+",
-        help="List of input files to plot optimal paths (npz files)",
+        help="Directory of input files to plot for",
     )
     p.add_argument(
-        "out_visu_path",
-        help="Output file name for visualisation (png image)",
+        "visual_dist_output_file_selected",
+        help="Output file name for visualisation",
         type=str,
     )
+
     p.add_argument(
         "--save_only",
         help="Save only the figure without displaying it",
@@ -38,15 +38,12 @@ def _build_arg_parser():
 def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
-
-    for i in range(len(args.in_opt_res)):
-        visualize_optimal_paths_edge(
-            args.in_mat_adj,
-            args.in_opt_res[i],
-            args.out_visu_path + " " + str(i),
-            args.save_only
+    visu_heatmap(
+            args.in_opt_res,
+            args.visual_dist_output_file_selected,
+            args.save_only,
         )
-
+        
 
 if __name__ == "__main__":
     main()
