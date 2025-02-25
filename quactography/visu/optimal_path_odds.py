@@ -39,9 +39,9 @@ def visualize_optimal_prob_rep(
     for in_file_path in glob_path:
         _, dist_binary_prob, _, h, bin_str, rep, _ = load_optimization_results(in_file_path)
         dist_binary_prob = dist_binary_prob.item()
-        opt_path = bin_str.item()
+        opt_path = bin_str.item()[::-1]
         h = h.item()
-        exact_path = h.exact_path[0].zfill(len(next(iter(dist_binary_prob))))
+        exact_path = (h.exact_path[0][::-1]).zfill(len(next(iter(dist_binary_prob))))
  
         probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
@@ -94,9 +94,9 @@ def visualize_optimal_prob_alpha(
     for in_file_path in glob_path:
         _, dist_binary_prob, _, h, bin_str, _, _ = load_optimization_results(in_file_path)
         dist_binary_prob = dist_binary_prob.item()
-        opt_path = bin_str.item()
+        opt_path = bin_str.item()[::-1]
         h = h.item()
-        exact_path = h.exact_path[0].zfill(len(next(iter(dist_binary_prob))))
+        exact_path = (h.exact_path[0][::-1]).zfill(len(next(iter(dist_binary_prob))))
 
         probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
@@ -154,7 +154,7 @@ def visu_heatmap(
         dist_binary_prob = dist_binary_prob.item()
         h = h.item()
         alpha = h.alpha * h.graph.number_of_edges/h.graph.all_weights_sum
-        exact_path = h.exact_path[0].zfill(len(next(iter(dist_binary_prob))))
+        exact_path = (h.exact_path[0][::-1]).zfill(len(next(iter(dist_binary_prob))))
 
         if dist_binary_prob[exact_path] not in heat:
             reps.append(rep.item())
