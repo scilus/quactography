@@ -46,7 +46,7 @@ def _build_arg_parser():
         "--reps",
         nargs="+",
         type=int,
-        help="Number of repetitions for the QAOA algorithm",
+        help="List of repetitions to run for the QAOA algorithm",
         default=[1],
     )
     p.add_argument(

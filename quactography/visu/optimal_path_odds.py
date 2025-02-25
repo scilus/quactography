@@ -1,10 +1,11 @@
-import numpy
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
+import pandas as pd 
+import seaborn as sns 
 
 from pathlib import Path
 from quactography.solver.io import load_optimization_results
-from qiskit.visualization import plot_distribution
 
 
 def visualize_optimal_prob_rep(
@@ -40,13 +41,16 @@ def visualize_optimal_prob_rep(
         dist_binary_prob = dist_binary_prob.item()
         opt_path = bin_str.item()
         h = h.item()
-        probs.append(dist_binary_prob[opt_path])
         exact_path = h.exact_path[0].zfill(11)
+ 
+        probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
         reps.append(rep)
 
-    plt.scatter(reps, probs)
-    plt.scatter(reps, hprobs)
+    plt.scatter(reps, probs).set_label('Optimal path')
+    plt.scatter(reps, hprobs).set_label('Exct path')
+    plt.legend()
+    plt.grid(True)
     plt.xlabel("Repitition")
     plt.ylabel("Quasi-probability")
     plt.title("Prob vs reps")
@@ -92,13 +96,16 @@ def visualize_optimal_prob_alpha(
         dist_binary_prob = dist_binary_prob.item()
         opt_path = bin_str.item()
         h = h.item()
-        probs.append(dist_binary_prob[opt_path])
         exact_path = h.exact_path[0].zfill(11)
+
+        probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
         alphas.append(h.alpha)
 
-    plt.scatter(alphas, probs)
-    plt.scatter(alphas, hprobs)
+    plt.scatter(alphas, probs).set_label('Optimal path')
+    plt.scatter(alphas, hprobs).set_label('Exact path')
+    plt.legend()
+    plt.grid(True)
     plt.xlabel("alphas")
     plt.ylabel("Quasi-probability")
     plt.title("Prob vs alphas")
@@ -112,9 +119,9 @@ def visualize_optimal_prob_alpha(
 
     plt.close()
 
-
-def visualize_optimal_paths_prob(
-    in_file,
+    
+def visu_heatmap(
+   in_file,
     out_file,
     save_only
 ):
@@ -135,48 +142,33 @@ def visualize_optimal_paths_prob(
     -------
     None """
 
-    paths = []
+    reps = []
     path = Path(in_file)
-    sumDir = 0
+    alphas = []
+    heat = []
     glob_path = path.glob('*')
 
     for in_file_path in glob_path:
         path = []
-        mercy = {}
-        _, dist_binary_prob, _, h, bin_str, _, _ = load_optimization_results(in_file_path)
+        _, dist_binary_prob, _, h, _, rep, _ = load_optimization_results(in_file_path)
         dist_binary_prob = dist_binary_prob.item()
-        opt_path = bin_str.item()
         h = h.item()
+        alpha = h.alpha * h.graph.number_of_edges/h.graph.all_weights_sum
         exact_path = h.exact_path[0].zfill(11)
-        path.append({opt_path: dist_binary_prob[opt_path]})
-        path.append({exact_path: dist_binary_prob[exact_path]})
-        for key in path:
-            mercy.update(key)
-        paths.append({key: mercy[key] for key in mercy})
-        sumDir += 1
 
-    legend = []
-    colors = []
-    last_key = list(paths[0])[-1]
-    print(list(paths[0])[-1])
-    color = iter(cm.rainbow(numpy.linspace(0, 1, sumDir+1)))
+        if dist_binary_prob[exact_path] not in heat:
+            reps.append(rep.item())
+            alphas.append(alpha)
+            heat.append(dist_binary_prob[exact_path])
 
-    for j in range(sumDir):
-        legend.append("File_" + str(j+1))
-        colors.append(next(color))
+    df = pd.DataFrame.from_dict(np.array([reps,alphas,heat]).T)
+    df.columns = ['Repitition', 'Alphas','Probability of optimal path']
+    df['Probability of optimal path'] =pd.to_numeric(df["Probability of optimal path"])
 
-    plot_distribution(
-        paths,
-        figsize=(14, 10),
-        title="Distribution of probabilities",
-        sort="hamming",
-        color=colors,
-        target_string=last_key
-    )
+    pivotted = df.pivot(index='Alphas',columns='Repitition',values='Probability of optimal path')
 
-    if not save_only:
-        plt.show()
-
-    plt.savefig(f"{out_file}_prob_for_reps.png")
+    heatmap = sns.heatmap(pivotted,cmap='RdBu')
+    fig = heatmap.get_figure()
+    fig.savefig(out_file+"_histo")
     print("Visualisation of the distance form optimal energy for different seeds "
-            f"and repetitions on identical alphas saved in {out_file}_prob_reps.png")
+            f"and repetitions on identical alphas saved in {out_file}_histo_.png")

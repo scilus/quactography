@@ -36,8 +36,7 @@ def visualize_optimal_paths_edge_rep(
         min_cost = min_cost.item()
         h = h.item()
         alpha = h.alpha
-        print(h.exact_cost)
-        print(min_cost)
+
         reps.append(rep)
         square_loss.append((min_cost + h.exact_cost)**2)
 
