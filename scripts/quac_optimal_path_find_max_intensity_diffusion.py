@@ -19,12 +19,6 @@ def _build_arg_parser():
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
     p.add_argument(
-        "loop_count",
-        help="How many time is the command is ran",
-        type=int,
-        default=1
-        )
-    p.add_argument(
         "in_graph",
         help="Adjacency matrix which graph we want path that maximizes weights in graph, (npz file)",
         type=str,
@@ -95,7 +89,6 @@ def main():
     for i in range(len(args.reps)):
         multiprocess_qaoa_solver_edge(
             hamiltonians,
-            args.loop_count,
             args.reps[i],
             args.number_processors,
             args.output_file,

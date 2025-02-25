@@ -37,7 +37,7 @@ def main():
 
     visu_heatmap(
         args.in_opt_res,
-        args.visual_dist_output_file_selected,
+        args.out_visu_path,
         args.save_only,
     )
 

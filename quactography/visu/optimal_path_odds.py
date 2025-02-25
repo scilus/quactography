@@ -41,14 +41,14 @@ def visualize_optimal_prob_rep(
         dist_binary_prob = dist_binary_prob.item()
         opt_path = bin_str.item()
         h = h.item()
-        exact_path = h.exact_path[0].zfill(11)
+        exact_path = h.exact_path[0].zfill(len(next(iter(dist_binary_prob))))
  
         probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
         reps.append(rep)
 
     plt.scatter(reps, probs).set_label('Optimal path')
-    plt.scatter(reps, hprobs).set_label('Exct path')
+    plt.scatter(reps, hprobs).set_label('Exact path')
     plt.legend()
     plt.grid(True)
     plt.xlabel("Repitition")
@@ -96,7 +96,7 @@ def visualize_optimal_prob_alpha(
         dist_binary_prob = dist_binary_prob.item()
         opt_path = bin_str.item()
         h = h.item()
-        exact_path = h.exact_path[0].zfill(11)
+        exact_path = h.exact_path[0].zfill(len(next(iter(dist_binary_prob))))
 
         probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
@@ -154,7 +154,7 @@ def visu_heatmap(
         dist_binary_prob = dist_binary_prob.item()
         h = h.item()
         alpha = h.alpha * h.graph.number_of_edges/h.graph.all_weights_sum
-        exact_path = h.exact_path[0].zfill(11)
+        exact_path = h.exact_path[0].zfill(len(next(iter(dist_binary_prob))))
 
         if dist_binary_prob[exact_path] not in heat:
             reps.append(rep.item())
@@ -169,6 +169,6 @@ def visu_heatmap(
 
     heatmap = sns.heatmap(pivotted,cmap='RdBu')
     fig = heatmap.get_figure()
-    fig.savefig(out_file+"_histo")
-    print("Visualisation of the distance form optimal energy for different seeds "
-            f"and repetitions on identical alphas saved in {out_file}_histo_.png")
+    fig.savefig(out_file+"_heatmap")
+    print("Visualisation of the heatmap of the optimal path according to alpha and repetition "
+            f"and repetitions on identical alphas saved in {out_file}_heatmap_.png")

@@ -26,7 +26,9 @@ def visualize_optimal_paths_edge_rep(
     -------
     None """
     reps = []
+    alphas = []
     square_loss = []
+    param_count = 0
     path = Path(in_file)
 
     glob_path = path.glob('*')
@@ -35,12 +37,20 @@ def visualize_optimal_paths_edge_rep(
         _, _, min_cost, h, _, rep, _ = load_optimization_results(in_file_path)
         min_cost = min_cost.item()
         h = h.item()
-        alpha = h.alpha
+        alpha = h.alpha * h.graph.number_of_edges/h.graph.all_weights_sum
 
+        if alpha not in alphas:
+            param_count += 1
+
+        alphas.append(alpha)
         reps.append(rep)
         square_loss.append((min_cost + h.exact_cost)**2)
 
-    plt.scatter(reps, square_loss)
+
+
+    scatter = plt.scatter(reps, square_loss, c=alphas)
+    plt.legend(*scatter.legend_elements(num=param_count-1), 
+               loc="upper right", title="Alphas")
     plt.xlabel("Repetitions")
     plt.ylabel("Square loss")
     plt.title("Square loss vs repetitions")
@@ -76,8 +86,10 @@ def visualize_optimal_paths_edge_alpha(
     Returns
     -------
     None """
+    reps = []
     alphas = []
     square_loss = []
+    param_count = 0
     path = Path(in_file)
 
     glob_path = path.glob('*')
@@ -86,12 +98,18 @@ def visualize_optimal_paths_edge_alpha(
         _, _, min_cost, h, _, rep, _ = load_optimization_results(in_file_path)
         min_cost = min_cost.item()
         h = h.item()
-        alpha = h.alpha
-
+        alpha = h.alpha * h.graph.number_of_edges/h.graph.all_weights_sum
         alphas.append(alpha)
-        square_loss.append((min_cost - h.exact_cost)**2)
 
-    plt.scatter(alphas, square_loss)
+        if rep not in reps:
+            param_count += 1
+
+        reps.append(rep)
+        square_loss.append((min_cost - h.exact_cost)**2)
+        
+
+    scatter = plt.scatter(alphas, square_loss, c=reps)
+    plt.legend(*scatter.legend_elements(num=param_count-1))
     plt.xlabel("alphas")
     plt.ylabel("Square loss")
     plt.title("Square loss vs alphas")
