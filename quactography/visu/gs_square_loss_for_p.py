@@ -5,7 +5,7 @@ from quactography.solver.io import load_optimization_results
 
 
 def visualize_optimal_paths_edge_rep(
-    in_file,
+    in_folder,
     out_file,
     save_only
 ):
@@ -14,10 +14,9 @@ def visualize_optimal_paths_edge_rep(
 
     Parameters
     ----------
-    graph_file: str
-        The input file containing the graph in .npz format.
-    in_file: str
-        The input file containing the optimization results in .npz format
+
+    in_folder: str
+        The folder containing the optimization results in .npz format
     out_file: str
         The output file name for the visualisation in .png format.
     save_only: bool
@@ -29,9 +28,9 @@ def visualize_optimal_paths_edge_rep(
     alphas = []
     square_loss = []
     param_count = 0
-    path = Path(in_file)
+    path = Path(in_folder)
 
-    glob_path = path.glob('*')
+    glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
         _, _, min_cost, h, _, rep, _ = load_optimization_results(in_file_path)
@@ -66,7 +65,7 @@ def visualize_optimal_paths_edge_rep(
 
 
 def visualize_optimal_paths_edge_alpha(
-    in_file,
+    in_folder,
     out_file,
     save_only
 ):
@@ -75,10 +74,9 @@ def visualize_optimal_paths_edge_alpha(
 
     Parameters
     ----------
-    graph_file: str
-        The input file containing the graph in .npz format.
-    in_file: str
-        The input file containing the optimization results in .npz format
+
+    in_folder: str
+        The folder containing the optimization results in .npz format
     out_file: str
         The output file name for the visualisation in .png format.
     save_only: bool
@@ -90,9 +88,9 @@ def visualize_optimal_paths_edge_alpha(
     alphas = []
     square_loss = []
     param_count = 0
-    path = Path(in_file)
+    path = Path(in_folder)
 
-    glob_path = path.glob('*')
+    glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
         _, _, min_cost, h, _, rep, _ = load_optimization_results(in_file_path)

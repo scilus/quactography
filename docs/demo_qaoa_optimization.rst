@@ -184,7 +184,8 @@ need 4 axis for 2 layers of QAOA, 6 axis for 3 layers etc.)
 ::
 
     quac_optimal_path_find_max_intensity_diffusion [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_5_edges_rand_graph.npz /
-                                            0 3 qaoa_solver_infos --alphas 1 1.5   /
+                                            0 3 qaoa_solver_infos [PATH_TO_QUACTO_DATA]data/output_graphs/tests/ 
+                                            --alphas 1 1.5   /
                                             --reps 1 2 -npr 2 /
                                             --optimizer Differential --plt_cost_landscape
 
@@ -255,7 +256,7 @@ To visualize a scatter plot of the square loss of the found energy and theorical
 and a scatter plot between theorical optimal path and the one found, run with arguement rep or alpha for your need: 
 
 ::
-   quac_params_comparison.py visu_scatter rep --save_only 
+   quac_params_comparison.py [PATH_TO_QUACTO_DATA]/data/output_graphs visu_scatter rep --save_only 
 
 Which should plot the following : 
 .. image:: img/visu_scatter_alpha_1.50.png

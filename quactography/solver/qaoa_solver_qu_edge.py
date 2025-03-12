@@ -170,6 +170,7 @@ def find_longest_path(args):
         min_cost=min_cost,
         hamiltonian=h,
         outfile=outfile,
+        outfolder=args[5],
         # It is reversed as classical read to be compared to exact_path code when diagonalising Hamiltonian
         opt_bin_str=opt_path,
         reps=reps,
@@ -182,6 +183,7 @@ def multiprocess_qaoa_solver_edge(
     reps,
     nbr_processes,
     output_file,
+    output_folder,
     optimizer,
     cost_landscape,
     save_only,
@@ -224,6 +226,7 @@ def multiprocess_qaoa_solver_edge(
             itertools.repeat(output_file),
             itertools.repeat(optimizer),
             itertools.repeat(cost_landscape),
+            itertools.repeat(output_folder),
             itertools.repeat(save_only),
         ),
     )

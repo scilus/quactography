@@ -29,6 +29,10 @@ def _build_arg_parser():
                    help="Ending node of the graph", type=int)
     p.add_argument("output_file",
                    help="Output file name (npz file)", type=str)
+    p.add_argument("output_directory",
+                    help="directory where the files will be outputed", type=str,
+                    default="data/output_graphs/"
+    )
     p.add_argument(
         "--alphas",
         nargs="+",
@@ -92,6 +96,7 @@ def main():
             args.reps[i],
             args.number_processors,
             args.output_file,
+            args.output_directory,
             args.optimizer,
             args.plt_cost_landscape,
             args.save_only,

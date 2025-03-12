@@ -115,7 +115,7 @@ def plot_distribution_of_probabilities_edge(
 
  
 def plot_distribution_comparison(
-    in_file, visu_out_file_selected, save_only
+    in_folder, visu_out_file_selected, save_only
 ):
     """
     Plot the distribution of probabilities for the optimal path
@@ -123,8 +123,8 @@ def plot_distribution_comparison(
 
     Parameters
     ----------
-    in_file: str
-        The input file containing the optimization results.
+    in_folder: str
+        The folder containing the optimization results files.
     visu_out_file_selected: str
         The output file name for the histogram of selected paths.
     save_only: bool
@@ -136,9 +136,9 @@ def plot_distribution_comparison(
     """
     counts = []
     sumDir = 0
-    path = Path(in_file)
+    path = Path(in_folder)
 
-    glob_path = path.glob('*')
+    glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
         _, dist_binary_prob, min_cost, h, _, _, _ = load_optimization_results(

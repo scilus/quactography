@@ -1,8 +1,10 @@
+import os
 import numpy as np
 
 
 def save_optimization_results(
     outfile,
+    outfolder,
     dist,
     min_cost,
     hamiltonian,
@@ -36,8 +38,11 @@ def save_optimization_results(
     -------
     None
     """
+    if os.path.exists(outfolder) == False:
+        os.makedirs(outfolder)
+        
     np.savez(
-        "data/output_graphs/"+outfile,
+        outfolder+outfile,
         dist=dist,
         dist_binary_probabilities=dist_binary_probabilities,
         min_cost=min_cost,

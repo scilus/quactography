@@ -9,19 +9,17 @@ from quactography.solver.io import load_optimization_results
 
 
 def visualize_optimal_prob_rep(
-    in_file,
+    in_folder,
     out_file,
     save_only
 ):
     """
-    Visualize the optimal path on a graph.
+    Visualize a scatter plot of the optimal path and the exact path for different repetitions.
 
     Parameters
     ----------
-    graph_file: str
-        The input file containing the graph in .npz format.
-    in_file: str
-        The input file containing the optimization results in .npz format
+    in_folder: str
+        The folder containing the optimization results in .npz format
     out_file: str
         The output file name for the visualisation in .png format.
     save_only: bool
@@ -31,10 +29,10 @@ def visualize_optimal_prob_rep(
     None """
 
     probs = []
-    path = Path(in_file)
+    path = Path(in_folder)
     hprobs = []
     reps = []
-    glob_path = path.glob('*')
+    glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
         _, dist_binary_prob, _, h, bin_str, rep, _ = load_optimization_results(in_file_path)
@@ -64,19 +62,17 @@ def visualize_optimal_prob_rep(
 
 
 def visualize_optimal_prob_alpha(
-    in_file,
+    in_folder,
     out_file,
     save_only
 ):
     """
-    Visualize the optimal path on a graph.
+    Visualize a scatter plot of the optimal path and the exact path for different alphas.
 
     Parameters
     ----------
-    graph_file: str
-        The input file containing the graph in .npz format.
-    in_file: str
-        The input file containing the optimization results in .npz format
+    in_folder: str
+        The folder containing the optimization results in .npz format
     out_file: str
         The output file name for the visualisation in .png format.
     save_only: bool
@@ -85,11 +81,11 @@ def visualize_optimal_prob_alpha(
     -------
     None """
     alphas = []
-    path = Path(in_file)
+    path = Path(in_folder)
     probs = []
     hprobs = []
 
-    glob_path = path.glob('*')
+    glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
         _, dist_binary_prob, _, h, bin_str, _, _ = load_optimization_results(in_file_path)
@@ -121,19 +117,17 @@ def visualize_optimal_prob_alpha(
 
     
 def visu_heatmap(
-   in_file,
+   in_folder,
     out_file,
     save_only
 ):
     """
-    Visualize the optimal path on a graph.
+    Visualize a heatmap of the optimal path  according to alphas and repetitions given.
 
     Parameters
     ----------
-    graph_file: str
-        The input file containing the graph in .npz format.
-    in_file: str
-        The input file containing the optimization results in .npz format
+    in_folder: str
+        The folder containing the optimization results in .npz format
     out_file: str
         The output file name for the visualisation in .png format.
     save_only: bool
@@ -143,10 +137,10 @@ def visu_heatmap(
     None """
 
     reps = []
-    path = Path(in_file)
+    path = Path(in_folder)
     alphas = []
     heat = []
-    glob_path = path.glob('*')
+    glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
         path = []
