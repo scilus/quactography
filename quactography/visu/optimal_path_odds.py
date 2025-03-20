@@ -161,7 +161,7 @@ def visu_heatmap(
 
     pivotted = df.pivot(index='Alphas',columns='Repitition',values='Probability of optimal path')
 
-    heatmap = sns.heatmap(pivotted,cmap='RdBu')
+    heatmap = sns.heatmap(pivotted)
     fig = heatmap.get_figure()
     fig.savefig(out_file+"_heatmap")
     print("Visualisation of the heatmap of the optimal path according to alpha and repetition "
