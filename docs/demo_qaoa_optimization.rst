@@ -184,7 +184,7 @@ need 4 axis for 2 layers of QAOA, 6 axis for 3 layers etc.)
 ::
 
     quac_optimal_path_find_max_intensity_diffusion [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_5_edges_rand_graph.npz /
-                                            0 3 qaoa_solver_infos [PATH_TO_QUACTO_DATA]data/output_graphs/tests/ 
+                                            0 3 qaoa_solver_infos [PATH_TO_QUACTO_DATA]data/output_graphs/ 
                                             --alphas 1 1.5   /
                                             --reps 1 2 -npr 2 /
                                             --optimizer Differential --plt_cost_landscape
