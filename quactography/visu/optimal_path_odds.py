@@ -26,7 +26,8 @@ def visualize_optimal_prob_rep(
         If True, the figure is saved without displaying it
     Returns
     -------
-    None """
+    None 
+    """
 
     probs = []
     path = Path(in_folder)
@@ -79,7 +80,8 @@ def visualize_optimal_prob_alpha(
         If True, the figure is saved without displaying it
     Returns
     -------
-    None """
+    None 
+    """
     alphas = []
     path = Path(in_folder)
     probs = []
@@ -134,7 +136,8 @@ def visu_heatmap(
         If True, the figure is saved without displaying it
     Returns
     -------
-    None """
+    None 
+    """
 
     reps = []
     path = Path(in_folder)

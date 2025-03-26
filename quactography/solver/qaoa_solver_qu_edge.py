@@ -1,5 +1,7 @@
 import multiprocessing
 import itertools
+import os
+from pathlib import Path
 
 from qiskit.primitives import Estimator, Sampler
 from qiskit.circuit.library import QAOAAnsatz
@@ -9,8 +11,7 @@ from qiskit.quantum_info import SparsePauliOp
 from scipy.optimize import differential_evolution
 from functools import partial
 
-
-from quactography.solver.io import save_optimization_results
+from quactography.solver.io import load_optimization_results, save_optimization_results
 from quactography.solver.optimization_loops import (
     POWELL_loop_optimizer,
     POWELL_refinement_optimization,
@@ -21,10 +22,7 @@ from quactography.visu.plot_cost_landscape import plt_cost_func
 # classical read (meaning the zeroth qubit is the first from left
 # term in binary string) !!!!!!!!!!!!!!!
 
-alpha_min_costs = []
 
-
-# Minimization cost function
 def cost_func(params, estimator, ansatz, hamiltonian):
     """
     Cost function to minimize for the optimization of the quantum circuit.
@@ -51,6 +49,33 @@ def cost_func(params, estimator, ansatz, hamiltonian):
         .result().values[0]
     )
     return cost
+
+def mixer(h):
+    """
+    Create the mixer operator for the QAOA algorithm.
+
+    Returns
+    -------
+    mixer : SparsePauliOp object from qiskit
+        Mixer operator for the QAOA algorithm.
+    """
+    
+    
+    pauli_weight_first_term = [
+            ("I" * h.graph.number_of_edges, h.graph.all_weights_sum / 2)
+        ]
+    pauli_weight_first_term.append(("X" + "I" * (h.graph.number_of_edges-1),-h.graph.weights[0][1] / 2))
+    # Z à la bonne position:
+    for i in range(1, h.graph.number_of_edges):
+        str1 = (
+            "I" * (i-1) + "Y" + "X"  + "I" * (h.graph.number_of_edges - i - 1),-h.graph.weights[0][i] / 2
+            
+        )
+        pauli_weight_first_term.append(str1)
+    pauli_weight_first_term.append(("I" * (h.graph.number_of_edges-1) + "Y",-h.graph.weights[0][i] / 2))
+    mixer = SparsePauliOp.from_list(pauli_weight_first_term)
+        
+    return mixer
 
 
 # Function to find the shortest path in a graph
@@ -81,29 +106,17 @@ def find_longest_path(args):
     outfileI = args[2]
     optimizer = args[3]
 
-    pauli_weight_first_term = [
-            ("I" * h.graph.number_of_edges, h.graph.all_weights_sum / 2)
-        ]
-
-    # Z à la bonne position:
-    for i in range(1, h.graph.number_of_edges):
-        str1 = (
-            "I" * (i-1) + "XY" + "I" * (h.graph.number_of_edges - i - 1),
-            h.graph.weights[0][i] / 2,
-        )
-        pauli_weight_first_term.append(str1)
-
-    mixer = SparsePauliOp.from_list(pauli_weight_first_term)
+    mixerf = mixer(h)
 
     # Create QAOA circuit.
-    ansatz = QAOAAnsatz(h.total_hamiltonian, reps, mixer_operator=mixer, name="QAOA", flatten=True)
+    ansatz = QAOAAnsatz(h.total_hamiltonian, reps, mixer_operator=mixerf, name="QAOA", flatten=True)
     # Plot the circuit layout:
     # ansatz.decompose(reps=3).draw()
 
     # ----------------------------------------------------------------RUN LOCALLY: -----
     # Run on local estimator and sampler:
     # Save output file name diffrerent for each alpha and loop:
-    outfile = outfileI + "_alpha_" + str(h.alpha) + "_reps_" + str(reps)
+    outfile = outfileI + "_alpha_" + str(h.alphai) + "_reps_" + str(reps)
     estimator = Estimator(options={"shots": 1000000, "seed": 43})
     sampler = Sampler(options={"shots": 1000000, "seed": 43})
     # -----------------------------------------------------------------------------------
@@ -176,6 +189,21 @@ def find_longest_path(args):
         reps=reps,
         opt_params=resx  # type: ignore
     )  # type: ignore
+    
+def find_max_cost(in_folder, alpha, rep):
+    
+    path = Path(in_folder)
+    glob_path = path.glob(f'*_alpha_{alpha}_reps_{rep}.npz')
+    min = 100
+    
+    for in_file_path in glob_path:
+        _, _, min_cost, _, _, _, _ = load_optimization_results(in_file_path)
+        min_cost = min_cost.item()
+        if min_cost < min:
+            min = min_cost
+        else:
+            os.remove(in_file_path)
+            
 
 
 def multiprocess_qaoa_solver_edge(
@@ -217,7 +245,6 @@ def multiprocess_qaoa_solver_edge(
     None
     """
     pool = multiprocessing.Pool(nbr_processes)
-
     pool.map(
         find_longest_path,
         zip(
@@ -230,8 +257,6 @@ def multiprocess_qaoa_solver_edge(
             itertools.repeat(save_only),
         ),
     )
-    pool.close()
-    pool.join()
 
     print(
         "------------------MULTIPROCESS SOLVER FINISHED-------------------------"

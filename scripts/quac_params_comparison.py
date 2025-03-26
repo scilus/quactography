@@ -18,7 +18,7 @@ def _build_arg_parser():
     p.add_argument(
         "in_opt_res",
         help="Directory of input files to plot squareloss for"
-        "(npz files)",
+            "(npz files)",
     )
     p.add_argument(
         "out_visu_path",
@@ -28,8 +28,8 @@ def _build_arg_parser():
     p.add_argument(
         "comparator",
         choices=["rep", "alpha"],
-        help="plot the square loss for either repetitions "
-        "or alphas parameter [rep,alpha]",
+        help="Plot the square loss for either repetitions "
+            "or alphas parameter [rep,alpha]",
         type=str,
     )
     p.add_argument(

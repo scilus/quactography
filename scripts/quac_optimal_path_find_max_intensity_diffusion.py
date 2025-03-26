@@ -30,7 +30,7 @@ def _build_arg_parser():
     p.add_argument("output_file",
                    help="Output file name (npz file)", type=str)
     p.add_argument("output_directory",
-                    help="directory where the files will be outputed", type=str,
+                    help="Directory where the files will be outputed", type=str,
                     default="data/output_graphs/"
     )
     p.add_argument(
@@ -50,7 +50,7 @@ def _build_arg_parser():
     p.add_argument(
         "-npr",
         "--number_processors",
-        help="number of cpu to use for multiprocessing",
+        help="Number of cpu to use for multiprocessing",
         default=1,
         type=int,
     )
