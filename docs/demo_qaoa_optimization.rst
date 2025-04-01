@@ -195,7 +195,7 @@ If --plt_cost_landscape was set to Yes, than you should get the following plot:
 .. image:: img/Opt_point_visu.png
    :alt: Cost landscape of the weighted toy graph with 5 edges 
 
-Else, you should get the given print statement and a qaoa_solver_infos_alpha_0.[3457436704885499,5186155057328249]_reps_[1,2].npz file 
+Else, you should get the given print statement and a qaoa_solver_infos_alpha_1.[.0,.5]_reps_[1,2].npz file 
 containing the results : 
 
 ::
@@ -218,7 +218,7 @@ run this command:
 
 ::
 
-    quac_histogram_plot data/output_graphs/qaoa_solver_infos_alpha_0.5186155057328249_reps_1.npz  /
+    quac_histogram_plot data/output_graphs/qaoa_solver_infos_alpha_1.0_reps_1.npz  /
                                        visu_total_dist visu_selected_dist /
                                        --save_only 
 
