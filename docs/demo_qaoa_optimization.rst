@@ -195,7 +195,7 @@ If --plt_cost_landscape was set to Yes, than you should get the following plot:
 .. image:: img/Opt_point_visu.png
    :alt: Cost landscape of the weighted toy graph with 5 edges 
 
-Else, you should get the given print statement and a qaoa_solver_infos_alpha_1.[.0,.5]_reps_[1,2].npz file 
+Else, you should get the given print statement and a qaoa_solver_infos_alpha_[1.0,1.5]_reps_[1,2].npz file 
 containing the results : 
 
 ::
@@ -252,8 +252,8 @@ It is best used when you have the same graph ran with different alphas and repet
    :alt: Visualisation of heatmap of probabilities of the optimal path according to alphas and circuit depth
 
 
-To visualize a scatter plot of the square loss of the found energy and theorical ground state, 
-and a scatter plot between theorical optimal path and the one found, run with arguement rep or alpha for your need: 
+To visualize a scatter plot of the square loss of the found energy and theoretical ground state, 
+and a scatter plot between theorical optimal path and the one found, run with argument rep or alpha for your need: 
 
 ::
    quac_params_comparison.py [PATH_TO_QUACTO_DATA]/data/output_graphs visu_scatter rep --save_only 
