@@ -11,5 +11,5 @@ def save_graph(G, output_base, copies=1):
 
         np.savez(output_file, nodes=nodes_array, edges=edges_array)
 
-        print(f"✅ Copie {i+1}/{copies} saved as '{output_file}'.")
+        print(f"Copie {i+1}/{copies} saved as '{output_file}'.")
         
