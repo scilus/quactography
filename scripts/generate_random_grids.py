@@ -5,7 +5,7 @@
 Generate random grids/graphs with obstacles.
 This script can optionally suppress the output
 display of the grid and graph nodes.
-The generated graphs are saved as .json files.
+The generated graphs are saved as .npz files.
 """
 
 import argparse
@@ -30,12 +30,12 @@ def _build_arg_parser():
 
     parser.add_argument(
         '--output', type=str, required=True,
-        help="Output format: 'filename.json;<number>'. "
-             "This will generate <number> files like 'filename_0.json', etc."
+        help="Output format: 'filename.npz;<number>'. "
+             "This will generate <number> files like 'filename_0.npz', etc."
     )
 
     parser.add_argument(
-        '--quiet', action='store_true',
+        '--save_only', action='store_true',
         help="If set, suppress grid and node outputs."
     )
 
@@ -68,14 +68,14 @@ def main():
         else generer_grille(args.size, mode, value, value)
     )
 
-    if not args.quiet:
-        print(f"{number} graphs saved as '{file}_X.json'.")
+    if not args.save_only:
+        print(f"{number} graphs saved as '{file}_X.npz'.")
         print("Grille générée :")
         print(grid)
         print("Graph nodes:", list(G.nodes))
 
     for i in range(number):
-        save_graph(G, f"{file}_{i}.json")
+        save_graph(G, f"{file}_{i}.npz")
 
 
 if __name__ == "__main__":
