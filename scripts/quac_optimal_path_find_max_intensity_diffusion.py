@@ -29,6 +29,10 @@ def _build_arg_parser():
                    help="Ending node of the graph", type=int)
     p.add_argument("output_file",
                    help="Output file name (npz file)", type=str)
+    p.add_argument("output_directory",
+                    help="Directory where the files will be outputed", type=str,
+                    default="data/output_graphs/"
+    )
     p.add_argument(
         "--alphas",
         nargs="+",
@@ -38,14 +42,15 @@ def _build_arg_parser():
     )
     p.add_argument(
         "--reps",
-        help="Number of repetitions for the QAOA algorithm",
+        nargs="+",
         type=int,
-        default=1,
+        help="List of repetitions to run for the QAOA algorithm",
+        default=[1],
     )
     p.add_argument(
         "-npr",
         "--number_processors",
-        help="number of cpu to use for multiprocessing",
+        help="Number of cpu to use for multiprocessing",
         default=1,
         type=int,
     )
@@ -85,15 +90,17 @@ def main():
     # print(hamiltonians[0].total_hamiltonian.simplify())
 
     print("\n Calculating qubits as edges......................")
-    multiprocess_qaoa_solver_edge(
-        hamiltonians,
-        args.reps,
-        args.number_processors,
-        args.output_file,
-        args.optimizer,
-        args.plt_cost_landscape,
-        args.save_only,
-    )
+    for i in range(len(args.reps)):
+        multiprocess_qaoa_solver_edge(
+            hamiltonians,
+            args.reps[i],
+            args.number_processors,
+            args.output_file,
+            args.output_directory,
+            args.optimizer,
+            args.plt_cost_landscape,
+            args.save_only,
+            )
 
 
 if __name__ == "__main__":

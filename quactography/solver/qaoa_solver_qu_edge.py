@@ -1,18 +1,17 @@
 import multiprocessing
 import itertools
+import os
+from pathlib import Path
 
-# import sys
 from qiskit.primitives import Estimator, Sampler
 from qiskit.circuit.library import QAOAAnsatz
 import matplotlib.pyplot as plt
 import numpy as np
+from qiskit.quantum_info import SparsePauliOp
 from scipy.optimize import differential_evolution
 from functools import partial
-from functools import partial
 
-# sys.path.append(r"C:\Users\harsh\quactography")
-
-from quactography.solver.io import save_optimization_results
+from quactography.solver.io import load_optimization_results, save_optimization_results
 from quactography.solver.optimization_loops import (
     POWELL_loop_optimizer,
     POWELL_refinement_optimization,
@@ -23,10 +22,7 @@ from quactography.visu.plot_cost_landscape import plt_cost_func
 # classical read (meaning the zeroth qubit is the first from left
 # term in binary string) !!!!!!!!!!!!!!!
 
-alpha_min_costs = []
 
-
-# Minimization cost function
 def cost_func(params, estimator, ansatz, hamiltonian):
     """
     Cost function to minimize for the optimization of the quantum circuit.
@@ -49,12 +45,41 @@ def cost_func(params, estimator, ansatz, hamiltonian):
     """
 
     cost = (
-        estimator.run(ansatz, hamiltonian, parameter_values=params).result().values[0]
+        estimator.run(ansatz, hamiltonian, parameter_values=params)
+        .result().values[0]
     )
     return cost
 
+def mixer(h):
+    """
+    Create the mixer operator for the QAOA algorithm.
 
-# Function to find the shortest path in a graph using QAOA algorithm with parallel processing:
+    Returns
+    -------
+    mixer : SparsePauliOp object from qiskit
+        Mixer operator for the QAOA algorithm.
+    """
+    
+    
+    pauli_weight_first_term = [
+            ("I" * h.graph.number_of_edges, h.graph.all_weights_sum / 2)
+        ]
+    pauli_weight_first_term.append(("X" + "I" * (h.graph.number_of_edges-1),-h.graph.weights[0][1] / 2))
+    # Z à la bonne position:
+    for i in range(1, h.graph.number_of_edges):
+        str1 = (
+            "I" * (i-1) + "Y" + "X"  + "I" * (h.graph.number_of_edges - i - 1),-h.graph.weights[0][i] / 2
+            
+        )
+        pauli_weight_first_term.append(str1)
+    pauli_weight_first_term.append(("I" * (h.graph.number_of_edges-1) + "Y",-h.graph.weights[0][i] / 2))
+    mixer = SparsePauliOp.from_list(pauli_weight_first_term)
+        
+    return mixer
+
+
+# Function to find the shortest path in a graph
+# using QAOA algorithm with parallel processing:
 def find_longest_path(args):
     """
     Find the longest path in a graph using the QAOA algorithm,
@@ -78,22 +103,22 @@ def find_longest_path(args):
     """
     h = args[0]
     reps = args[1]
-    outfile = args[2]
+    outfileI = args[2]
     optimizer = args[3]
 
-    # Save output file name diffrerent for each alpha:
-    outfile = outfile + "_alpha_" + str(h.alpha)
+    mixerf = mixer(h)
 
     # Create QAOA circuit.
-    ansatz = QAOAAnsatz(h.total_hamiltonian, reps, name="QAOA")
-
+    ansatz = QAOAAnsatz(h.total_hamiltonian, reps, mixer_operator=mixerf, name="QAOA", flatten=True)
     # Plot the circuit layout:
     # ansatz.decompose(reps=3).draw()
 
     # ----------------------------------------------------------------RUN LOCALLY: -----
     # Run on local estimator and sampler:
-    estimator = Estimator(options={"shots": 1000000, "seed": 42})
-    sampler = Sampler(options={"shots": 1000000, "seed": 42})
+    # Save output file name diffrerent for each alpha and loop:
+    outfile = outfileI + "_alpha_" + str(h.alphai) + "_reps_" + str(reps)
+    estimator = Estimator(options={"shots": 1000000, "seed": 43})
+    sampler = Sampler(options={"shots": 1000000, "seed": 43})
     # -----------------------------------------------------------------------------------
 
     if optimizer == "Differential":
@@ -158,11 +183,27 @@ def find_longest_path(args):
         min_cost=min_cost,
         hamiltonian=h,
         outfile=outfile,
+        outfolder=args[5],
         # It is reversed as classical read to be compared to exact_path code when diagonalising Hamiltonian
         opt_bin_str=opt_path,
         reps=reps,
         opt_params=resx  # type: ignore
     )  # type: ignore
+    
+def find_max_cost(in_folder, alpha, rep):
+    
+    path = Path(in_folder)
+    glob_path = path.glob(f'*_alpha_{alpha}_reps_{rep}.npz')
+    min = 100
+    
+    for in_file_path in glob_path:
+        _, _, min_cost, _, _, _, _ = load_optimization_results(in_file_path)
+        min_cost = min_cost.item()
+        if min_cost < min:
+            min = min_cost
+        else:
+            os.remove(in_file_path)
+            
 
 
 def multiprocess_qaoa_solver_edge(
@@ -170,6 +211,7 @@ def multiprocess_qaoa_solver_edge(
     reps,
     nbr_processes,
     output_file,
+    output_folder,
     optimizer,
     cost_landscape,
     save_only,
@@ -181,8 +223,9 @@ def multiprocess_qaoa_solver_edge(
     Parameters
     ----------
     hamiltonians : list
-        List of Hamiltonian objects from quactography library,
-        Hamiltonian_qubit_edge.
+        List of Hamiltonian objects from quactography library, Hamiltonian_qubit_edge.
+    batch_count : int
+        Number of time the command will be ran
     reps : int
         Number of repetitions for the QAOA algorithm,
         determines the number of sets of gamma and beta angles.
@@ -202,7 +245,6 @@ def multiprocess_qaoa_solver_edge(
     None
     """
     pool = multiprocessing.Pool(nbr_processes)
-
     pool.map(
         find_longest_path,
         zip(
@@ -211,11 +253,10 @@ def multiprocess_qaoa_solver_edge(
             itertools.repeat(output_file),
             itertools.repeat(optimizer),
             itertools.repeat(cost_landscape),
+            itertools.repeat(output_folder),
             itertools.repeat(save_only),
         ),
     )
-    pool.close()
-    pool.join()
 
     print(
         "------------------MULTIPROCESS SOLVER FINISHED-------------------------"
