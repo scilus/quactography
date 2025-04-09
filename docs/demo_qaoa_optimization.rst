@@ -174,6 +174,8 @@ The first argument is the npz file containing the constructed graph, then the fo
 the --alphas option let you decide a value for alpha the coefficient that will be multiplied by 8 for ending and start penalty, 
 multiplied by 0.5 for intermediate edges penalty and by 1 for intermediate nodes parity constraint which can 
 be seen in quactography/hamiltonian Hamiltonian class (you could add more than one alpha value to run QAOA on different Hamiltonians). 
+Following this, the parameter --reps can take a list and run the algorithm back to back using different circuit depths. 
+(for exemple 1 2 3 would run the script for depth 1, 2 and 3)
 When more than one alpha is used, it is possible to use --npr to use more than one processor (parallel processing), for 
 now --optimizer has only Differential as an option, and --plt_cost_landscape (if present will plot, elso won't) plots the cost landscape of problem at hand with 
 a red dot at the optimal parameters actually found by QAOA, works only for 1 rep to be represented in 2D cost landscape (or else we would 
@@ -182,8 +184,9 @@ need 4 axis for 2 layers of QAOA, 6 axis for 3 layers etc.)
 ::
 
     quac_optimal_path_find_max_intensity_diffusion [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_5_edges_rand_graph.npz /
-                                            0 3 qaoa_solver_infos --alphas  1.5   /
-                                            --reps 1  -npr 1 /
+                                            0 3 qaoa_solver_infos [PATH_TO_QUACTO_DATA]data/output_graphs/ 
+                                            --alphas 1 1.5   /
+                                            --reps 1 2 -npr 2 /
                                             --optimizer Differential --plt_cost_landscape
 
 
@@ -192,16 +195,19 @@ If --plt_cost_landscape was set to Yes, than you should get the following plot:
 .. image:: img/Opt_point_visu.png
    :alt: Cost landscape of the weighted toy graph with 5 edges 
 
-Else, you should get the given print statement and a qaoa_solver_infos_alpha_0.5186155057328249.npz file 
+Else, you should get the given print statement and a qaoa_solver_infos_alpha_[1.0,1.5]_reps_[1,2].npz file 
 containing the results : 
 
 ::
 
    
-   ├  Calculating qubits as edges...................... 
-   ├  parameters after optimization loop :  [5.883749   0.29698696] Cost: 1.7517654038454218
-   ├  ------------------------MULTIPROCESS SOLVER FINISHED-------------------------------
-       
+ Calculating qubits as edges......................
+parameters after optimization loop :  [6.28318531 2.48738907] Cost: 3.3011389243252833
+parameters after optimization loop :  [6.28318531 1.70259674] Cost: 4.970894190758633
+------------------MULTIPROCESS SOLVER FINISHED-------------------------
+parameters after optimization loop :  [5.17542843 2.50592232 6.01546329 1.85682697] Cost: 4.190091258547003
+parameters after optimization loop :  [2.58735155 3.14159265 4.41952512 0.40653534] Cost: 2.882419594295858
+------------------MULTIPROCESS SOLVER FINISHED-------------------------
 
 
 Visualize histogram of path that minimizes cost function and optimal path 
@@ -212,7 +218,7 @@ run this command:
 
 ::
 
-    quac_histogram_plot qaoa_solver_infos_alpha_0.5186155057328249.npz  /
+    quac_histogram_plot data/output_graphs/qaoa_solver_infos_alpha_1.0_reps_1.npz  /
                                        visu_total_dist visu_selected_dist /
                                        --save_only 
 
@@ -227,10 +233,32 @@ To visualize first most probable to minimize cost function path, run:
 ::
 
     quac_optimal_paths_plot [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_5_edges_rand_graph.npz  /
-                            qaoa_solver_infos_alpha_0.5186155057328249.npz opt_paths --save_only
+                            data/output_graphs/qaoa_solver_infos_alpha_0.5186155057328249_reps_1.npz opt_paths --save_only
 
 
 Which should plot:
 
 .. image:: img/opt_paths_0_alpha_0.52.png
    :alt: Visualisation of optimal path found by QAOA for the graph constructed in demo 
+
+To visualize a heatmap of the probability of the exact path being chosen, run: 
+
+::
+
+   quac_heatmap_rep_alpha.py [PATH_TO_QUACTO_DATA]/data/output_graphs visu_out --save_only
+
+It is best used when you have the same graph ran with different alphas and repetitions. You should get the plot:
+.. image:: img/visu_out_heatmap.png
+   :alt: Visualisation of heatmap of probabilities of the optimal path according to alphas and circuit depth
+
+
+To visualize a scatter plot of the square loss of the found energy and theoretical ground state, 
+and a scatter plot between theorical optimal path and the one found, run with argument rep or alpha for your need: 
+
+::
+   quac_params_comparison.py [PATH_TO_QUACTO_DATA]/data/output_graphs visu_scatter rep --save_only 
+
+Which should plot the following : 
+.. image:: img/visu_scatter_alpha_1.50.png
+.. image:: img/visu_scatter_prob_for_reps.png
+   :alt: Visualisation square loss and probability distribution in for of scatter plots
