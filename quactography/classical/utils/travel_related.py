@@ -4,3 +4,6 @@ def get_neighbors_diagonal(node, G):
             neighbor = (node[0] + dx, node[1] + dy)
             if neighbor in G.nodes():
                 yield neighbor
+
+def heuristic(current, target):
+    return max(abs(current[0] - target[0]), abs(current[1] - target[1]))
