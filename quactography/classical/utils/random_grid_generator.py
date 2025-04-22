@@ -2,7 +2,7 @@ import numpy as np
 import random
 import networkx as nx
 
-def generer_grille(size, obstacle_mode="ratio", obstacle_ratio=0.2, obstacle_number=20):
+def generate_grid(size, obstacle_mode="ratio", obstacle_ratio=0.2, obstacle_number=20):
     """
     Generate a random 2D grid and its corresponding NetworkX graph.
 
