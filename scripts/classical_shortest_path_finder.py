@@ -96,7 +96,7 @@ def main():
         )
 
     if path_history is None:
-        print("⚠️ Aucun chemin trouvé.")
+        print("No path found.")
         sys.exit(0)
 
     shortest_path = [tuple(int(x) for x in n) for n in path_history[-1]]
