@@ -11,7 +11,7 @@ The generated graphs are saved as .npz files.
 import argparse
 import sys
 
-from my_research.utils.grid_dijkstra import generer_grille, save_graph
+from quactography.classical.utils.random_grid_generator import generate_grid, save_graph
 
 
 def _build_arg_parser():
