@@ -29,7 +29,7 @@ def _build_arg_parser():
     )
 
     parser.add_argument(
-        '--output', type=str, required=True,
+        '--output', required=True,
         help="Output format: 'filename.npz;<number>'. "
              "This will generate <number> files like 'filename_0.npz', etc."
     )
