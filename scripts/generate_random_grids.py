@@ -11,8 +11,8 @@ The generated graphs are saved as .npz files.
 import argparse
 import sys
 
-from quactography.classical.utils.random_grid_generator import generate_grid, save_graph
-
+from quactography.classical.utils.random_grid_generator import generate_grid
+from quactography.classical.io import save_graph
 
 def _build_arg_parser():
     parser = argparse.ArgumentParser(
