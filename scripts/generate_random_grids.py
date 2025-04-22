@@ -82,9 +82,9 @@ def main():
 
     for i in range(number):
         grid, G = (
-            generer_grille(args.size, 'ratio', value)
+            generate_grid(args.size, 'ratio', value)
             if mode == 'ratio'
-            else generer_grille(args.size, 'number', value, value)
+            else generate_grid(args.size, 'number', value, value)
         )
 
         save_graph(G, f"{file}_{i}.npz")
