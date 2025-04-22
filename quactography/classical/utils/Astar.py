@@ -1,5 +1,3 @@
-def heuristic(current, target):
-    return max(abs(current[0] - target[0]), abs(current[1] - target[1]))
         
 def astar_stepwise(G, start, target, diagonal_mode="nondiagonal"):
     start_time = time.time()
