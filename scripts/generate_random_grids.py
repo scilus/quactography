@@ -9,6 +9,8 @@ The generated graphs are saved as .npz files.
 """
 
 import argparse
+import sys
+
 from my_research.utils.grid_dijkstra import generer_grille, save_graph
 
 
@@ -20,62 +22,78 @@ def _build_arg_parser():
 
     parser.add_argument(
         '--size', type=int, default=10,
-        help="Size of the grid (grid will be of shape size x size)."
+        help="Size of the grid (the grid will be of shape size x size)."
     )
 
-    parser.add_argument(
-        '--obstacles', type=str, default='ratio:0.2',
-        help="Obstacle settings: 'ratio:<value>' or 'number:<value>'"
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        '--ratio', type=float,
+        help="Ratio of obstacles (e.g., 0.2 = 20%)."
+    )
+    group.add_argument(
+        '--number', type=int,
+        help="Exact number of obstacles."
     )
 
     parser.add_argument(
         '--output', required=True,
         help="Output format: 'filename.npz;<number>'. "
-             "This will generate <number> files like 'filename_0.npz', etc."
+             "Generates <number> files like 'filename_0.npz', etc."
     )
 
     parser.add_argument(
         '--save_only', action='store_true',
-        help="If set, suppress grid and node outputs."
+        help="If set, suppresses grid and node outputs."
     )
 
     return parser
 
 
-def parse_obstacle_mode(obstacle_str):
-    mode, value_str = obstacle_str.split(':')
-    value = float(value_str) if mode == 'ratio' else int(value_str)
-
-    if mode == 'ratio' and not (0 <= value <= 1):
+def parse_output_arg(output_str):
+    try:
+        file, number_str = output_str.split(';')
+        number = int(number_str)
+        if number <= 0:
+            raise ValueError("The number of files must be greater than 0.")
+        return file, number
+    except ValueError:
         raise ValueError(
-            f"The obstacle ratio must be between 0 and 1 (received: {value})")
-
-    return mode, value
+            f"Invalid output format: '{output_str}'. "
+            "Expected format is 'filename.npz;<number>'."
+        )
 
 
 def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
 
-    mode, value = parse_obstacle_mode(args.obstacles)
+    try:
+        file, number = parse_output_arg(args.output)
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
-    file, number = args.output.split(';')
-    number = int(number)
+    mode = 'ratio' if args.ratio is not None else 'number'
+    value = args.ratio if args.ratio is not None else args.number
 
-    grid, G = (
-        generer_grille(args.size, mode, value)
-        if mode == "ratio"
-        else generer_grille(args.size, mode, value, value)
-    )
-
-    if not args.save_only:
-        print(f"{number} graphs saved as '{file}_X.npz'.")
-        print("Grille générée :")
-        print(grid)
-        print("Graph nodes:", list(G.nodes))
+    if mode == 'ratio' and not (0 <= value <= 1):
+        print("Error: Ratio must be between 0 and 1.", file=sys.stderr)
+        sys.exit(1)
 
     for i in range(number):
+        grid, G = (
+            generer_grille(args.size, 'ratio', value)
+            if mode == 'ratio'
+            else generer_grille(args.size, 'number', value, value)
+        )
+
         save_graph(G, f"{file}_{i}.npz")
+
+        if not args.save_only:
+            print(f"Graph {i + 1}/{number} saved as '{file}_{i}.npz'")
+            print("Generated grid:")
+            print(grid)
+            print("Graph nodes:", list(G.nodes))
 
 
 if __name__ == "__main__":
