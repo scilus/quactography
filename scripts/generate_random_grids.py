@@ -87,13 +87,14 @@ def main():
             else generate_grid(args.size, 'number', value, value)
         )
 
-        save_graph(G, f"{file}_{i}.npz")
+        save_graph(G, f"{file}_{i}.npz") 
 
         if not args.save_only:
             print(f"Graph {i + 1}/{number} saved as '{file}_{i}.npz'")
-            print("Generated grid:")
-            print(grid)
-            print("Graph nodes:", list(G.nodes))
+    if not args.save_only:
+        print("Generated grid:")
+        print(grid)
+        print("Graph nodes:", list(G.nodes))
 
 
 if __name__ == "__main__":
