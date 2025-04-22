@@ -1,12 +1,47 @@
-        
+import time
+import heapq
+from travel_related import heuristic, get_neighbors_diagonal
+
+
 def astar_stepwise(G, start, target, diagonal_mode="nondiagonal"):
+    """
+    Perform the A* pathfinding algorithm in a stepwise manner on a given graph.
+
+    Parameters
+    ----------
+    G : networkx.Graph
+        The input graph where each node is typically a tuple (e.g., (x, y)).
+        Edges may have a 'weight' attribute indicating traversal cost
+        (default is 1).
+    start : hashable
+        The starting node for the pathfinding algorithm.
+    target : hashable
+        The target (goal) node to reach.
+    diagonal_mode : str, optional
+        Neighbor retrieval mode. Must be either:
+        - "nondiagonal": only 4-directional neighbors (up, down, left, right)
+        - "diagonal": include diagonal neighbors (8 directions total)
+        Default is "nondiagonal".
+
+    Returns
+    -------
+    evaluated_nodes : list
+        The list of nodes in the order they were evaluated by the algorithm.
+    path_to_current : list of list
+        A list containing the reconstructed path from the start node to each
+        node evaluated so far, in evaluation order.
+    current_f_score : float
+        The final f-score (g + h) associated with the target node if found,
+        or with the last evaluated node if the target was not reached.
+    """
     start_time = time.time()
+
     g_scores = {node: float('inf') for node in G.nodes()}
     g_scores[start] = 0
-        
+
     f_scores = {node: float('inf') for node in G.nodes()}
     f_scores[start] = heuristic(start, target)
-        
+
     previous_nodes = {node: None for node in G.nodes()}
     evaluated_nodes = []
     path_to_current = []
@@ -15,10 +50,10 @@ def astar_stepwise(G, start, target, diagonal_mode="nondiagonal"):
 
     while priority_queue:
         current_f_score, current_node = heapq.heappop(priority_queue)
-            
+
         if current_node not in evaluated_nodes:
             evaluated_nodes.append(current_node)
-            
+
         temp_path = []
         node = current_node
         while node is not None:
@@ -26,15 +61,13 @@ def astar_stepwise(G, start, target, diagonal_mode="nondiagonal"):
             node = previous_nodes[node]
         temp_path.reverse()
         path_to_current.append(temp_path)
-            
-        #print(f"Step {len(evaluated_nodes)}: Evaluated {current_node}, Path: {temp_path}")
 
         if current_node == target:
             break
 
         if diagonal_mode == "diagonal":
             neighbors = list(get_neighbors_diagonal(current_node, G))
-        elif diagonal_mode == "nondiagonal":
+        else:
             neighbors = list(G.neighbors(current_node))
 
         for neighbor in neighbors:
@@ -43,9 +76,15 @@ def astar_stepwise(G, start, target, diagonal_mode="nondiagonal"):
             if tentative_g_score < g_scores[neighbor]:
                 previous_nodes[neighbor] = current_node
                 g_scores[neighbor] = tentative_g_score
-                f_scores[neighbor] = tentative_g_score + heuristic(neighbor, target)
-                heapq.heappush(priority_queue, (f_scores[neighbor], neighbor))
+                f_scores[neighbor] = tentative_g_score
+                + heuristic(neighbor, target)
+                heapq.heappush(
+                    priority_queue,
+                    (f_scores[neighbor], neighbor)
+                )
+
     end_time = time.time()
     execution_time = end_time - start_time
-    print(f"Execution time of A* : {execution_time:.4f} secondes")
+    print(f"Execution time of A* : {execution_time:.4f} seconds")
+
     return evaluated_nodes, path_to_current, current_f_score
