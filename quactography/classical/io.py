@@ -1,4 +1,5 @@
 import numpy as np
+import json
 
 def save_graph(G, output_base, copies=1):
     for i in range(copies):
