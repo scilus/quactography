@@ -32,7 +32,8 @@ def visualize_optimal_prob_rep(
     probs = []
     path = Path(in_folder)
     hprobs = []
-    reps = []
+    repsm = []
+    repsp = []
     glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
@@ -44,10 +45,16 @@ def visualize_optimal_prob_rep(
  
         probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
-        reps.append(rep)
+        repsm.append(rep-0.2)
+        repsp.append(rep+0.2)
 
-    plt.scatter(reps, probs).set_label('Optimal path')
-    plt.scatter(reps, hprobs).set_label('Exact path')
+
+
+    qaoa = plt.scatter(repsm, probs,marker=",")
+    qaoa.set_label('QAOA solution')
+    plt.scatter(repsp, hprobs).set_label('Strue solution')
+    for i in range (len(repsm)):
+        plt.plot([repsm[i],repsp[i]],[probs[i],hprobs[i]])
     plt.legend()
     plt.grid(True)
     plt.xlabel("Repitition")
@@ -82,7 +89,8 @@ def visualize_optimal_prob_alpha(
     -------
     None 
     """
-    alphas = []
+    alphasm = []
+    alphasp = []
     path = Path(in_folder)
     probs = []
     hprobs = []
@@ -98,10 +106,13 @@ def visualize_optimal_prob_alpha(
 
         probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
-        alphas.append(h.alpha)
+        alphasm.append(h.alphai-0.15)
+        alphasp.append(h.alphai+0.15)
 
-    plt.scatter(alphas, probs).set_label('Optimal path')
-    plt.scatter(alphas, hprobs).set_label('Exact path')
+    plt.scatter(alphasm, probs,marker=",").set_label('QAOA solution')
+    plt.scatter(alphasp, hprobs).set_label('True solution')
+    for i in range (len(alphasm)):
+        plt.plot([alphasm[i],alphasp[i]],[probs[i],hprobs[i]],'k--')
     plt.legend()
     plt.grid(True)
     plt.xlabel("alphas")

@@ -20,6 +20,8 @@ class Hamiltonian_qubit_edge:
         self.alpha_d = 8 * self.alpha
         self.alpha_f = 8 * self.alpha
         self.alpha_i = self.alpha
+        self.alphai = alpha
+
         self.total_hamiltonian = (
             -self.mandatory_c
             + self.alpha_d * (self.starting_node_c) ** 2
