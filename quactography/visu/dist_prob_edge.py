@@ -1,6 +1,8 @@
 from qiskit.visualization import plot_distribution
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
+import matplotlib
+matplotlib.use("Agg")
 from pathlib import Path
 import numpy 
 import copy
@@ -52,13 +54,14 @@ def plot_distribution_of_probabilities_edge(
         else:
             if prob < dist_binary_prob[exact_path]:
                 colors.append("tab:gray")
-            else:
+            else:   
                 colors.append("tab:red")
         
     # Plot distribution of probabilities:
-    plt.bar(list(count1),list(count2),color=colors,width=5)
+    bar_container = plt.bar(list(count1),list(count2),color=colors)
     plt.tick_params("x",rotation=90)
-    plt.xticks((numpy.arange(len(count1))),numpy.arange(len(count1)))
+    plt.xticks((numpy.arange(len(count1))),count1)
+    plt.bar_label(bar_container, fmt='%.2f', fontsize=8, padding=3)
 
  
     if not save_only:
