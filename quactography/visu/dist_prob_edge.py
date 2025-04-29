@@ -1,9 +1,11 @@
 from qiskit.visualization import plot_distribution
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
+import matplotlib
+matplotlib.use("Agg")
 from pathlib import Path
-import numpy
-
+import numpy 
+import copy
 
 from quactography.solver.io import load_optimization_results
 
@@ -37,13 +39,31 @@ def plot_distribution_of_probabilities_edge(
     dist_binary_prob = dist_binary_prob.item()
     min_cost = min_cost.item()
     h = h.item()
+    exact_path = (h.exact_path[0][::-1]).zfill(len(next(iter(dist_binary_prob))))
+    count1 = []
+    count2 = []
+    colors = []
+    count3 = copy.copy(dist_binary_prob)
+    count3.pop(exact_path)
+
+    for path, prob in dist_binary_prob.items():
+        count1.append(path)
+        count2.append(prob)
+        if path == exact_path:
+            colors.append('tab:green')
+        else:
+            if prob < dist_binary_prob[exact_path]:
+                colors.append("tab:gray")
+            else:   
+                colors.append("tab:red")
+        
     # Plot distribution of probabilities:
-    plot_distribution(
-        dist_binary_prob,
-        figsize=(10, 8),
-        title="Distribution of probabilities",
-        color="pink",
-    )
+    bar_container = plt.bar(list(count1),list(count2),color=colors)
+    plt.tick_params("x",rotation=90)
+    plt.xticks((numpy.arange(len(count1))),count1)
+    plt.bar_label(bar_container, fmt='%.2f', fontsize=8, padding=3)
+
+ 
     if not save_only:
         plt.show()
     # Save plot of distribution:
@@ -53,7 +73,7 @@ def plot_distribution_of_probabilities_edge(
     # print(max(dist_binary_prob, key=dist_binary_prob.get))
     # bin_str = list(map(int, max(dist_binary_prob, key=dist_binary_prob.get)))
     # bin_str_reversed = bin_str[::-1]
-    # bin_str_reversed = np.array(bin_str_reversed)
+    # bin_str_reversed = numpy.array(bin_str_reversed)
 
     # Check if optimal path in a subset of most probable paths:
     sorted(
@@ -81,6 +101,8 @@ def plot_distribution_of_probabilities_edge(
     selected_paths = sorted(
         selected_paths[::2], key=lambda x: dist_binary_prob[x], reverse=True
     )
+
+    
 
     # match_found = False
     # for i in selected_paths:

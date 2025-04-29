@@ -232,8 +232,8 @@ To visualize first most probable to minimize cost function path, run:
 
 ::
 
-    quac_optimal_paths_plot [PATH_TO_QUACTO_DATA]/data/test_graphs/weighted_5_edges_rand_graph.npz  /
-                            data/output_graphs/qaoa_solver_infos_alpha_1.5_reps_1.npz opt_paths --save_only
+                            data/output_graphs/qaoa_solver_infos_alpha_1.0_reps_1.npz opt_paths --save_only
+
 
 
 Which should plot:
@@ -252,6 +252,10 @@ It is best used when you have the same graph ran with different alphas and repet
 .. image:: img/visu_out_heatmap.png
    :alt: Visualisation of heatmap of probabilities of the optimal path according to alphas and circuit depth
 
+And the following, indicating directly in which position the optimal path is in, 1 being the best and chosen by the algorithm
+.. image:: img/visu_out_pos.png
+   :alt: Visualisation of optimal path position in compared to other path probability
+
 
 To visualize a scatter plot of the square loss of the found energy and theoretical ground state, 
 and a scatter plot between theorical optimal path and the one found, run with argument rep or alpha for your need: 
@@ -259,8 +263,8 @@ and a scatter plot between theorical optimal path and the one found, run with ar
 ::
    quac_params_comparison.py [PATH_TO_QUACTO_DATA]/data/output_graphs visu_scatter rep --save_only 
 
-Which should plot the following :
+Which should plot the following : 
+.. image:: img/visu_scatter_reps.png
 
-.. image:: img/visu_scatter_alpha_1.50.png
 .. image:: img/visu_scatter_prob_for_reps.png
-   :alt: Visualisation square loss and probability distribution in for of scatter plots
+   :alt: Visualisation QAOA probability delta and probability distribution in for of scatter plots

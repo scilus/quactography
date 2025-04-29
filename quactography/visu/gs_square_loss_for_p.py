@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from collections import defaultdict, OrderedDict
 
 from pathlib import Path
 from quactography.solver.io import load_optimization_results
@@ -24,42 +25,43 @@ def visualize_optimal_paths_edge_rep(
     Returns
     -------
     None """
-    reps = []
-    alphas = []
-    square_loss = []
-    param_count = 0
+    delta_dict = defaultdict(list)
     path = Path(in_folder)
 
     glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
-        _, _, min_cost, h, _, rep, _ = load_optimization_results(in_file_path)
+        _, dist_prob, min_cost, h, _, rep, _ = load_optimization_results(in_file_path)
         min_cost = min_cost.item()
+        dist_prob = dist_prob.item()
         h = h.item()
-        alpha = h.alpha * h.graph.number_of_edges/h.graph.all_weights_sum
+        rep = rep.item()
 
-        if alpha not in alphas:
-            param_count += 1
+        exact_path = (h.exact_path[0][::-1]).zfill(len(next(iter(dist_prob))))
+        maxp = max(dist_prob, key=dist_prob.get)
+        maxp = dist_prob[maxp]
+        delta = maxp - dist_prob[exact_path]
 
-        alphas.append(alpha)
-        reps.append(rep)
-        square_loss.append((min_cost + h.exact_cost)**2)
+        
+        delta_dict[rep].append(delta)
+
+    
+    delta_dict = OrderedDict(sorted(delta_dict.items()))
+    labels, data = [*zip(*delta_dict.items())]
 
 
-
-    scatter = plt.scatter(reps, square_loss, c=alphas)
-    plt.legend(*scatter.legend_elements(num=param_count-1), 
-               loc="upper right", title="Alphas")
+    plt.boxplot(data, notch=False)
+    plt.xticks(range(1, len(labels) + 1),labels)
     plt.xlabel("Repetitions")
-    plt.ylabel("Square loss")
-    plt.title("Square loss vs repetitions")
+    plt.ylabel("QAOA delta")
+    plt.title("Delta vs repetitions")
 
     if not save_only:
         plt.show()
 
-    plt.savefig(f"{out_file}_alpha_{alpha:.2f}.png")
+    plt.savefig(f"{out_file}_reps.png")
     print("Visualisation of the distance form optimal energy for different seeds"
-            f"and repetitions on identical alphas saved in {out_file}_alpha_{alpha:.2f}.png")
+            f"and repetitions on identical alphas saved in {out_file}_reps.png")
 
     plt.close()
 
@@ -84,39 +86,42 @@ def visualize_optimal_paths_edge_alpha(
     Returns
     -------
     None """
-    reps = []
-    alphas = []
-    square_loss = []
-    param_count = 0
+    delta_dict = defaultdict(list)
     path = Path(in_folder)
 
     glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
-        _, _, min_cost, h, _, rep, _ = load_optimization_results(in_file_path)
+        _, dist_prob, min_cost, h, _, _, _ = load_optimization_results(in_file_path)
         min_cost = min_cost.item()
+        dist_prob = dist_prob.item()
         h = h.item()
-        alpha = h.alpha * h.graph.number_of_edges/h.graph.all_weights_sum
-        alphas.append(alpha)
+        alpha = h.alphai
 
-        if rep not in reps:
-            param_count += 1
-
-        reps.append(rep)
-        square_loss.append((min_cost - h.exact_cost)**2)
+        exact_path = (h.exact_path[0][::-1]).zfill(len(next(iter(dist_prob))))
+        maxp = max(dist_prob, key=dist_prob.get)
+        maxp = dist_prob[maxp]
+        delta = (maxp - dist_prob[exact_path])
         
+        delta_dict[alpha].append(delta)
 
-    scatter = plt.scatter(alphas, square_loss, c=reps)
-    plt.legend(*scatter.legend_elements(num=param_count-1))
+    
+    delta_dict = OrderedDict(sorted(delta_dict.items()))
+    labels, data = [*zip(*delta_dict.items())]
+
+
+
+    plt.boxplot(data, notch=False)
+    plt.xticks(range(1, len(labels) + 1),labels)
     plt.xlabel("alphas")
-    plt.ylabel("Square loss")
-    plt.title("Square loss vs alphas")
+    plt.ylabel("QAOA Delta")
+    plt.title("Delta vs alphas")
 
     if not save_only:
         plt.show()
 
-    plt.savefig(f"{out_file}_rep_{rep}.png")
+    plt.savefig(f"{out_file}_alphas.png")
     print("Visualisation of the distance from optimal energy for different seeds"
-          f" and alphas on uniform repetition saved in {out_file}_rep_{rep}.png")
+          f" and alphas on uniform repetition saved in {out_file}_alphas.png")
 
     plt.close()
