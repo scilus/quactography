@@ -32,7 +32,7 @@ def main():
     args = parser.parse_args()
 
     weighted_graph, node_indices, vol_dim = load_graph(args.in_graph)
-    x, y = np.unravel_index(node_indices, vol_dim)
+    x, y, _ = np.unravel_index(node_indices, vol_dim)
     weighted_graph = np.triu(weighted_graph)
 
     # draw the graph
