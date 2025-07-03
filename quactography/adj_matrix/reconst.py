@@ -98,7 +98,7 @@ def build_weighted_graph(adj_matrix, node_indices, sh, axis_name):
     """
     # Get directions depending if we are in axial, coronal or sagittal :
     sphere = _get_sphere_for_axis(axis_name)
-    sf = sh_to_sf(sh, sphere, sh_order=12, basis_type="tournier07")
+    sf = sh_to_sf(sh, sphere, sh_order=8, basis_type="tournier07")
     sf[sf < 0.0] = 0.0
     sf /= np.max(sf, axis=(0, 1), keepdims=True)
     # sf = sf / np.max(sf, axis=(-1), keepdims=True)

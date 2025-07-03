@@ -215,6 +215,7 @@ def multiprocess_qaoa_solver_edge(
     optimizer,
     cost_landscape,
     save_only,
+    nb_edges
 ):
     """
     Solve the optimization problem using the QAOA algorithm
@@ -244,19 +245,31 @@ def multiprocess_qaoa_solver_edge(
     -------
     None
     """
-    pool = multiprocessing.Pool(nbr_processes)
-    pool.map(
-        find_longest_path,
-        zip(
-            hamiltonians,
-            itertools.repeat(reps),
-            itertools.repeat(output_file),
-            itertools.repeat(optimizer),
-            itertools.repeat(cost_landscape),
-            itertools.repeat(output_folder),
-            itertools.repeat(save_only),
-        ),
-    )
+    # pool = multiprocessing.Pool(nbr_processes)
+    # pool.map(
+    #     find_longest_path,
+    #     zip(
+    #         hamiltonians,
+    #         itertools.repeat(reps),
+    #         itertools.repeat(output_file),
+    #         itertools.repeat(optimizer),
+    #         itertools.repeat(cost_landscape),
+    #         itertools.repeat(output_folder),
+    #         itertools.repeat(save_only),
+    #     ),
+    # )
+    exact_path = ((hamiltonians[0].exact_path[0][::-1]).zfill(nb_edges))
+    print(f"Exact path: {exact_path}... length: {list(exact_path)}")
+    all_coords = []
+    value_to_find = '1'
+
+    for i, x in enumerate(exact_path):
+        if x == value_to_find:
+            all_coords.append(np.unravel_index(i, (hamiltonians[0].graph.number_of_edges, hamiltonians[0].graph.number_of_edges)))
+            
+    
+    print(f"All occurrences of {value_to_find} are at indices: {all_coords}")
+
 
     print(
         "------------------MULTIPROCESS SOLVER FINISHED-------------------------"

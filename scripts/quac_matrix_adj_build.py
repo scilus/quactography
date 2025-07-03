@@ -16,7 +16,7 @@ from quactography.adj_matrix.filter import (
 )
 from quactography.image.utils import slice_along_axis
 from quactography.adj_matrix.io import save_graph
-from quac_optimal_path_find_max_intensity_diffusion import rap_funct
+from scripts.quac_optimal_path_find_max_intensity_diffusion import rap_funct
 
 
 """
@@ -65,6 +65,7 @@ def _build_arg_parser():
 
 
 def main():
+    
     parser = _build_arg_parser()
     args = parser.parse_args()
     nodes_mask_im = nib.load(args.in_nodes_mask)
@@ -76,7 +77,7 @@ def main():
 
     keep_node_indices = None
     if args.keep_mask:
-        keep_mask_im = nib.load(args.keep_mask)
+        keep_mask_im = nib.load(keep_mask)
         keep_mask = slice_along_axis(
             keep_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index
         )
@@ -122,17 +123,18 @@ def main():
     # print("node indices", node_indices)
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
+    print("Graph saved")
     path = Path(args.out_graph)
 
     rap_funct(
         path,
-        starting_node=0,
-        ending_node=len(node_indices) - 1,
+        starting_node=node_indices[0],
+        ending_node=node_indices[3],
         output_file="rap_output",
         plt_cost_landscape=False,
         save_only=True
     )
-    print("Graph saved")
+    
 
 
 if __name__ == "__main__":
