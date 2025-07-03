@@ -9,7 +9,9 @@ import matplotlib.pyplot as plt
 
 """
 Tool to visualize the graph constructed with
-diffusion data (white matter mask and fodf peaks)
+diffusion data (white matter mask and fodf peaks).
+
+Only works for 2D graphs.
 """
 
 
@@ -32,7 +34,16 @@ def main():
     args = parser.parse_args()
 
     weighted_graph, node_indices, vol_dim = load_graph(args.in_graph)
-    x, y, _ = np.unravel_index(node_indices, vol_dim)
+    x, y, z = np.unravel_index(node_indices, vol_dim)
+    # Convert input graph in 2D
+    if len(np.unique(x)) == 1:
+        x, y = y, z
+    elif len(np.unique(y)) == 1:
+        x, y = x, z
+    elif len(np.unique(z)) == 1:
+        x, y = x, y
+    else:
+        parser.error(f'Input graph is 3D.')
     weighted_graph = np.triu(weighted_graph)
 
     # draw the graph
