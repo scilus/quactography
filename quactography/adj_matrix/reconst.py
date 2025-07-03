@@ -3,20 +3,6 @@ from dipy.reconst.shm import sh_to_sf
 from dipy.core.sphere import Sphere
 
 
-DIRECTIONS_2D = np.array(
-    [
-        [-1.0, 0.0],
-        [1.0, 0.0],
-        [0.0, -1.0],
-        [0.0, 1.0],
-        [-np.sqrt(2.0) / 2.0, np.sqrt(2.0) / 2.0],
-        [np.sqrt(2.0) / 2.0, np.sqrt(2.0) / 2.0],
-        [np.sqrt(2.0) / 2.0, -np.sqrt(2.0) / 2.0],
-        [-np.sqrt(2.0) / 2.0, -np.sqrt(2.0) / 2.0],
-    ]
-)
-
-
 def build_adjacency_matrix(nodes_mask):
     """
     Build the adjacency matrix for a given set of nodes in a 2D image.
