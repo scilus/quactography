@@ -267,7 +267,13 @@ def multiprocess_qaoa_solver_edge(
         if x == value_to_find:
             all_coords.append(np.unravel_index(i, (hamiltonians[0].graph.number_of_edges, hamiltonians[0].graph.number_of_edges)))
             
-    
+    if os.path.exists(output_folder) == False:
+        os.makedirs(output_folder)
+        
+    np.savez(
+        "streamline_coords",
+        all_coords=all_coords,
+    )
     print(f"All occurrences of {value_to_find} are at indices: {all_coords}")
 
 

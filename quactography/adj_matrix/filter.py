@@ -34,6 +34,30 @@ def remove_orphan_nodes(graph, node_indices, keep_indices=None):
     return out_graph, out_indices
 
 
+def extract_slice_at_index(graph, node_indices, shape, slice_index, axis_name):
+    out_graph = []
+    out_it = []
+    for it, graph_row in enumerate(graph):
+        if _is_on_target_slice(node_indices[it], shape, slice_index, axis_name):
+            out_graph.append(graph_row)
+            out_it.append(it)
+    out_graph = np.take(np.asarray(out_graph), out_it, axis=1)
+    out_indices = node_indices[np.asarray(out_it)]
+
+    return out_graph, out_indices
+
+
+def _is_on_target_slice(node_idx, shape, slice_index, axis_name):
+    x, y, z = np.unravel_index(node_idx, shape)
+    if axis_name == 'sagittal':
+        return x == slice_index
+    if axis_name == 'coronal':
+        return y == slice_index
+    if axis_name == 'axial':
+        return z == slice_index
+    raise ValueError((f'Unknown axis name {axis_name}.'))
+
+
 def remove_intermediate_connections(graphR, node_indices=None, keep_indices=None):
     """
     Remove nodes that do not add a change in direction between the two nodes
