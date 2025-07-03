@@ -74,6 +74,33 @@ def _build_arg_parser():
 
     return p
 
+def rap_funct(graph, starting_node, ending_node, output_file, save_only, output_directory="data/output_graphs", alphas=[1.2],
+                reps=[1], number_processors=2, optimizer="Differential", plt_cost_landscape=False):
+    """
+    Function to return the path from starting node to ending node in the graph.
+    """
+    weighted_graph, _, _ = load_graph(graph)
+    graph = Graph(weighted_graph, starting_node, ending_node)
+
+    # Construct Hamiltonian when qubits are set as edges,
+    # then optimize with QAOA/scipy:
+
+    hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in alphas]
+
+    # print(hamiltonians[0].total_hamiltonian.simplify())
+
+    print("\n Calculating qubits as edges......................")
+    for i in range(len(reps)):
+        multiprocess_qaoa_solver_edge(
+            hamiltonians,
+            reps[i],
+            number_processors,
+            output_file,
+            output_directory,
+            optimizer,
+            plt_cost_landscape,
+            save_only,
+            )
 
 def main():
     parser = _build_arg_parser()

@@ -4,6 +4,7 @@ import argparse
 import nibabel as nib
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 from quactography.adj_matrix.reconst import (
                     build_adjacency_matrix,
@@ -15,6 +16,7 @@ from quactography.adj_matrix.filter import (
 )
 from quactography.image.utils import slice_along_axis
 from quactography.adj_matrix.io import save_graph
+from quac_optimal_path_find_max_intensity_diffusion import rap_funct
 
 
 """
@@ -120,6 +122,16 @@ def main():
     # print("node indices", node_indices)
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
+    path = Path(args.out_graph)
+
+    rap_funct(
+        path,
+        starting_node=0,
+        ending_node=len(node_indices) - 1,
+        output_file="rap_output",
+        plt_cost_landscape=False,
+        save_only=True
+    )
     print("Graph saved")
 
 
