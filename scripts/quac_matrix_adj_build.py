@@ -122,7 +122,6 @@ def main():
         plt.imshow(np.log(weighted_graph + 1))
         plt.show()
 
-    # print("node indices", node_indices)
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
     print("Graph saved")
