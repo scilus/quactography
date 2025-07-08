@@ -81,9 +81,9 @@ class Graph:
         # print(f"End   :{ending_nodes}")
 
         weights = []
-        for _ in range(number_of_edges):
-            for _ in starting_nodes:
-                for _ in ending_nodes:
+        for _ in range(10):
+            for _ in range(10):
+                for _ in range(10):
                     weight_qubit = mat_adj[starting_nodes, ending_nodes]
         weights.append(weight_qubit)
         # weights[0][0]

@@ -54,7 +54,7 @@ class Hamiltonian_qubit_edge:
         for i in range(self.graph.number_of_edges):
             str1 = (
                 "I" * (self.graph.number_of_edges - i - 1) + "Z" + "I" * i,
-                -self.graph.weights[i] / 2,
+                -self.graph.weights[0][i] / 2,
             )
             pauli_weight_first_term.append(str1)
 
