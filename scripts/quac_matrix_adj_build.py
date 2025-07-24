@@ -218,13 +218,13 @@ def quack_rap(in_nodes_mask, in_sh, out_graph,
         )
 
     #function to process the graph before quantum path finding 
-    rap_funct(
+    line = rap_funct(
         out_graph,
         starting_node=node_indices[0],
         ending_node=node_indices[3],
         plt_cost_landscape=False,
     )
-
+    return line
 
 if __name__ == "__main__":
     main()
