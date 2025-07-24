@@ -190,7 +190,27 @@ def find_longest_path(args):
         opt_params=resx  # type: ignore
     )  # type: ignore
     
-def find_max_cost(in_folder, alpha, rep):
+def find_min_cost(in_folder, alpha, rep):
+    """
+    Find the minimum cost in the optimization results for given alpha and rep,
+    and remove all files with a cost lower than the minimum cost.
+
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    QUACK_RAP does not save any files, nor have iteration with different alphas or repetitions,
+    it only returns a list of coordinates for the streamline.
+
+    Parameters
+    ----------
+    in_folder : str
+        The folder containing the optimization results files.
+    alpha : float
+        The alpha value used in the optimization.
+    rep : int
+        The number of repetitions for the QAOA algorithm.
+    Returns
+    -------
+    None
+    """
     
     path = Path(in_folder)
     glob_path = path.glob(f'*_alpha_{alpha}_reps_{rep}.npz')
@@ -214,8 +234,7 @@ def multiprocess_qaoa_solver_edge(
     output_folder,
     optimizer,
     cost_landscape,
-    save_only,
-    nb_edges
+    save_only
 ):
     """
     Solve the optimization problem using the QAOA algorithm
@@ -245,17 +264,67 @@ def multiprocess_qaoa_solver_edge(
     -------
     None
     """
+    pool = multiprocessing.Pool(nbr_processes)
+    pool.map(
+        find_longest_path,
+        zip(
+            hamiltonians,
+            itertools.repeat(reps),
+            itertools.repeat(output_file),
+            itertools.repeat(optimizer),
+            itertools.repeat(cost_landscape),
+            itertools.repeat(output_folder),
+            itertools.repeat(save_only),
+        ),
+    )
+    print(
+        "------------------MULTIPROCESS SOLVER FINISHED-------------------------"
+    )
+
+#Only returns solution by classic solution as it is
+def multiprocess_qaoa_solver_edge_rap(
+    hamiltonians,
+    reps,
+    nbr_processes,
+    nb_edges,
+    optimizer="Differential",
+):
+    """
+    Solve the optimization problem using the QAOA algorithm
+    with multiprocessing on the alpha values.
+    
+    Parameters
+    ----------
+    hamiltonians : list
+        List of Hamiltonian objects from quactography library, Hamiltonian_qubit_edge.
+    batch_count : int
+        Number of time the command will be ran
+    reps : int
+        Number of repetitions for the QAOA algorithm,
+        determines the number of sets of gamma and beta angles.
+    nbr_processes : int
+        Number of cpu to use for multiprocessing. default=1
+    output_file : str
+        The output file name for the optimization results in .npz format.
+    optimizer : str
+        Optimizer to use for the QAOA algorithm. default="Differential"
+    cost_landscape : bool
+        Plot the cost landscape with the optimal point if reps=1. default=False
+    save_only : bool
+        If True, the figure is saved without displaying it. default=False
+    
+    Returns
+    -------
+    line : list
+        List of coordinates for the streamline.
+    """
     # pool = multiprocessing.Pool(nbr_processes)
     # pool.map(
-    #     find_longest_path,
+    #     find_longest_path_rap,
     #     zip(
     #         hamiltonians,
     #         itertools.repeat(reps),
-    #         itertools.repeat(output_file),
     #         itertools.repeat(optimizer),
-    #         itertools.repeat(cost_landscape),
-    #         itertools.repeat(output_folder),
-    #         itertools.repeat(save_only),
     #     ),
     # )
     exact_path = ((hamiltonians[0].exact_path[0][::-1]).zfill(nb_edges))
@@ -266,17 +335,100 @@ def multiprocess_qaoa_solver_edge(
     for i, x in enumerate(exact_path):
         if x == value_to_find:
             all_coords.append(np.unravel_index(i, (hamiltonians[0].graph.number_of_edges, hamiltonians[0].graph.number_of_edges)))
-            
-    if os.path.exists(output_folder) == False:
-        os.makedirs(output_folder)
-        
-    np.savez(
-        "streamline_coords",
-        all_coords=all_coords,
-    )
-    print(f"All occurrences of {value_to_find} are at indices: {all_coords}")
+
+    return all_coords
+
+def find_longest_path_rap(args):
+    """
+    Find the longest path in a graph using the QAOA algorithm,
+    with a plot of the cost landscape if reps=1 and
+    the optimal point if cost_landscape=True.
+
+    Parameters
+    ----------
+    args : tuple
+        Tuple containing the Hamiltonian object from quactography library,
+        Hamiltonian_qubit_edge, the number of repetitions for the QAOA algorithm,
+        the output file name for the optimization results in .npz format, the optimizer
+        to use for the QAOA algorithm, a boolean to plot the cost landscape with
+        the optimal point if reps=1, and a boolean to save the figure
+        without displaying it.
 
 
-    print(
-        "------------------MULTIPROCESS SOLVER FINISHED-------------------------"
-    )
+    Returns
+    -------
+    None
+    """
+    h = args[0]
+    reps = args[1]
+    optimizer = args[2]
+
+    mixerf = mixer(h)
+
+    # Create QAOA circuit.
+    ansatz = QAOAAnsatz(h.total_hamiltonian, reps, mixer_operator=mixerf, name="QAOA", flatten=True)
+    # Plot the circuit layout:
+    # ansatz.decompose(reps=3).draw()
+
+    # ----------------------------------------------------------------RUN LOCALLY: -----
+    # Run on local estimator and sampler:
+    # Save output file name diffrerent for each alpha and loop:
+    estimator = Estimator(options={"shots": 1000000, "seed": 43})
+    sampler = Sampler(options={"shots": 1000000, "seed": 43})
+    # -----------------------------------------------------------------------------------
+
+    if optimizer == "Differential":
+        # Reference: https://www.youtube.com/watch?v=o-OPrQmS1pU
+        # Define fixed arguments
+        cost_func_with_args = partial(
+            cost_func,
+            estimator=estimator,
+            ansatz=ansatz,
+            hamiltonian=h.total_hamiltonian,
+        )
+
+        # Call differential evolution with the modified cost function
+        bounds = [[0, 2 * np.pi], [0, np.pi]] * reps
+        res = differential_evolution(cost_func_with_args, bounds, disp=False)
+        resx = res.x
+
+    # Save the minimum cost and the corresponding parameters
+    min_cost = cost_func(resx, estimator, ansatz, h.total_hamiltonian)  # type: ignore
+
+    # Scatter optimal point on cost Landscape ----------------------------
+    if args[4]:
+        if reps == 1:
+            fig, ax1, ax2 = plt_cost_func(estimator, ansatz, h)
+            ax1.scatter(  # type: ignore
+                resx[0], resx[1], min_cost, color="red",
+                marker="o", s=100, label="Optimal Point"  # type: ignore
+            )
+            ax2.scatter(  # type: ignore
+                resx[0], resx[1], s=100, color="red",
+                marker="o", label="Optimal Point"  # type: ignore
+            )
+            plt.savefig("Opt_point_visu.png")
+            print("Optimal point saved in Opt_point_visu.png")
+            if not args[5]:
+                plt.show()
+    else:
+        pass
+    # -----------------------------------------------------
+
+    circ = ansatz.copy()
+    circ.measure_all()
+    dist = sampler.run(circ, resx).result().quasi_dists[0]  # type: ignore
+
+    bin_str = list(map(int, max(dist.binary_probabilities(),
+                                key=dist.binary_probabilities().get)))  # type: ignore
+    bin_str_reversed = bin_str[::-1]
+    bin_str_reversed = np.array(bin_str_reversed)  # type: ignore
+
+    # Concatenate the binary path to a string:
+    str_path_reversed = ["".join(map(str, bin_str_reversed))]  # type: ignore
+    str_path_reversed = str_path_reversed[0]  # type: ignore
+
+    # Save parameters alpha and min_cost with path in csv file:
+    opt_path = str_path_reversed
+
+    return opt_path

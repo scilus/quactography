@@ -70,77 +70,7 @@ def _build_arg_parser():
     return p
 
 
-def build_mat(in_nodes_mask, in_sh, out_graph,
-         keep_mask=None, threshold=0.2, slice_index=None,
-         axis_name="axial", sh_order=8, save_only=False):
-    
-    
-    nodes_mask_im = nib.load(in_nodes_mask)
-    sh_im = nib.load(in_sh)
-
-    nodes_mask = nodes_mask_im.get_fdata().astype(bool)
-
-
-    keep_node_indices = None
-    if keep_mask:
-        keep_mask = nib.load(keep_mask).get_fdata().astype(bool)
-        keep_node_indices = np.flatnonzero(keep_mask)
-
-    sh = sh_im.get_fdata()
-
-    # adjacency graph
-    adj_matrix, node_indices = build_adjacency_matrix(nodes_mask)
-
-    # assign edge weights
-    weighted_graph, node_indices = build_weighted_graph(
-        adj_matrix, node_indices, sh, sh_order
-    )
-
-    # # Could be added in the code if needed:
-    # # Select sub-graph and filter:___________________________________________
-    # select_1 = 30
-    # select_2 = 200
-
-    # weighted_graph = weighted_graph[select_1:select_2, select_1:select_2]
-    # # print(weighted_graph)
-    # # _______________________________________________________________________
-
-    # filter graph edges by weight
-    weighted_graph[weighted_graph < threshold] = 0.0
-
-    # remove intermediate nodes that connect only two nodes
-    weighted_graph = remove_intermediate_connections(
-        weighted_graph, node_indices, keep_node_indices
-    )
-
-    # remove nodes without edges
-    weighted_graph, node_indices = remove_orphan_nodes(
-        weighted_graph, node_indices, keep_node_indices
-    )
-    if slice_index is not None:
-        weighted_graph, node_indices = extract_slice_at_index(
-            weighted_graph, node_indices, nodes_mask.shape, slice_index, axis_name
-        )
-
-    if not save_only:
-        plt.imshow(np.log(weighted_graph + 1))
-        plt.show()
-
-    # print("node indices", node_indices)
-    # save output
-    save_graph(weighted_graph, node_indices, nodes_mask.shape, out_graph)
-    print("Graph saved")
-    path = Path(out_graph)
-
-    rap_funct(
-        path,
-        starting_node=node_indices[0],
-        ending_node=node_indices[3],
-        output_file="rap_output",
-        plt_cost_landscape=False,
-        save_only=True
-    )
-
+#main used to test from command instructions
 def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
@@ -198,15 +128,102 @@ def main():
     # print("node indices", node_indices)
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
+    # rap_funct(
+    #     args.out_graph,
+    #     starting_node=node_indices[0],
+    #     ending_node=node_indices[3],
+    #     output_file="rap_output",
+    #     plt_cost_landscape=False,
+    #     save_only=True
+    # )
+
+
+
+def quack_rap(in_nodes_mask, in_sh, out_graph,
+         keep_mask=None, threshold=0.2, slice_index=None,
+         axis_name="axial", sh_order=8):
+    """Build adjacency matrix from diffusion data (white matter mask and fodf peaks).
+    Parameters
+    ----------
+    in_nodes_mask : str
+        Input nodes mask image (.nii.gz file).
+    in_sh : str
+        Input SH image (.nii.gz file).
+    out_graph : str
+        Output graph file name (npz file).
+    keep_mask : str, optional
+        Nodes that must not be filtered out. If None, all nodes are filtered.
+    threshold : float, optional
+        Cut all weights below a given threshold. Default is 0.2.
+    slice_index : int, optional
+        If None, a 3D graph is built. If an integer, a slice is extracted
+        along the specified axis.
+    axis_name : str, optional   
+        Axis along which a slice is taken. Default is "axial".
+    sh_order : int, optional
+        Maximum SH order. Default is 8.
+
+    Returns
+    -------
+    line : list
+        List of coordinates for the streamline.
+    """
+    
+    
+    nodes_mask_im = nib.load(in_nodes_mask)
+    sh_im = nib.load(in_sh)
+
+    nodes_mask = nodes_mask_im.get_fdata().astype(bool)
+
+
+    keep_node_indices = None
+    if keep_mask:
+        keep_mask = nib.load(keep_mask).get_fdata().astype(bool)
+        keep_node_indices = np.flatnonzero(keep_mask)
+
+    sh = sh_im.get_fdata()
+
+    # adjacency graph
+    adj_matrix, node_indices = build_adjacency_matrix(nodes_mask)
+
+    # assign edge weights
+    weighted_graph, node_indices = build_weighted_graph(
+        adj_matrix, node_indices, sh, sh_order
+    )
+
+    # # Could be added in the code if needed:
+    # # Select sub-graph and filter:___________________________________________
+    # select_1 = 30
+    # select_2 = 200
+
+    # weighted_graph = weighted_graph[select_1:select_2, select_1:select_2]
+    # # print(weighted_graph)
+    # # _______________________________________________________________________
+
+    # filter graph edges by weight
+    weighted_graph[weighted_graph < threshold] = 0.0
+
+    # remove intermediate nodes that connect only two nodes
+    weighted_graph = remove_intermediate_connections(
+        weighted_graph, node_indices, keep_node_indices
+    )
+
+    # remove nodes without edges
+    weighted_graph, node_indices = remove_orphan_nodes(
+        weighted_graph, node_indices, keep_node_indices
+    )
+    if slice_index is not None:
+        weighted_graph, node_indices = extract_slice_at_index(
+            weighted_graph, node_indices, nodes_mask.shape, slice_index, axis_name
+        )
+
+    #function to process the graph before quantum path finding 
     rap_funct(
-        args.out_graph,
+        out_graph,
         starting_node=node_indices[0],
         ending_node=node_indices[3],
-        output_file="rap_output",
         plt_cost_landscape=False,
-        save_only=True
     )
-    print("Graph saved")
 
 
 if __name__ == "__main__":
