@@ -48,15 +48,3 @@ def get_output_nodes(mask, entry_node, propagation_direction, angle_rad):
     is_valid_edge = directions_cos_angle > propagation_cos_angle
     valid_indices = edge_indices[is_valid_edge.reshape((-1,))]
     return valid_indices
-
-
-if __name__ == '__main__':
-    # little demo code here
-    mask = np.zeros((25, 25, 25), dtype=bool)
-    mask[5:10, 5:10, 5:10] = True
-    entry_node = np.array([5, 5, 5])
-    propagation_direction = np.array([0, 1, 1])
-    angle_rad = np.pi / 8
-
-    indices = get_output_nodes(mask, entry_node, propagation_direction, angle_rad)
-    print(indices)
