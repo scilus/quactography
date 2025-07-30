@@ -12,8 +12,8 @@ from quactography.adj_matrix.reconst import (
 from quactography.adj_matrix.filter import (
                     remove_orphan_nodes,
                     remove_intermediate_connections,
+                    extract_slice_at_index
 )
-from quactography.image.utils import slice_along_axis
 from quactography.adj_matrix.io import save_graph
 
 
@@ -44,15 +44,21 @@ def _build_arg_parser():
         help="Cut all weights below a given threshold. [%(default)s]",
     )
     p.add_argument(
+        '--sh_order',
+        type=int,
+        default=12,
+        help='Maximum SH order. [%(default)s]'
+    )
+    p.add_argument(
         "--slice_index",
         type=int,
-        help="If None, midslice is taken."
+        help="If None, a 3D graph is built."
         )
     p.add_argument(
         "--axis_name",
         default="axial",
         choices=["sagittal", "coronal", "axial"],
-        help="Axis along which a slice is taken.",
+        help="Axis along which a slice is taken. Ignored when slice_index is None.",
     )
     p.add_argument(
         "--save_only",
@@ -68,27 +74,21 @@ def main():
     nodes_mask_im = nib.load(args.in_nodes_mask)
     sh_im = nib.load(args.in_sh)
 
-    nodes_mask = slice_along_axis(
-        nodes_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index
-    )
+    nodes_mask = nodes_mask_im.get_fdata().astype(bool)
 
     keep_node_indices = None
     if args.keep_mask:
-        keep_mask_im = nib.load(args.keep_mask)
-        keep_mask = slice_along_axis(
-            keep_mask_im.get_fdata().astype(bool), args.axis_name, args.slice_index
-        )
+        keep_mask = nib.load(args.keep_mask).get_fdata().astype(bool)
         keep_node_indices = np.flatnonzero(keep_mask)
 
-    # !!Careful, we remove a dimension, but the SH amplitudes still exist in 3D
-    sh = slice_along_axis(sh_im.get_fdata(), args.axis_name, args.slice_index)
+    sh = sh_im.get_fdata()
 
     # adjacency graph
     adj_matrix, node_indices = build_adjacency_matrix(nodes_mask)
 
     # assign edge weights
     weighted_graph, node_indices = build_weighted_graph(
-        adj_matrix, node_indices, sh, args.axis_name
+        adj_matrix, node_indices, sh, args.sh_order
     )
 
     # # Could be added in the code if needed:
@@ -113,11 +113,15 @@ def main():
         weighted_graph, node_indices, keep_node_indices
     )
 
+    if args.slice_index is not None:
+        weighted_graph, node_indices = extract_slice_at_index(
+            weighted_graph, node_indices, nodes_mask.shape, args.slice_index, args.axis_name
+        )
+
     if not args.save_only:
         plt.imshow(np.log(weighted_graph + 1))
         plt.show()
 
-    # print("node indices", node_indices)
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
     print("Graph saved")
