@@ -3,6 +3,7 @@ from dipy.reconst.shm import sh_to_sf
 from dipy.core.sphere import Sphere
 
 
+
 DIRECTIONS_2D = np.array(
     [
         [-1.0, 0.0],
@@ -30,6 +31,10 @@ def build_adjacency_matrix(nodes_mask):
     adj_matrix : np.ndarray
         Adjacency matrix of the nodes.
     """
+
+
+
+
     # 1st. Assign labels to non-zero voxels (nodes)
     node_indices = np.flatnonzero(nodes_mask)
 
@@ -148,6 +153,32 @@ def _add_edge_perhaps(
         adj_matrix[current_node, neighbor_label] = 1
     return adj_matrix
 
+def _add_end_point_edge(adj_matrix, end, node_indes):
+    """
+    Add a node and edges to the end points of the ROI in the adjacency matrix.
+
+    Parameters
+    ----------
+    adj_matrix : np.ndarray
+        Adjacency matrix of the graph.
+    end_points : list of tuples
+        List of end points as (x, y, z) coordinates.
+    labels_volume : np.ndarray
+        List of every column in the image:
+    
+    Returns
+    -------
+    np.ndarray
+        Updated adjacency matrix with end point edges added.
+    """
+    labels = np.unravel_index(node_indes, adj_matrix.shape)
+    new_shape = (adj_matrix.shape[0] + 1, adj_matrix.shape[1] + 1)
+    adj_matrix = np.lib.pad(adj_matrix, new_shape, 'constant', constant_values=(0))
+   
+    start = labels.index(end)
+    adj_matrix[start, -1] = 1
+    adj_matrix[-1, start] = 1  # Assuming undirected graph
+    return adj_matrix
 
 def _is_valid_pos(pos_x, pos_y, pos_z, nodes_mask):
     if pos_x < 0 or pos_x >= nodes_mask.shape[0]:

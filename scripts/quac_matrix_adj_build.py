@@ -8,13 +8,15 @@ from pathlib import Path
 
 from quactography.adj_matrix.reconst import (
                     build_adjacency_matrix,
-                    build_weighted_graph
+                    build_weighted_graph,
+                    _add_end_point_edge
 )
 from quactography.adj_matrix.filter import (
                     remove_orphan_nodes,
                     remove_intermediate_connections,
                     extract_slice_at_index
 )
+from quactography.graph.utils import get_output_nodes
 from quactography.adj_matrix.io import save_graph
 from scripts.quac_optimal_path_find_max_intensity_diffusion import rap_funct
 
@@ -139,9 +141,9 @@ def main():
 
 
 
-def quack_rap(in_nodes_mask, in_sh, out_graph,
+def quack_rap(in_nodes_mask, in_sh,
          keep_mask=None, threshold=0.2, slice_index=None,
-         axis_name="axial", sh_order=8):
+         axis_name="axial", sh_order=8, prev_direction=[0,0,0], theta=45):
     """Build adjacency matrix from diffusion data (white matter mask and fodf peaks).
     Parameters
     ----------
@@ -149,8 +151,6 @@ def quack_rap(in_nodes_mask, in_sh, out_graph,
         Input nodes mask image (.nii.gz file).
     in_sh : str
         Input SH image (.nii.gz file).
-    out_graph : str
-        Output graph file name (npz file).
     keep_mask : str, optional
         Nodes that must not be filtered out. If None, all nodes are filtered.
     threshold : float, optional
@@ -183,9 +183,17 @@ def quack_rap(in_nodes_mask, in_sh, out_graph,
 
     sh = sh_im.get_fdata()
 
+   # Get end points of the streamline
+    end_points = get_output_nodes(
+        nodes_mask,
+        entry_node=np.array(node_indices[0]),
+        propagation_direction=prev_direction,
+        angle_rad=theta
+    )
+    
     # adjacency graph
-    adj_matrix, node_indices = build_adjacency_matrix(nodes_mask)
-
+    adj_matrix, node_indices = build_adjacency_matrix(nodes_mask,end_points)
+    
     # assign edge weights
     weighted_graph, node_indices = build_weighted_graph(
         adj_matrix, node_indices, sh, sh_order
@@ -216,14 +224,18 @@ def quack_rap(in_nodes_mask, in_sh, out_graph,
         weighted_graph, node_indices = extract_slice_at_index(
             weighted_graph, node_indices, nodes_mask.shape, slice_index, axis_name
         )
+    
+    # Add end point edges to the adjacency matrix
+    weighted_graph = _add_end_point_edge(weighted_graph, end_points, node_indices)
 
     #function to process the graph before quantum path finding 
     line = rap_funct(
-        out_graph,
+        weighted_graph,
         starting_node=node_indices[0],
-        ending_node=node_indices[3],
+        ending_node= weighted_graph.shape[0] -1,
         plt_cost_landscape=False,
     )
+    line.pop()
     return line
 
 if __name__ == "__main__":
