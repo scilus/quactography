@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
+import matplotlib  
+matplotlib.use("Agg")
 import pandas as pd 
 import seaborn as sns 
 
@@ -32,7 +34,8 @@ def visualize_optimal_prob_rep(
     probs = []
     path = Path(in_folder)
     hprobs = []
-    reps = []
+    repsm = []
+    repsp = []
     glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
@@ -44,13 +47,21 @@ def visualize_optimal_prob_rep(
  
         probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
-        reps.append(rep)
+        repsm.append(rep-0.2)
+        repsp.append(rep+0.2)
 
-    plt.scatter(reps, probs).set_label('Optimal path')
-    plt.scatter(reps, hprobs).set_label('Exact path')
+
+
+    qaoa = plt.scatter(repsm, probs,marker=",")
+    qaoa.set_label('QAOA solution')
+    plt.scatter(repsp, hprobs).set_label('Strue solution')
+    for i in range (len(repsm)):
+        plt.plot([repsm[i],repsp[i]],[probs[i],hprobs[i]], 'k--')
     plt.legend()
     plt.grid(True)
     plt.xlabel("Repitition")
+    plt.xticks(np.arange(len(repsm)),np.arange(len(repsm)))
+
     plt.ylabel("Quasi-probability")
     plt.title("Prob vs reps")
 
@@ -82,7 +93,8 @@ def visualize_optimal_prob_alpha(
     -------
     None 
     """
-    alphas = []
+    alphasm = []
+    alphasp = []
     path = Path(in_folder)
     probs = []
     hprobs = []
@@ -98,13 +110,17 @@ def visualize_optimal_prob_alpha(
 
         probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
-        alphas.append(h.alpha)
+        alphasm.append(h.alphai-0.15)
+        alphasp.append(h.alphai+0.15)
 
-    plt.scatter(alphas, probs).set_label('Optimal path')
-    plt.scatter(alphas, hprobs).set_label('Exact path')
+    plt.scatter(alphasm, probs,marker=",").set_label('QAOA solution')
+    plt.scatter(alphasp, hprobs).set_label('True solution')
+    for i in range (len(alphasm)):
+        plt.plot([alphasm[i],alphasp[i]],[probs[i],hprobs[i]],'k--')
     plt.legend()
     plt.grid(True)
     plt.xlabel("alphas")
+    plt.xticks(np.arange(len(alphasm)),np.arange(len(alphasm)))
     plt.ylabel("Quasi-probability")
     plt.title("Prob vs alphas")
 
@@ -143,6 +159,7 @@ def visu_heatmap(
     path = Path(in_folder)
     alphas = []
     heat = []
+    pos = []
     glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
@@ -157,6 +174,11 @@ def visu_heatmap(
             reps.append(rep.item())
             alphas.append(alpha)
             heat.append(dist_binary_prob[exact_path])
+            sorted_dict = sorted(
+                dist_binary_prob.items(), key=lambda items: items[1], 
+            )
+            ind = sorted_dict.index((exact_path, dist_binary_prob[exact_path]))
+            pos.append(len(sorted_dict)-ind)
 
     df = pd.DataFrame.from_dict(np.array([reps,alphas,heat]).T)
     df.columns = ['Repitition', 'Alphas','Probability of optimal path']
@@ -169,3 +191,18 @@ def visu_heatmap(
     fig.savefig(out_file+"_heatmap")
     print("Visualisation of the heatmap of the optimal path according to alpha and repetition "
             f"and repetitions on identical alphas saved in {out_file}_heatmap_.png")
+    fig.clf()
+    
+    df_pos = pd.DataFrame.from_dict(np.array([reps,alphas,pos]).T)
+    df_pos.columns = ['Repitition', 'Alphas','Probability of optimal path']
+    df_pos['Probability of optimal path'] =pd.to_numeric(df_pos["Probability of optimal path"])
+
+    pivotted_pos = df_pos.pivot(index='Alphas',columns='Repitition',values='Probability of optimal path')
+
+    heatmap_pos = sns.heatmap(pivotted_pos, cmap="jet_r",annot=True)
+    heatmap_pos.set_title('Optimal path position')
+    fig_pos = heatmap_pos.get_figure()
+    fig_pos.savefig(out_file+"_pos")
+    print("Visualisation of the heatmap of the optimal path according to alpha and repetition "
+            f"and repetitions on identical alphas saved in {out_file}_heatmap_.png")
+    fig.clf()
