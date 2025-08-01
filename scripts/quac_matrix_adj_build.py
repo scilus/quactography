@@ -9,7 +9,7 @@ from pathlib import Path
 from quactography.adj_matrix.reconst import (
                     build_adjacency_matrix,
                     build_weighted_graph,
-                    _add_end_point_edge
+                    add_end_point_edge
 )
 from quactography.adj_matrix.filter import (
                     remove_orphan_nodes,
@@ -130,18 +130,10 @@ def main():
     # print("node indices", node_indices)
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
-    # rap_funct(
-    #     args.out_graph,
-    #     starting_node=node_indices[0],
-    #     ending_node=node_indices[3],
-    #     output_file="rap_output",
-    #     plt_cost_landscape=False,
-    #     save_only=True
-    # )
 
 
 
-def quack_rap(in_nodes_mask, in_sh,
+def quack_rap(in_nodes_mask, in_sh, start_point, reps, alpha,
          keep_mask=None, threshold=0.2, slice_index=None,
          axis_name="axial", sh_order=8, prev_direction=[0,0,0], theta=45):
     """Build adjacency matrix from diffusion data (white matter mask and fodf peaks).
@@ -151,6 +143,8 @@ def quack_rap(in_nodes_mask, in_sh,
         Input nodes mask image (.nii.gz file).
     in_sh : str
         Input SH image (.nii.gz file).
+    start_point : int
+        Starting node index in the graph.
     keep_mask : str, optional
         Nodes that must not be filtered out. If None, all nodes are filtered.
     threshold : float, optional
@@ -162,6 +156,11 @@ def quack_rap(in_nodes_mask, in_sh,
         Axis along which a slice is taken. Default is "axial".
     sh_order : int, optional
         Maximum SH order. Default is 8.
+    prev_direction : list, optional
+        Previous direction of the streamline, used to determine the propagation direction.
+        Default is [0, 0, 0].
+    theta : float, optional
+        Aperture angle in degrees for the propagation direction. Default is 45.
 
     Returns
     -------
@@ -182,31 +181,14 @@ def quack_rap(in_nodes_mask, in_sh,
         keep_node_indices = np.flatnonzero(keep_mask)
 
     sh = sh_im.get_fdata()
-
-   # Get end points of the streamline
-    end_points = get_output_nodes(
-        nodes_mask,
-        entry_node=np.array(node_indices[0]),
-        propagation_direction=prev_direction,
-        angle_rad=theta
-    )
     
     # adjacency graph
-    adj_matrix, node_indices = build_adjacency_matrix(nodes_mask,end_points)
+    adj_matrix, node_indices, labes = build_adjacency_matrix(nodes_mask)
     
     # assign edge weights
     weighted_graph, node_indices = build_weighted_graph(
         adj_matrix, node_indices, sh, sh_order
     )
-
-    # # Could be added in the code if needed:
-    # # Select sub-graph and filter:___________________________________________
-    # select_1 = 30
-    # select_2 = 200
-
-    # weighted_graph = weighted_graph[select_1:select_2, select_1:select_2]
-    # # print(weighted_graph)
-    # # _______________________________________________________________________
 
     # filter graph edges by weight
     weighted_graph[weighted_graph < threshold] = 0.0
@@ -225,18 +207,29 @@ def quack_rap(in_nodes_mask, in_sh,
             weighted_graph, node_indices, nodes_mask.shape, slice_index, axis_name
         )
     
+    # Get end points of the streamline
+    end_points = get_output_nodes(
+        nodes_mask,
+        entry_node=np.array(node_indices[0]),
+        propagation_direction=prev_direction,
+        angle_rad=theta
+    )
     # Add end point edges to the adjacency matrix
-    weighted_graph = _add_end_point_edge(weighted_graph, end_points, node_indices)
+    weighted_graph = add_end_point_edge(weighted_graph, end_points, labels=labes)
+    if len(np.flatnonzero(weighted_graph))> 17: 
+            print("RAPGraph: max number of points exceeded")
+            is_line_valid = False
+            return line, prev_direction, is_line_valid
 
     #function to process the graph before quantum path finding 
     line = rap_funct(
         weighted_graph,
-        starting_node=node_indices[0],
-        ending_node= weighted_graph.shape[0] -1,
-        plt_cost_landscape=False,
+        starting_node = start_point,
+        alphas=[alpha],
+        reps=reps,
     )
     line.pop()
-    return line
+    return line, prev_direction, True
 
 if __name__ == "__main__":
     main()

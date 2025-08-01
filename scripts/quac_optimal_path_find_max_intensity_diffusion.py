@@ -13,8 +13,8 @@ Tool to run QAOA, optimize parameters, plot cost landscape with optimal
 parameters found if only one reps, and returns the optimization results.
 """
 
-def rap_funct(weighted_graph, starting_node, ending_node, alphas=[1.2],
-                reps=1, number_processors=2, optimizer="Differential"):
+def rap_funct(weighted_graph, starting_node, alphas,
+                reps, number_processors=2, optimizer="Differential"):
     """
     Process he Graph in order to create the Hamiltonian matrix before optimization
     with QAOA algorithm. The Hamiltonian is constructed with qubits as edges.
@@ -41,7 +41,7 @@ def rap_funct(weighted_graph, starting_node, ending_node, alphas=[1.2],
     line : list
         List of coordinates for the streamline.
     """
-    graph = Graph(weighted_graph, starting_node, ending_node)
+    graph = Graph(weighted_graph, starting_node)
 
     # Construct Hamiltonian when qubits are set as edges,
     # then optimize with QAOA/scipy:
