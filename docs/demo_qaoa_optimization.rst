@@ -266,7 +266,8 @@ and a scatter plot between theorical optimal path and the one found, run with ar
 
    quac_params_comparison.py [PATH_TO_QUACTO_DATA]/data/output_graphs visu_scatter rep --save_only 
 
-Which should plot the following : 
+Which should plot the following :
+ 
 .. image:: img/visu_scatter_reps.png
 
 .. image:: img/visu_scatter_prob_for_reps.png

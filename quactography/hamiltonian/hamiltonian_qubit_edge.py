@@ -7,7 +7,63 @@ import numpy as np
 
 class Hamiltonian_qubit_edge:
     """Creates the Hamiltonian with qubits considered to be edges with 
-    the given graph and alpha value"""
+    the given graph and alpha value
+    
+    Parameters
+    ----------
+    graph : Graph object
+        The graph object containing the edges, starting nodes, ending nodes, and weights.
+    alpha : float
+        A scaling factor for the cost terms in the Hamiltonian.
+        
+    Attributes
+    ----------
+    graph : Graph object
+        The graph object containing the edges, starting nodes, ending nodes, and weights.
+    mandatory_c : SparsePauliOp
+        The cost term for having a single edge connected to each node in the path.
+    starting_node_c : SparsePauliOp
+        The cost term for having a single starting node connection.
+    ending_node_c : SparsePauliOp
+        The cost term for having a single ending node connection.
+    hint_c : SparsePauliOp
+        The cost term for having a pair number of connections to each intermediate node.
+    hint_edge_c : SparsePauliOp
+        The cost term for penalizing the number of edges connected to each intermediate node.
+    alpha_norm : float
+        A normalized scaling factor for the cost terms in the Hamiltonian.
+    alpha_d : float
+        Scaled factor for the starting node cost.
+    alpha_f : float
+        Scaled factor for the ending node cost.
+    alpha_i : float
+        Scaled factor for the intermediate node cost.
+    alpha_init : float
+        initial alpha given by user.
+    total_hamiltonian : SparsePauliOp
+        The total Hamiltonian representing the quantum cost function.
+    exact_cost : list
+        The exact cost of the Hamiltonian, which is the minimum eigenvalue.
+    exact_path : list
+        The binary paths corresponding to the eigenvalues of the Hamiltonian, representing the optimal paths through
+        the graph.
+        
+    Methods
+    -------
+    mandatory_cost()
+        Computes the cost term for having a single edge connected to each node in the path.
+    starting_node_cost()
+        Computes the cost term for having a single starting node connection.
+    ending_node_cost()
+        Computes the cost term for having a single ending node connection.
+    intermediate_node_cost()
+        Computes the cost term for having a pair number of connections to each intermediate node.
+    intermediate_min_edge_cost()
+        Computes the cost term for penalizing the number of edges connected to each intermediate node.
+    get_exact_sol()
+        Computes the exact solution of the Hamiltonian by diagonalizing it, returning the eigenvalues and
+        corresponding binary paths.
+    """
 
     def __init__(self, graph, alpha):
         self.graph = graph
@@ -16,11 +72,11 @@ class Hamiltonian_qubit_edge:
         self.ending_node_c = self.ending_node_cost()
         self.hint_c = self.intermediate_node_cost()
         self.hint_edge_c = self.intermediate_min_edge_cost()
-        self.alpha = alpha * self.graph.all_weights_sum / graph.number_of_edges
-        self.alpha_d = 8 * self.alpha
-        self.alpha_f = 8 * self.alpha
-        self.alpha_i = self.alpha
-        self.alphai = alpha
+        self.alpha_norm = alpha * self.graph.all_weights_sum / graph.number_of_edges
+        self.alpha_d = 8 * self.alpha_norm
+        self.alpha_f = 8 * self.alpha_norm
+        self.alpha_i = self.alpha_norm
+        self.alpha_init = alpha
         self.total_hamiltonian = (
             -self.mandatory_c
             + self.alpha_d * (self.starting_node_c) ** 2
