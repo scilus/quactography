@@ -198,7 +198,7 @@ def visu_heatmap(
     fig = heatmap.get_figure()
     fig.savefig(out_file + "_heatmap")
     print("Visualisation of the heatmap of the optimal path according to alpha and repetition "
-            f"and repetitions on identical alphas saved in {out_file + "_heatmap"}_heatmap_.png")
+            f"and repetitions on identical alphas saved in {out_file}_heatmap_.png")
     fig.clf()
     
     df_pos = pd.DataFrame.from_dict(np.array([reps,alphas,pos]).T)
@@ -212,5 +212,5 @@ def visu_heatmap(
     fig_pos = heatmap_pos.get_figure()
     fig_pos.savefig(out_file + "_pos")
     print("Visualisation of the heatmap of the optimal path according to alpha and repetition "
-            f"and repetitions on identical alphas saved in {out_file + "_pos"}_heatmap_.png")
+            f"and repetitions on identical alphas saved in {out_file}_heatmap_.png")
     fig.clf()
