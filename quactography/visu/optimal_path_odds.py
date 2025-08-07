@@ -46,7 +46,7 @@ def visualize_optimal_prob_rep(
         h = h.item()
         exact_path = (h.exact_path[0][::-1]).zfill(len(next(iter(dist_binary_prob))))
  
-        # set appart the optimal path and the exact path
+        # set apart the optimal path and the exact path
         # opt_path is the path found with QAOA
         probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])
@@ -111,7 +111,7 @@ def visualize_optimal_prob_alpha(
         h = h.item()
         exact_path = (h.exact_path[0][::-1]).zfill(len(next(iter(dist_binary_prob))))
 
-        # set appart the optimal path and the exact path
+        # set apart the optimal path and the exact path
         # opt_path is the path found with QAOA
         probs.append(dist_binary_prob[opt_path])
         hprobs.append(dist_binary_prob[exact_path])

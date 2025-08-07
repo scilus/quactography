@@ -79,7 +79,7 @@ def prob_delta_for_alpha(
 ):
     """
     Visualize the distance of the optimal path from the most probable path
-    for different repetitions in terms of probabilities. 
+    for different alphas in terms of probabilities. 
     i.e. How much more or less probable the optimal path is compared to the most probable path.
     
     Parameters

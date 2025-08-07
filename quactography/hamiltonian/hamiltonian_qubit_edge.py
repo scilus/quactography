@@ -27,7 +27,7 @@ class Hamiltonian_qubit_edge:
     ending_node_c : SparsePauliOp
         The cost term for having a single ending node connection.
     hint_c : SparsePauliOp
-        The cost term for having a pair number of connections to each intermediate node.
+        The cost term for having only an entry and exit connection to each intermediate node.
     hint_edge_c : SparsePauliOp
         The cost term for penalizing the number of edges connected to each intermediate node.
     alpha_norm : float
