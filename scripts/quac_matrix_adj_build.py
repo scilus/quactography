@@ -208,25 +208,27 @@ def quack_rap(in_nodes_mask, in_sh, start_point, reps, alpha,
         )
     
     # Get end points of the streamline
+
     end_points = get_output_nodes(
         nodes_mask,
-        entry_node=np.array(node_indices[0]),
+        entry_node=start_point,
         propagation_direction=prev_direction,
         angle_rad=theta
     )
     # Add end point edges to the adjacency matrix
     weighted_graph = add_end_point_edge(weighted_graph, end_points, labels=labes)
-    if len(np.flatnonzero(weighted_graph))> 17: 
-            print("RAPGraph: max number of points exceeded")
-            is_line_valid = False
-            return line, prev_direction, is_line_valid
+    end = np.flatnonzero(weighted_graph)
+    if len(end)> 17: 
+           raise Exception("RAPGraph: max number of points exceeded")
+       
 
     #function to process the graph before quantum path finding 
     line = rap_funct(
         weighted_graph,
-        starting_node = start_point,
-        alphas=[alpha],
-        reps=reps,
+        starting_node = labes[start_point[0], start_point[1], start_point[2]],
+        end_node = end[-1],
+        alphas = [alpha],
+        reps = reps,
     )
     line.pop()
     return line, prev_direction, True
