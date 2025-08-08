@@ -116,7 +116,7 @@ def find_longest_path(args):
     # ----------------------------------------------------------------RUN LOCALLY: -----
     # Run on local estimator and sampler:
     # Save output file name diffrerent for each alpha and loop:
-    outfile = outfileI + "_alpha_" + str(h.alphai) + "_reps_" + str(reps)
+    outfile = outfileI + "_alpha_" + str(h.alpha_init) + "_reps_" + str(reps)
     estimator = Estimator(options={"shots": 1000000, "seed": 43})
     sampler = Sampler(options={"shots": 1000000, "seed": 43})
     # -----------------------------------------------------------------------------------
@@ -191,7 +191,21 @@ def find_longest_path(args):
     )  # type: ignore
     
 def find_max_cost(in_folder, alpha, rep):
-    
+    """
+    Remove all optimization results files in the input folder
+    that do not have the minimum cost for a given alpha and repetition.
+    Parameters
+    ----------
+    in_folder: str
+        The input folder containing the optimization results files in .npz format.
+    alpha: float
+        The alpha value to filter the optimization results files.
+    rep: int
+        The repetition value to filter the optimization results files.
+    Returns
+    -------
+    None
+    """
     path = Path(in_folder)
     glob_path = path.glob(f'*_alpha_{alpha}_reps_{rep}.npz')
     min = 100
