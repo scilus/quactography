@@ -15,8 +15,9 @@ from quactography.graph.undirected_graph import Graph
 from quactography.graph.utils import get_output_nodes
 from quactography.hamiltonian.hamiltonian_qubit_edge import Hamiltonian_qubit_edge
 from quactography.solver.qaoa_solver_qu_edge import multiprocess_qaoa_solver_edge_rap
+from quactography.solver.Dijkstra import dijkstra_stepwise
 
-def quack_rap(in_nodes_mask, in_sh, start_point, reps, alpha,
+def quack_rap(in_nodes_mask_img, in_sh_img, start_point, reps, alpha,
          keep_mask=None, threshold=0.2, slice_index=None,
          axis_name="axial", sh_order=8, prev_direction=[0,0,0], theta=45):
     """Build adjacency matrix from diffusion data (white matter mask and fodf peaks).
@@ -52,10 +53,10 @@ def quack_rap(in_nodes_mask, in_sh, start_point, reps, alpha,
     """
     
     
-    nodes_mask_im = nib.load(in_nodes_mask)
-    sh_im = nib.load(in_sh)
+    #nodes_mask_im = nib.load(in_nodes_mask)
+    #sh_im = nib.load(in_sh)
 
-    nodes_mask = nodes_mask_im.get_fdata().astype(bool)
+    nodes_mask = in_nodes_mask_img.get_fdata().astype(bool)
 
 
     keep_node_indices = None
@@ -63,7 +64,7 @@ def quack_rap(in_nodes_mask, in_sh, start_point, reps, alpha,
         keep_mask = nib.load(keep_mask).get_fdata().astype(bool)
         keep_node_indices = np.flatnonzero(keep_mask)
 
-    sh = sh_im.get_fdata()
+    sh = in_sh_img.get_fdata()
     
     # adjacency graph
     adj_matrix, node_indices, labes = build_adjacency_matrix(nodes_mask)
@@ -101,22 +102,19 @@ def quack_rap(in_nodes_mask, in_sh, start_point, reps, alpha,
     # Add end point edges to the adjacency matrix
     weighted_graph = add_end_point_edge(weighted_graph, end_points, labels=labes)
     end = np.flatnonzero(weighted_graph)
-    if len(end)> 17: 
-           raise Exception("RAPGraph: max number of points exceeded")
-       
 
     #function to process the graph before quantum path finding 
     line = rap_funct(
         weighted_graph,
         starting_node = labes[start_point[0], start_point[1], start_point[2]],
-        end_node = end[-1],
+        ending_node = end[-1],
         alphas = [alpha],
         reps = reps,
     )
     line.pop()
     return line, prev_direction, True
 
-def rap_funct(weighted_graph, starting_node,ending_node, alphas,
+def rap_funct(weighted_graph, starting_node, ending_node, alphas,
                 reps, number_processors=2, optimizer="Differential"):
     """
     Process he Graph in order to create the Hamiltonian matrix before optimization
@@ -144,23 +142,32 @@ def rap_funct(weighted_graph, starting_node,ending_node, alphas,
     line : list
         List of coordinates for the streamline.
     """
-    graph = Graph(weighted_graph, starting_node, ending_node)
+    # graph = Graph(weighted_graph, starting_node, ending_node)
+    # if graph.number_of_edges > 17: 
+    #        raise Exception("RAPGraph: max number of points exceeded")
+    
 
-    # Construct Hamiltonian when qubits are set as edges,
-    # then optimize with QAOA/scipy:
+    # # Construct Hamiltonian when qubits are set as edges,
+    # # then optimize with QAOA/scipy:
 
-    hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in alphas]
+    # hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in alphas]
 
-    # print(hamiltonians[0].total_hamiltonian.simplify())
+    # # print(hamiltonians[0].total_hamiltonian.simplify())
 
-    print("\n Calculating qubits as edges......................")
-    # Run the multiprocess QAOA solver for edge qubits
-    # and return the optimal path as a list of coordinates.
-    line = multiprocess_qaoa_solver_edge_rap(
-        hamiltonians,
-        reps,
-        number_processors,
-        graph.number_of_edges,
-        optimizer
-        )
+    # print("\n Calculating qubits as edges......................")
+    # # Run the multiprocess QAOA solver for edge qubits
+    # # and return the optimal path as a list of coordinates.
+    # line = multiprocess_qaoa_solver_edge_rap(
+    #     hamiltonians,
+    #     reps,
+    #     number_processors,
+    #     graph.number_of_edges,
+    #     optimizer
+    #     )
+    
+    line = dijkstra_stepwise(
+        weighted_graph,
+        starting_node,
+        ending_node
+    )
     return line
