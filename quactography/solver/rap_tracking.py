@@ -112,7 +112,12 @@ def quack_rap(in_nodes_mask_img, in_sh_img, start_point, reps, alpha,
         reps = reps,
     )
     line.pop()
-    return line, prev_direction, True
+    sline = np.unravel_index(line, labes.shape)
+    llist = []
+    for i in range(len(sline[0])):
+        llist.append([sline[0][i], sline[1][i], sline[2][i]])
+    sline = llist
+    return sline, prev_direction, True
 
 def rap_funct(weighted_graph, starting_node, ending_node, alphas,
                 reps, number_processors=2, optimizer="Differential"):
