@@ -11,8 +11,10 @@ from quactography.adj_matrix.filter import (
                     remove_intermediate_connections,
                     extract_slice_at_index
 )
+from quactography.graph.undirected_graph import Graph
 from quactography.graph.utils import get_output_nodes
-from scripts.quac_optimal_path_find_max_intensity_diffusion import rap_funct
+from quactography.hamiltonian.hamiltonian_qubit_edge import Hamiltonian_qubit_edge
+from quactography.solver.qaoa_solver_qu_edge import multiprocess_qaoa_solver_edge_rap
 
 def quack_rap(in_nodes_mask, in_sh, start_point, reps, alpha,
          keep_mask=None, threshold=0.2, slice_index=None,
@@ -113,3 +115,52 @@ def quack_rap(in_nodes_mask, in_sh, start_point, reps, alpha,
     )
     line.pop()
     return line, prev_direction, True
+
+def rap_funct(weighted_graph, starting_node,ending_node, alphas,
+                reps, number_processors=2, optimizer="Differential"):
+    """
+    Process he Graph in order to create the Hamiltonian matrix before optimization
+    with QAOA algorithm. The Hamiltonian is constructed with qubits as edges.
+
+    Parameters
+    ----------  
+    graph : str
+        Path to the input graph file (npz file).
+    starting_node : int
+        Starting node of the graph.
+    ending_node : int
+        Ending node of the graph.
+    alphas : list of float, optional
+        List of alpha values for the Hamiltonian. Default is [1.2].
+    reps : int, optional
+        Number of repetitions for the QAOA algorithm, determines the number
+        of sets of gamma and beta angles. Default is 1.
+    number_processors : int, optional
+        Number of CPU to use for multiprocessing. Default is 2.
+    optimizer : str, optional
+        Optimizer to use for the QAOA algorithm. Default is "Differential".
+    Returns
+    -------
+    line : list
+        List of coordinates for the streamline.
+    """
+    graph = Graph(weighted_graph, starting_node, ending_node)
+
+    # Construct Hamiltonian when qubits are set as edges,
+    # then optimize with QAOA/scipy:
+
+    hamiltonians = [Hamiltonian_qubit_edge(graph, alpha) for alpha in alphas]
+
+    # print(hamiltonians[0].total_hamiltonian.simplify())
+
+    print("\n Calculating qubits as edges......................")
+    # Run the multiprocess QAOA solver for edge qubits
+    # and return the optimal path as a list of coordinates.
+    line = multiprocess_qaoa_solver_edge_rap(
+        hamiltonians,
+        reps,
+        number_processors,
+        graph.number_of_edges,
+        optimizer
+        )
+    return line
