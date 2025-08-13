@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-from quactography.visu.gs_square_loss_for_p import *
+from quactography.visu.probability_delta import *
 from quactography.visu.optimal_path_odds import *
 
 
@@ -46,7 +46,7 @@ def main():
     args = parser.parse_args()
 
     if args.comparator == "alpha":
-        visualize_optimal_paths_edge_alpha(
+        prob_delta_for_alpha(
                 args.in_opt_res,
                 args.out_visu_path,
                 args.save_only
@@ -58,7 +58,7 @@ def main():
         )
 
     else:
-        visualize_optimal_paths_edge_rep(
+        prob_delta_for_reps(
                 args.in_opt_res,
                 args.out_visu_path,
                 args.save_only
