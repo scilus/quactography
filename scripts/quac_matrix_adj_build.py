@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from quactography.adj_matrix.reconst import (
                     build_adjacency_matrix,
-                    build_weighted_graph,
+                    build_weighted_graph
 )
 from quactography.adj_matrix.filter import (
                     remove_orphan_nodes,
