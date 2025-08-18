@@ -5,13 +5,15 @@ from pathlib import Path
 from quactography.solver.io import load_optimization_results
 
 
-def visualize_optimal_paths_edge_rep(
+def prob_delta_for_reps(
     in_folder,
     out_file,
     save_only
 ):
     """
-    Visualize the optimal path on a graph.
+    Visualize the distance of the optimal path from the most probable path
+    for different repetitions in terms of probabilities. 
+    i.e. How much more or less probable the optimal path is compared to the most probable path.
 
     Parameters
     ----------
@@ -25,9 +27,11 @@ def visualize_optimal_paths_edge_rep(
     Returns
     -------
     None """
+    
     delta_dict = defaultdict(list)
+    
+    #load optimization results from all files in the directory
     path = Path(in_folder)
-
     glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
@@ -37,12 +41,14 @@ def visualize_optimal_paths_edge_rep(
         h = h.item()
         rep = rep.item()
 
+        # calculate the delta from the optimal path
+        # exact_path is the theorical optimal path found with classical means
         exact_path = (h.exact_path[0][::-1]).zfill(len(next(iter(dist_prob))))
         maxp = max(dist_prob, key=dist_prob.get)
         maxp = dist_prob[maxp]
         delta = maxp - dist_prob[exact_path]
 
-        
+        # store the delta for each repetition
         delta_dict[rep].append(delta)
 
     
@@ -66,14 +72,16 @@ def visualize_optimal_paths_edge_rep(
     plt.close()
 
 
-def visualize_optimal_paths_edge_alpha(
+def prob_delta_for_alpha(
     in_folder,
     out_file,
     save_only
 ):
     """
-    Visualize the optimal path on a graph.
-
+    Visualize the distance of the optimal path from the most probable path
+    for different alphas in terms of probabilities. 
+    i.e. How much more or less probable the optimal path is compared to the most probable path.
+    
     Parameters
     ----------
 
@@ -86,9 +94,11 @@ def visualize_optimal_paths_edge_alpha(
     Returns
     -------
     None """
+    
     delta_dict = defaultdict(list)
+    
+    #load optimization results from all files in the directory
     path = Path(in_folder)
-
     glob_path = path.glob('*.npz')
 
     for in_file_path in glob_path:
@@ -96,13 +106,16 @@ def visualize_optimal_paths_edge_alpha(
         min_cost = min_cost.item()
         dist_prob = dist_prob.item()
         h = h.item()
-        alpha = h.alphai
+        alpha = h.alpha_init
 
+        # calculate the delta from the optimal path
+        # exact_path is the theorical optimal path found with classical means
         exact_path = (h.exact_path[0][::-1]).zfill(len(next(iter(dist_prob))))
         maxp = max(dist_prob, key=dist_prob.get)
         maxp = dist_prob[maxp]
         delta = (maxp - dist_prob[exact_path])
         
+        # store the delta for each alpha
         delta_dict[alpha].append(delta)
 
     

@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from scipy.ndimage import binary_erosion
 import numpy as np
 
@@ -7,6 +8,7 @@ def get_output_nodes(mask, entry_node, propagation_direction, angle_rad):
     Get output nodes from a hotspot mask. The input mask is expected
     to be hole-free. Output nodes are edge nodes found within angle_rad
     radians from the propagation direction.
+
     Parameters
     ----------
     mask: ndarray
@@ -17,6 +19,7 @@ def get_output_nodes(mask, entry_node, propagation_direction, angle_rad):
         Direction along which propagation is done.
     angle_rad: float
         Aperture angle in radians.
+
     Returns
     -------
     indices: ndarray (N, 3)

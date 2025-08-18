@@ -5,20 +5,6 @@ from quactography.graph.utils import get_output_nodes
 
 
 
-DIRECTIONS_2D = np.array(
-    [
-        [-1.0, 0.0],
-        [1.0, 0.0],
-        [0.0, -1.0],
-        [0.0, 1.0],
-        [-np.sqrt(2.0) / 2.0, np.sqrt(2.0) / 2.0],
-        [np.sqrt(2.0) / 2.0, np.sqrt(2.0) / 2.0],
-        [np.sqrt(2.0) / 2.0, -np.sqrt(2.0) / 2.0],
-        [-np.sqrt(2.0) / 2.0, -np.sqrt(2.0) / 2.0],
-    ]
-)
-
-
 def build_adjacency_matrix(nodes_mask):
     """
     Build the adjacency matrix for a given set of nodes in a 2D image.
@@ -32,9 +18,6 @@ def build_adjacency_matrix(nodes_mask):
     adj_matrix : np.ndarray
         Adjacency matrix of the nodes.
     """
-
-
-
 
     # 1st. Assign labels to non-zero voxels (nodes)
     node_indices = np.flatnonzero(nodes_mask)
@@ -55,6 +38,17 @@ def build_adjacency_matrix(nodes_mask):
 
         # Coordinates of voxel
         x, y, z = np.unravel_index(label, nodes_mask.shape)
+
+        # Adds possibility of an edge to the actual node closest neighbour in 26 directions
+        for x_offset in [-1, 0, 1]:
+            for y_offset in [-1, 0, 1]:
+                for z_offset in [-1, 0, 1]:
+                    if x_offset == 0 and y_offset == 0 and z_offset == 0:
+                        continue
+                    else:
+                        adj_matrix = _add_edge_perhaps(
+                            x + x_offset, y + y_offset, z + z_offset, i, nodes_mask, labels_volume, adj_matrix
+                        )
 
         # Adds possibility of an edge to the actual node closest neighbour in 26 directions
         for x_offset in [-1, 0, 1]:
@@ -182,6 +176,7 @@ def add_end_point_edge(adj_matrix, end, labels):
         adj_matrix[start, -1] = 1
         adj_matrix[-1, start] = 1  # Assuming undirected graph
     return adj_matrix
+
 
 def _is_valid_pos(pos_x, pos_y, pos_z, nodes_mask):
     if pos_x < 0 or pos_x >= nodes_mask.shape[0]:

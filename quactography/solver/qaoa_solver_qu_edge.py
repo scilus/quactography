@@ -116,7 +116,7 @@ def find_longest_path(args):
     # ----------------------------------------------------------------RUN LOCALLY: -----
     # Run on local estimator and sampler:
     # Save output file name diffrerent for each alpha and loop:
-    outfile = outfileI + "_alpha_" + str(h.alphai) + "_reps_" + str(reps)
+    outfile = outfileI + "_alpha_" + str(h.alpha_init) + "_reps_" + str(reps)
     estimator = Estimator(options={"shots": 1000000, "seed": 43})
     sampler = Sampler(options={"shots": 1000000, "seed": 43})
     # -----------------------------------------------------------------------------------
@@ -207,11 +207,11 @@ def find_min_cost(in_folder, alpha, rep):
         The alpha value used in the optimization.
     rep : int
         The number of repetitions for the QAOA algorithm.
+
     Returns
     -------
     None
     """
-    
     path = Path(in_folder)
     glob_path = path.glob(f'*_alpha_{alpha}_reps_{rep}.npz')
     min = 100

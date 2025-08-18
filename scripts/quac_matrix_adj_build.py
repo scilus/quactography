@@ -44,10 +44,21 @@ def _build_arg_parser():
         help="Cut all weights below a given threshold. [%(default)s]",
     )
     p.add_argument(
+        '--sh_order',
+        type=int,
+        default=12,
+        help='Maximum SH order. [%(default)s]'
+    )
+    p.add_argument(
+        "--slice_index",
+        type=int,
+        help="If None, a 3D graph is built."
+        )
+    p.add_argument(
         "--axis_name",
         default="axial",
         choices=["sagittal", "coronal", "axial"],
-        help="Axis along which a slice is taken.",
+        help="Axis along which a slice is taken. Ignored when slice_index is None.",
     )
     p.add_argument(
         '--sh_order',
@@ -123,7 +134,6 @@ def main():
         plt.imshow(np.log(weighted_graph + 1))
         plt.show()
 
-    # print("node indices", node_indices)
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
 
