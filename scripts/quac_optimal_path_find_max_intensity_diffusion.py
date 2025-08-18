@@ -13,7 +13,6 @@ Tool to run QAOA, optimize parameters, plot cost landscape with optimal
 parameters found if only one reps, and returns the optimization results.
 """
 
-
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
@@ -73,7 +72,6 @@ def _build_arg_parser():
     )
 
     return p
-
 
 def main():
     parser = _build_arg_parser()

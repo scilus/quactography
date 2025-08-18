@@ -1,6 +1,8 @@
 import numpy as np
 from dipy.reconst.shm import sh_to_sf
 from dipy.core.sphere import Sphere
+from quactography.graph.utils import get_output_nodes
+
 
 
 def build_adjacency_matrix(nodes_mask):
@@ -16,6 +18,7 @@ def build_adjacency_matrix(nodes_mask):
     adj_matrix : np.ndarray
         Adjacency matrix of the nodes.
     """
+
     # 1st. Assign labels to non-zero voxels (nodes)
     node_indices = np.flatnonzero(nodes_mask)
 
@@ -47,7 +50,18 @@ def build_adjacency_matrix(nodes_mask):
                             x + x_offset, y + y_offset, z + z_offset, i, nodes_mask, labels_volume, adj_matrix
                         )
 
-    return adj_matrix, node_indices
+        # Adds possibility of an edge to the actual node closest neighbour in 26 directions
+        for x_offset in [-1, 0, 1]:
+            for y_offset in [-1, 0, 1]:
+                for z_offset in [-1, 0, 1]:
+                    if x_offset == 0 and y_offset == 0 and z_offset == 0:
+                        continue
+                    else:
+                        adj_matrix = _add_edge_perhaps(
+                            x + x_offset, y + y_offset, z + z_offset, i, nodes_mask, labels_volume, adj_matrix
+                        )
+
+    return adj_matrix, node_indices, labels_volume
 
 
 def build_weighted_graph(adj_matrix, node_indices, sh, sh_order=12):
@@ -135,6 +149,35 @@ def _add_edge_perhaps(
     return adj_matrix
 
 
+def add_end_point_edge(adj_matrix, end, labels):
+    """
+    Add a node and edges to the end points of the ROI in the adjacency matrix.
+
+    Parameters
+    ----------
+    adj_matrix : np.ndarray
+        Adjacency matrix of the graph.
+    end_points : list of tuples
+        List of end points as (x, y, z) coordinates.
+    labels_volume : np.ndarray
+        List of every column in the image:
+    
+    Returns
+    -------
+    np.ndarray
+        Updated adjacency matrix with end point edges added.
+    """
+    #labels = np.unravel_index(node_indes, adj_matrix.shape)
+    #new_shape = (adj_matrix.shape[0] + 1, adj_matrix.shape[1] + 1)
+    adj_matrix = np.lib.pad(adj_matrix, (0, 1), 'constant', constant_values=(0))
+
+    for i in end:
+        start = labels[i[0], i[1], i[2]] -1
+        adj_matrix[start, -1] = 1
+        adj_matrix[-1, start] = 1  # Assuming undirected graph
+    return adj_matrix
+
+
 def _is_valid_pos(pos_x, pos_y, pos_z, nodes_mask):
     if pos_x < 0 or pos_x >= nodes_mask.shape[0]:
         return False
@@ -143,3 +186,16 @@ def _is_valid_pos(pos_x, pos_y, pos_z, nodes_mask):
     if pos_z < 0 or pos_z >= nodes_mask.shape[2]:
         return False
     return nodes_mask[pos_x, pos_y, pos_z]
+
+if __name__ == "__main__":
+    # little demo code here and proto test 
+    mask = np.zeros((5, 5, 5), dtype=bool)
+    mask[1:3, 1:3, 1:3] = True
+    mat, nodes, labels = build_adjacency_matrix(mask)
+    entry_node = np.array([1, 1, 1])
+    propagation_direction = np.array([0, 1, 1])
+    angle_rad = np.pi / 8
+
+    indices = get_output_nodes(mask, entry_node, propagation_direction, angle_rad)
+    new = add_end_point_edge(mat,indices,labels)
+    print(new)

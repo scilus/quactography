@@ -61,6 +61,17 @@ def _build_arg_parser():
         help="Axis along which a slice is taken. Ignored when slice_index is None.",
     )
     p.add_argument(
+        '--sh_order',
+        type=int,
+        default=12,
+        help='Maximum SH order. [%(default)s]'
+    )
+    p.add_argument(
+        "--slice_index",
+        type=int,
+        help="If None, a 3D graph is built.",
+    )
+    p.add_argument(
         "--save_only",
         action="store_true",
         help="Does not plot the matrix, only saves a copy of npz adjacency matrix file"
@@ -68,6 +79,7 @@ def _build_arg_parser():
     return p
 
 
+#main used to test from command instructions
 def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
@@ -124,8 +136,6 @@ def main():
 
     # save output
     save_graph(weighted_graph, node_indices, nodes_mask.shape, args.out_graph)
-    print("Graph saved")
-
 
 if __name__ == "__main__":
     main()

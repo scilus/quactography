@@ -190,18 +190,24 @@ def find_longest_path(args):
         opt_params=resx  # type: ignore
     )  # type: ignore
     
-def find_max_cost(in_folder, alpha, rep):
+def find_min_cost(in_folder, alpha, rep):
     """
-    Remove all optimization results files in the input folder
-    that do not have the minimum cost for a given alpha and repetition.
+    Find the minimum cost in the optimization results for given alpha and rep,
+    and remove all files with a cost lower than the minimum cost.
+
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    QUACK_RAP does not save any files, nor have iteration with different alphas or repetitions,
+    it only returns a list of coordinates for the streamline.
+
     Parameters
     ----------
-    in_folder: str
-        The input folder containing the optimization results files in .npz format.
-    alpha: float
-        The alpha value to filter the optimization results files.
-    rep: int
-        The repetition value to filter the optimization results files.
+    in_folder : str
+        The folder containing the optimization results files.
+    alpha : float
+        The alpha value used in the optimization.
+    rep : int
+        The number of repetitions for the QAOA algorithm.
+
     Returns
     -------
     None
@@ -228,7 +234,7 @@ def multiprocess_qaoa_solver_edge(
     output_folder,
     optimizer,
     cost_landscape,
-    save_only,
+    save_only
 ):
     """
     Solve the optimization problem using the QAOA algorithm
@@ -271,7 +277,6 @@ def multiprocess_qaoa_solver_edge(
             itertools.repeat(save_only),
         ),
     )
-
     print(
         "------------------MULTIPROCESS SOLVER FINISHED-------------------------"
     )
